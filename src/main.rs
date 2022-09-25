@@ -17,7 +17,15 @@ fn main() {
 }
 
 #[derive(Default)]
-struct MyApp {}
+struct MyApp {
+    // clicked: bool,
+}
+
+// impl Default for MyApp {
+//     fn default() -> Self {
+//         Self { clicked: false }
+//     }
+// }
 
 impl MyApp {
     fn new(cc: &eframe::CreationContext<'_>) -> Self {
@@ -101,8 +109,7 @@ impl MyApp {
 
         cc.egui_ctx.set_visuals(visuals);
 
-        let ctx = egui::Context::default();
-        let mut style: egui::Style = (*ctx.style()).clone();
+        let mut style: egui::Style = (*cc.egui_ctx.style()).clone();
 
         let font_body = FontId {
             size: 24.0,
@@ -161,11 +168,16 @@ impl eframe::App for MyApp {
                     + &frame.is_web().to_string().to_owned()
                     + "\n",
             );
-            ui.button(
-                "Hello World!\nis Web? ".to_string().to_owned()
-                    + &frame.is_web().to_string().to_owned()
-                    + "\n",
-            );
+            if ui
+                .button(
+                    "Hello World!\nis Web? ".to_string().to_owned()
+                        + &frame.is_web().to_string().to_owned()
+                        + "\n",
+                )
+                .clicked()
+            {
+                print!("CLICK\n");
+            }
         });
     }
 }
