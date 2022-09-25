@@ -17,3 +17,8 @@ How to run and test the app:
 ```powershell
 cargo watch -x 'run'
 ```
+cargo-watch can be installed as follows:
+```powershell
+cargo install cargo-watch
+```
+[Click to read more about cargo-watch](https://crates.io/crates/cargo-watch)
