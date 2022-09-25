@@ -11,12 +11,9 @@ ToDo:
 - Learning Projects
 - Gamification
 
----
 ## Development
 How to run and test the app:
 
 ```powershell
 cargo watch -x 'run'
 ```
-
----
