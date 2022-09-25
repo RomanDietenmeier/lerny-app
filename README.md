@@ -15,8 +15,8 @@ ToDo:
 ## Development
 How to run and test the app:
 
-´´´powershell
+```powershell
 cargo watch -x 'run'
-´´´
+```
 
 ---
