@@ -18,7 +18,7 @@ fn main() {
 
 #[derive(Default)]
 struct MyApp {
-    // clicked: bool,
+    searchbar_text: String, // clicked: bool,
 }
 
 // impl Default for MyApp {
@@ -147,6 +147,22 @@ impl MyApp {
 
 impl eframe::App for MyApp {
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
+        egui::TopBottomPanel::top("project_container").show(ctx, |ui| {
+            let project_container_size = ui.available_size();
+
+            egui::SidePanel::left("project_selection").show_inside(ui, |ui| {
+                ui.set_width(project_container_size.x / 2.0);
+                ui.add_sized(
+                    ui.available_size(),
+                    egui::TextEdit::singleline(&mut self.searchbar_text),
+                );
+            });
+            egui::SidePanel::right("project_preview").show_inside(ui, |ui| {
+                ui.set_width(project_container_size.x / 2.0);
+                ui.add_sized(ui.available_size(), egui::Label::new("PREVIEW"));
+            });
+        });
+
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.heading(
                 "Hello World!\nis Web? ".to_string().to_owned()
