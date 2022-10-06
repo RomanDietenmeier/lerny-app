@@ -1,6 +1,6 @@
 use eframe::{
     egui::{self, FontData, FontDefinitions, TextStyle},
-    epaint::{Color32, FontFamily, FontId, Rounding, Stroke},
+    epaint::{Color32, FontFamily, FontId, Stroke},
 };
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
