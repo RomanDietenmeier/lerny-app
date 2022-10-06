@@ -1,6 +1,6 @@
 use eframe::{
     egui::{self, FontData, FontDefinitions, TextStyle},
-    epaint::{FontFamily, FontId},
+    epaint::{Color32, FontFamily, FontId, Rounding, Stroke},
 };
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
@@ -16,16 +16,23 @@ fn main() {
     );
 }
 
-#[derive(Default)]
+// #[derive(Default)]
 struct MyApp {
-    searchbar_text: String, // clicked: bool,
+    searchbar_text: String,
+    no_stroke_frame: egui::Frame,
 }
 
-// impl Default for MyApp {
-//     fn default() -> Self {
-//         Self { clicked: false }
-//     }
-// }
+impl Default for MyApp {
+    fn default() -> Self {
+        Self {
+            searchbar_text: String::default(),
+            no_stroke_frame: egui::Frame::none().stroke(Stroke {
+                width: 0.0,
+                color: Color32::TRANSPARENT,
+            }),
+        }
+    }
+}
 
 impl MyApp {
     fn new(cc: &eframe::CreationContext<'_>) -> Self {
@@ -139,7 +146,6 @@ impl MyApp {
         style.text_styles.insert(TextStyle::Body, font_body);
         style.text_styles.insert(TextStyle::Button, font_button);
         style.text_styles.insert(TextStyle::Heading, font_heading);
-
         cc.egui_ctx.set_style(style);
         Self::default()
     }
@@ -147,21 +153,29 @@ impl MyApp {
 
 impl eframe::App for MyApp {
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
-        egui::TopBottomPanel::top("project_container").show(ctx, |ui| {
-            let project_container_size = ui.available_size();
+        egui::TopBottomPanel::top("project_container")
+            .frame(self.no_stroke_frame.fill(ctx.style().visuals.window_fill()))
+            .show(ctx, |ui| {
+                let project_container_size = ui.available_size();
 
-            egui::SidePanel::left("project_selection").show_inside(ui, |ui| {
-                ui.set_width(project_container_size.x / 2.0);
-                ui.add_sized(
-                    ui.available_size(),
-                    egui::TextEdit::singleline(&mut self.searchbar_text),
-                );
+                egui::SidePanel::left("project_selection")
+                    .frame(self.no_stroke_frame.fill(ctx.style().visuals.window_fill()))
+                    .show_inside(ui, |ui| {
+                        ui.set_width(project_container_size.x / 2.0);
+                        ui.add_sized(
+                            ui.available_size(),
+                            egui::TextEdit::singleline(&mut self.searchbar_text)
+                                .frame(true)
+                                .hint_text("search..."),
+                        );
+                    });
+                egui::SidePanel::right("project_preview")
+                    .frame(self.no_stroke_frame.fill(ctx.style().visuals.window_fill()))
+                    .show_inside(ui, |ui| {
+                        ui.set_width(project_container_size.x / 2.0);
+                        ui.add_sized(ui.available_size(), egui::Label::new("PREVIEW"));
+                    });
             });
-            egui::SidePanel::right("project_preview").show_inside(ui, |ui| {
-                ui.set_width(project_container_size.x / 2.0);
-                ui.add_sized(ui.available_size(), egui::Label::new("PREVIEW"));
-            });
-        });
 
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.heading(
