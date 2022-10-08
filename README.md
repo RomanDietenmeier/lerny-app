@@ -1,4 +1,10 @@
 # LERNY-APP 📖👨🏼‍💻👩🏿‍💻
+<div style="text-align: center;">
+
+![a snapshot picture of the application](./SnapshotImage.jpg "SnapShot 08.October.2022")
+
+</div>
+
 ## Description
 Lerny-App will be an App to teach noobs programming
 The App should have the following features:
