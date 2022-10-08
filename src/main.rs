@@ -1,6 +1,6 @@
 use eframe::{
     egui::{self, FontData, FontDefinitions, TextStyle},
-    epaint::{Color32, FontFamily, FontId, Stroke},
+    epaint::{text::LayoutJob, Color32, FontFamily, FontId, Stroke},
 };
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
@@ -16,10 +16,277 @@ fn main() {
     );
 }
 
+impl SyntectTheme {
+    fn all() -> impl ExactSizeIterator<Item = Self> {
+        [
+            Self::Base16EightiesDark,
+            Self::Base16MochaDark,
+            Self::Base16OceanDark,
+            Self::Base16OceanLight,
+            Self::InspiredGitHub,
+            Self::SolarizedDark,
+            Self::SolarizedLight,
+        ]
+        .iter()
+        .copied()
+    }
+
+    fn name(&self) -> &'static str {
+        match self {
+            Self::Base16EightiesDark => "Base16 Eighties (dark)",
+            Self::Base16MochaDark => "Base16 Mocha (dark)",
+            Self::Base16OceanDark => "Base16 Ocean (dark)",
+            Self::Base16OceanLight => "Base16 Ocean (light)",
+            Self::InspiredGitHub => "InspiredGitHub (light)",
+            Self::SolarizedDark => "Solarized (dark)",
+            Self::SolarizedLight => "Solarized (light)",
+        }
+    }
+
+    fn syntect_key_name(&self) -> &'static str {
+        match self {
+            Self::Base16EightiesDark => "base16-eighties.dark",
+            Self::Base16MochaDark => "base16-mocha.dark",
+            Self::Base16OceanDark => "base16-ocean.dark",
+            Self::Base16OceanLight => "base16-ocean.light",
+            Self::InspiredGitHub => "InspiredGitHub",
+            Self::SolarizedDark => "Solarized (dark)",
+            Self::SolarizedLight => "Solarized (light)",
+        }
+    }
+
+    pub fn is_dark(&self) -> bool {
+        match self {
+            Self::Base16EightiesDark
+            | Self::Base16MochaDark
+            | Self::Base16OceanDark
+            | Self::SolarizedDark => true,
+
+            Self::Base16OceanLight | Self::InspiredGitHub | Self::SolarizedLight => false,
+        }
+    }
+}
+
+#[derive(Clone, Copy, Hash, PartialEq)]
+enum SyntectTheme {
+    Base16EightiesDark,
+    Base16MochaDark,
+    Base16OceanDark,
+    Base16OceanLight,
+    InspiredGitHub,
+    SolarizedDark,
+    SolarizedLight,
+}
+
+#[derive(Clone, Copy, PartialEq, enum_map::Enum)]
+enum TokenType {
+    Comment,
+    Keyword,
+    Literal,
+    StringLiteral,
+    Punctuation,
+    Whitespace,
+}
+
+#[derive(Clone, Hash, PartialEq)]
+pub struct CodeTheme {
+    dark_mode: bool,
+
+    syntect_theme: SyntectTheme,
+
+    formats: enum_map::EnumMap<TokenType, egui::TextFormat>,
+}
+
+//ToDo Here are two themes a syntect_theme and a egui Theme!!!!
+
+impl CodeTheme {
+    pub fn dark() -> Self {
+        let font_id = egui::FontId::monospace(10.0);
+        use egui::TextFormat;
+        Self {
+            dark_mode: true,
+            formats: enum_map::enum_map![
+                TokenType::Comment => TextFormat::simple(font_id.clone(), Color32::from_gray(120)),
+                TokenType::Keyword => TextFormat::simple(font_id.clone(), Color32::from_rgb(255, 100, 100)),
+                TokenType::Literal => TextFormat::simple(font_id.clone(), Color32::from_rgb(87, 165, 171)),
+                TokenType::StringLiteral => TextFormat::simple(font_id.clone(), Color32::from_rgb(109, 147, 226)),
+                TokenType::Punctuation => TextFormat::simple(font_id.clone(), Color32::LIGHT_GRAY),
+                TokenType::Whitespace => TextFormat::simple(font_id.clone(), Color32::TRANSPARENT),
+            ],
+            syntect_theme: SyntectTheme::Base16MochaDark,
+        }
+    }
+
+    pub fn light() -> Self {
+        let font_id = egui::FontId::monospace(10.0);
+        use egui::TextFormat;
+        Self {
+            dark_mode: false,
+            #[cfg(not(feature = "syntect"))]
+            formats: enum_map::enum_map![
+                TokenType::Comment => TextFormat::simple(font_id.clone(), Color32::GRAY),
+                TokenType::Keyword => TextFormat::simple(font_id.clone(), Color32::from_rgb(235, 0, 0)),
+                TokenType::Literal => TextFormat::simple(font_id.clone(), Color32::from_rgb(153, 134, 255)),
+                TokenType::StringLiteral => TextFormat::simple(font_id.clone(), Color32::from_rgb(37, 203, 105)),
+                TokenType::Punctuation => TextFormat::simple(font_id.clone(), Color32::DARK_GRAY),
+                TokenType::Whitespace => TextFormat::simple(font_id.clone(), Color32::TRANSPARENT),
+            ],
+            syntect_theme: SyntectTheme::SolarizedLight,
+        }
+    }
+
+    pub fn from_memory(ctx: &egui::Context) -> Self {
+        if ctx.style().visuals.dark_mode {
+            ctx.data()
+                .get_persisted(egui::Id::new("dark"))
+                .unwrap_or_else(CodeTheme::dark)
+        } else {
+            ctx.data()
+                .get_persisted(egui::Id::new("light"))
+                .unwrap_or_else(CodeTheme::light)
+        }
+    }
+}
+
+struct Highlighter {
+    ps: syntect::parsing::SyntaxSet,
+    ts: syntect::highlighting::ThemeSet,
+}
+
+impl Default for Highlighter {
+    fn default() -> Self {
+        Self {
+            ps: syntect::parsing::SyntaxSet::load_defaults_newlines(),
+            ts: syntect::highlighting::ThemeSet::load_defaults(),
+        }
+    }
+}
+fn is_keyword(word: &str) -> bool {
+    matches!(
+        word,
+        "as" | "async"
+            | "await"
+            | "break"
+            | "const"
+            | "continue"
+            | "crate"
+            | "dyn"
+            | "else"
+            | "enum"
+            | "extern"
+            | "false"
+            | "fn"
+            | "for"
+            | "if"
+            | "impl"
+            | "in"
+            | "let"
+            | "loop"
+            | "match"
+            | "mod"
+            | "move"
+            | "mut"
+            | "pub"
+            | "ref"
+            | "return"
+            | "self"
+            | "Self"
+            | "static"
+            | "struct"
+            | "super"
+            | "trait"
+            | "true"
+            | "type"
+            | "unsafe"
+            | "use"
+            | "where"
+            | "while"
+    )
+}
+
+impl Highlighter {
+    #[allow(clippy::unused_self, clippy::unnecessary_wraps)]
+    fn highlight(&self, theme: &CodeTheme, mut text: &str, _language: &str) -> LayoutJob {
+        // Extremely simple syntax highlighter for when we compile without syntect
+
+        let mut job = LayoutJob::default();
+
+        while !text.is_empty() {
+            if text.starts_with("//") {
+                let end = text.find('\n').unwrap_or(text.len());
+                job.append(&text[..end], 0.0, theme.formats[TokenType::Comment].clone());
+                text = &text[end..];
+            } else if text.starts_with('"') {
+                let end = text[1..]
+                    .find('"')
+                    .map(|i| i + 2)
+                    .or_else(|| text.find('\n'))
+                    .unwrap_or(text.len());
+                job.append(
+                    &text[..end],
+                    0.0,
+                    theme.formats[TokenType::StringLiteral].clone(),
+                );
+                text = &text[end..];
+            } else if text.starts_with(|c: char| c.is_ascii_alphanumeric()) {
+                let end = text[1..]
+                    .find(|c: char| !c.is_ascii_alphanumeric())
+                    .map_or_else(|| text.len(), |i| i + 1);
+                let word = &text[..end];
+                let tt = if is_keyword(word) {
+                    TokenType::Keyword
+                } else {
+                    TokenType::Literal
+                };
+                job.append(word, 0.0, theme.formats[tt].clone());
+                text = &text[end..];
+            } else if text.starts_with(|c: char| c.is_ascii_whitespace()) {
+                let end = text[1..]
+                    .find(|c: char| !c.is_ascii_whitespace())
+                    .map_or_else(|| text.len(), |i| i + 1);
+                job.append(
+                    &text[..end],
+                    0.0,
+                    theme.formats[TokenType::Whitespace].clone(),
+                );
+                text = &text[end..];
+            } else {
+                let mut it = text.char_indices();
+                it.next();
+                let end = it.next().map_or(text.len(), |(idx, _chr)| idx);
+                job.append(
+                    &text[..end],
+                    0.0,
+                    theme.formats[TokenType::Punctuation].clone(),
+                );
+                text = &text[end..];
+            }
+        }
+
+        job
+    }
+}
+
+/// Memoized Code highlighting
+pub fn highlight(ctx: &egui::Context, theme: &CodeTheme, code: &str, language: &str) -> LayoutJob {
+    impl egui::util::cache::ComputerMut<(&CodeTheme, &str, &str), LayoutJob> for Highlighter {
+        fn compute(&mut self, (theme, code, lang): (&CodeTheme, &str, &str)) -> LayoutJob {
+            self.highlight(theme, code, lang)
+        }
+    }
+
+    type HighlightCache = egui::util::cache::FrameCache<LayoutJob, Highlighter>;
+
+    let mut memory = ctx.memory();
+    let highlight_cache = memory.caches.cache::<HighlightCache>();
+    highlight_cache.get((theme, code, language))
+}
+
 // #[derive(Default)]
 struct MyApp {
     searchbar_text: String,
     no_stroke_frame: egui::Frame,
+    code: String,
 }
 
 impl Default for MyApp {
@@ -30,6 +297,7 @@ impl Default for MyApp {
                 width: 0.0,
                 color: Color32::TRANSPARENT,
             }),
+            code: "".into(),
         }
     }
 }
@@ -178,26 +446,21 @@ impl eframe::App for MyApp {
             });
 
         egui::CentralPanel::default().show(ctx, |ui| {
-            ui.heading(
-                "Hello World!\nis Web? ".to_string().to_owned()
-                    + &frame.is_web().to_string().to_owned()
-                    + "\n",
+            let mut theme = CodeTheme::from_memory(ui.ctx());
+            let mut layouter = |ui: &egui::Ui, string: &str, wrap_width: f32| {
+                let mut layout_job = highlight(ui.ctx(), &theme, string, "rs");
+                layout_job.wrap.max_width = wrap_width;
+                ui.fonts().layout_job(layout_job)
+            };
+
+            ui.add(
+                egui::TextEdit::multiline(&mut self.code)
+                    .code_editor()
+                    .desired_width(f32::INFINITY)
+                    .lock_focus(true)
+                    .layouter(&mut layouter),
             );
-            ui.monospace(
-                "Hello World!\nis Web? ".to_string().to_owned()
-                    + &frame.is_web().to_string().to_owned()
-                    + "\n",
-            );
-            ui.small(
-                "Hello World!\nis Web? ".to_string().to_owned()
-                    + &frame.is_web().to_string().to_owned()
-                    + "\n",
-            );
-            ui.label(
-                "Hello World!\nis Web? ".to_string().to_owned()
-                    + &frame.is_web().to_string().to_owned()
-                    + "\n",
-            );
+
             if ui
                 .button(
                     "Hello World!\nis Web? ".to_string().to_owned()
