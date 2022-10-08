@@ -16,6 +16,17 @@ fn main() {
     );
 }
 
+#[derive(Clone, Copy, Hash, PartialEq)]
+enum SyntectTheme {
+    Base16EightiesDark,
+    Base16MochaDark,
+    Base16OceanDark,
+    Base16OceanLight,
+    InspiredGitHub,
+    SolarizedDark,
+    SolarizedLight,
+}
+
 impl SyntectTheme {
     fn all() -> impl ExactSizeIterator<Item = Self> {
         [
@@ -67,70 +78,23 @@ impl SyntectTheme {
     }
 }
 
-#[derive(Clone, Copy, Hash, PartialEq)]
-enum SyntectTheme {
-    Base16EightiesDark,
-    Base16MochaDark,
-    Base16OceanDark,
-    Base16OceanLight,
-    InspiredGitHub,
-    SolarizedDark,
-    SolarizedLight,
-}
-
-#[derive(Clone, Copy, PartialEq, enum_map::Enum)]
-enum TokenType {
-    Comment,
-    Keyword,
-    Literal,
-    StringLiteral,
-    Punctuation,
-    Whitespace,
-}
-
 #[derive(Clone, Hash, PartialEq)]
 pub struct CodeTheme {
     dark_mode: bool,
-
     syntect_theme: SyntectTheme,
-
-    formats: enum_map::EnumMap<TokenType, egui::TextFormat>,
 }
-
-//ToDo Here are two themes a syntect_theme and a egui Theme!!!!
 
 impl CodeTheme {
     pub fn dark() -> Self {
-        let font_id = egui::FontId::monospace(10.0);
-        use egui::TextFormat;
         Self {
             dark_mode: true,
-            formats: enum_map::enum_map![
-                TokenType::Comment => TextFormat::simple(font_id.clone(), Color32::from_gray(120)),
-                TokenType::Keyword => TextFormat::simple(font_id.clone(), Color32::from_rgb(255, 100, 100)),
-                TokenType::Literal => TextFormat::simple(font_id.clone(), Color32::from_rgb(87, 165, 171)),
-                TokenType::StringLiteral => TextFormat::simple(font_id.clone(), Color32::from_rgb(109, 147, 226)),
-                TokenType::Punctuation => TextFormat::simple(font_id.clone(), Color32::LIGHT_GRAY),
-                TokenType::Whitespace => TextFormat::simple(font_id.clone(), Color32::TRANSPARENT),
-            ],
             syntect_theme: SyntectTheme::Base16MochaDark,
         }
     }
 
     pub fn light() -> Self {
-        let font_id = egui::FontId::monospace(10.0);
-        use egui::TextFormat;
         Self {
             dark_mode: false,
-            #[cfg(not(feature = "syntect"))]
-            formats: enum_map::enum_map![
-                TokenType::Comment => TextFormat::simple(font_id.clone(), Color32::GRAY),
-                TokenType::Keyword => TextFormat::simple(font_id.clone(), Color32::from_rgb(235, 0, 0)),
-                TokenType::Literal => TextFormat::simple(font_id.clone(), Color32::from_rgb(153, 134, 255)),
-                TokenType::StringLiteral => TextFormat::simple(font_id.clone(), Color32::from_rgb(37, 203, 105)),
-                TokenType::Punctuation => TextFormat::simple(font_id.clone(), Color32::DARK_GRAY),
-                TokenType::Whitespace => TextFormat::simple(font_id.clone(), Color32::TRANSPARENT),
-            ],
             syntect_theme: SyntectTheme::SolarizedLight,
         }
     }
@@ -161,112 +125,82 @@ impl Default for Highlighter {
         }
     }
 }
-fn is_keyword(word: &str) -> bool {
-    matches!(
-        word,
-        "as" | "async"
-            | "await"
-            | "break"
-            | "const"
-            | "continue"
-            | "crate"
-            | "dyn"
-            | "else"
-            | "enum"
-            | "extern"
-            | "false"
-            | "fn"
-            | "for"
-            | "if"
-            | "impl"
-            | "in"
-            | "let"
-            | "loop"
-            | "match"
-            | "mod"
-            | "move"
-            | "mut"
-            | "pub"
-            | "ref"
-            | "return"
-            | "self"
-            | "Self"
-            | "static"
-            | "struct"
-            | "super"
-            | "trait"
-            | "true"
-            | "type"
-            | "unsafe"
-            | "use"
-            | "where"
-            | "while"
-    )
+
+fn as_byte_range(whole: &str, range: &str) -> std::ops::Range<usize> {
+    let whole_start = whole.as_ptr() as usize;
+    let range_start = range.as_ptr() as usize;
+    assert!(whole_start <= range_start);
+    assert!(range_start + range.len() <= whole_start + whole.len());
+    let offset = range_start - whole_start;
+    offset..(offset + range.len())
 }
 
 impl Highlighter {
     #[allow(clippy::unused_self, clippy::unnecessary_wraps)]
-    fn highlight(&self, theme: &CodeTheme, mut text: &str, _language: &str) -> LayoutJob {
-        // Extremely simple syntax highlighter for when we compile without syntect
-
-        let mut job = LayoutJob::default();
-
-        while !text.is_empty() {
-            if text.starts_with("//") {
-                let end = text.find('\n').unwrap_or(text.len());
-                job.append(&text[..end], 0.0, theme.formats[TokenType::Comment].clone());
-                text = &text[end..];
-            } else if text.starts_with('"') {
-                let end = text[1..]
-                    .find('"')
-                    .map(|i| i + 2)
-                    .or_else(|| text.find('\n'))
-                    .unwrap_or(text.len());
-                job.append(
-                    &text[..end],
-                    0.0,
-                    theme.formats[TokenType::StringLiteral].clone(),
-                );
-                text = &text[end..];
-            } else if text.starts_with(|c: char| c.is_ascii_alphanumeric()) {
-                let end = text[1..]
-                    .find(|c: char| !c.is_ascii_alphanumeric())
-                    .map_or_else(|| text.len(), |i| i + 1);
-                let word = &text[..end];
-                let tt = if is_keyword(word) {
-                    TokenType::Keyword
+    fn highlight(&self, theme: &CodeTheme, code: &str, lang: &str) -> LayoutJob {
+        self.highlight_impl(theme, code, lang).unwrap_or_else(|| {
+            // Fallback:
+            LayoutJob::simple(
+                code.into(),
+                egui::FontId::monospace(12.0),
+                if theme.dark_mode {
+                    egui::Color32::LIGHT_GRAY
                 } else {
-                    TokenType::Literal
+                    egui::Color32::DARK_GRAY
+                },
+                f32::INFINITY,
+            )
+        })
+    }
+
+    fn highlight_impl(&self, theme: &CodeTheme, text: &str, language: &str) -> Option<LayoutJob> {
+        use syntect::easy::HighlightLines;
+        use syntect::highlighting::FontStyle;
+        use syntect::util::LinesWithEndings;
+
+        let syntax = self
+            .ps
+            .find_syntax_by_name(language)
+            .or_else(|| self.ps.find_syntax_by_extension(language))?;
+
+        let theme = theme.syntect_theme.syntect_key_name();
+        let mut h = HighlightLines::new(syntax, &self.ts.themes[theme]);
+
+        use egui::text::{LayoutSection, TextFormat};
+
+        let mut job = LayoutJob {
+            text: text.into(),
+            ..Default::default()
+        };
+
+        for line in LinesWithEndings::from(text) {
+            for (style, range) in h.highlight_line(line, &self.ps).ok()? {
+                let fg = style.foreground;
+                let text_color = egui::Color32::from_rgb(fg.r, fg.g, fg.b);
+                let italics = style.font_style.contains(FontStyle::ITALIC);
+                let underline = style.font_style.contains(FontStyle::ITALIC);
+                let underline = if underline {
+                    egui::Stroke::new(1.0, text_color)
+                } else {
+                    egui::Stroke::none()
                 };
-                job.append(word, 0.0, theme.formats[tt].clone());
-                text = &text[end..];
-            } else if text.starts_with(|c: char| c.is_ascii_whitespace()) {
-                let end = text[1..]
-                    .find(|c: char| !c.is_ascii_whitespace())
-                    .map_or_else(|| text.len(), |i| i + 1);
-                job.append(
-                    &text[..end],
-                    0.0,
-                    theme.formats[TokenType::Whitespace].clone(),
-                );
-                text = &text[end..];
-            } else {
-                let mut it = text.char_indices();
-                it.next();
-                let end = it.next().map_or(text.len(), |(idx, _chr)| idx);
-                job.append(
-                    &text[..end],
-                    0.0,
-                    theme.formats[TokenType::Punctuation].clone(),
-                );
-                text = &text[end..];
+                job.sections.push(LayoutSection {
+                    leading_space: 0.0,
+                    byte_range: as_byte_range(text, range),
+                    format: TextFormat {
+                        font_id: egui::FontId::monospace(12.0),
+                        color: text_color,
+                        italics,
+                        underline,
+                        ..Default::default()
+                    },
+                });
             }
         }
 
-        job
+        Some(job)
     }
 }
-
 /// Memoized Code highlighting
 pub fn highlight(ctx: &egui::Context, theme: &CodeTheme, code: &str, language: &str) -> LayoutJob {
     impl egui::util::cache::ComputerMut<(&CodeTheme, &str, &str), LayoutJob> for Highlighter {
