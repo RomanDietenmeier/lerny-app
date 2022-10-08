@@ -1,6 +1,6 @@
 pub mod code_editor;
-pub mod my_app;
-use my_app::MyApp;
+pub mod main_application;
+use main_application::MainApplication;
 
 fn main() {
     let mut options = eframe::NativeOptions::default();
@@ -9,6 +9,6 @@ fn main() {
     eframe::run_native(
         "Lerny App",
         options,
-        Box::new(|_cc| Box::new(MyApp::new(_cc))),
+        Box::new(|_cc| Box::new(MainApplication::new(_cc))),
     );
 }

@@ -7,13 +7,13 @@ use strum_macros::EnumIter;
 
 use crate::code_editor::syntect_layouter::get_layouter;
 
-pub struct MyApp {
+pub struct MainApplication {
     searchbar_text: String,
     no_stroke_frame: egui::Frame,
     code: String,
 }
 
-impl Default for MyApp {
+impl Default for MainApplication {
     fn default() -> Self {
         Self {
             searchbar_text: String::default(),
@@ -26,7 +26,7 @@ impl Default for MyApp {
     }
 }
 
-impl MyApp {
+impl MainApplication {
     pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
         // Customize egui here with cc.egui_ctx.set_fonts and cc.egui_ctx.set_visuals.
         // Restore app state using cc.storage (requires the "persistence" feature).
@@ -143,7 +143,7 @@ impl MyApp {
     }
 }
 
-impl eframe::App for MyApp {
+impl eframe::App for MainApplication {
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
         egui::TopBottomPanel::top("project_container")
             .frame(self.no_stroke_frame.fill(ctx.style().visuals.window_fill()))
