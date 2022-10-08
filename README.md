@@ -1,5 +1,5 @@
 # LERNY-APP 📖👨🏼‍💻👩🏿‍💻
-<div style="text-align: center;">
+<div align="center">
 
 ![a snapshot picture of the application](./SnapshotImage.jpg "SnapShot 08.October.2022")
 
