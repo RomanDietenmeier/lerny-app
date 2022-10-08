@@ -1,6 +1,8 @@
+pub mod code_editor;
+use code_editor::syntect_layouter::get_layouter;
 use eframe::{
     egui::{self, FontData, FontDefinitions, TextStyle},
-    epaint::{text::LayoutJob, Color32, FontFamily, FontId, Stroke},
+    epaint::{Color32, FontFamily, FontId, Stroke},
 };
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
@@ -14,159 +16,6 @@ fn main() {
         options,
         Box::new(|_cc| Box::new(MyApp::new(_cc))),
     );
-}
-
-#[derive(Clone, Copy, Hash, PartialEq)]
-enum SyntectTheme {
-    Base16MochaDark,
-    SolarizedLight,
-}
-
-impl SyntectTheme {
-    fn syntect_key_name(&self) -> &'static str {
-        match self {
-            Self::Base16MochaDark => "base16-mocha.dark",
-            Self::SolarizedLight => "Solarized (light)",
-        }
-    }
-}
-
-#[derive(Clone, Hash, PartialEq)]
-pub struct CodeTheme {
-    dark_mode: bool,
-    syntect_theme: SyntectTheme,
-}
-
-impl CodeTheme {
-    pub fn dark() -> Self {
-        Self {
-            dark_mode: true,
-            syntect_theme: SyntectTheme::Base16MochaDark,
-        }
-    }
-
-    pub fn light() -> Self {
-        Self {
-            dark_mode: false,
-            syntect_theme: SyntectTheme::SolarizedLight,
-        }
-    }
-
-    pub fn from_memory(ctx: &egui::Context) -> Self {
-        if ctx.style().visuals.dark_mode {
-            ctx.data()
-                .get_persisted(egui::Id::new("dark"))
-                .unwrap_or_else(CodeTheme::dark)
-        } else {
-            ctx.data()
-                .get_persisted(egui::Id::new("light"))
-                .unwrap_or_else(CodeTheme::light)
-        }
-    }
-}
-
-struct Highlighter {
-    ps: syntect::parsing::SyntaxSet,
-    ts: syntect::highlighting::ThemeSet,
-}
-
-impl Default for Highlighter {
-    fn default() -> Self {
-        Self {
-            ps: syntect::parsing::SyntaxSet::load_defaults_newlines(),
-            ts: syntect::highlighting::ThemeSet::load_defaults(),
-        }
-    }
-}
-
-fn as_byte_range(whole: &str, range: &str) -> std::ops::Range<usize> {
-    let whole_start = whole.as_ptr() as usize;
-    let range_start = range.as_ptr() as usize;
-    assert!(whole_start <= range_start);
-    assert!(range_start + range.len() <= whole_start + whole.len());
-    let offset = range_start - whole_start;
-    offset..(offset + range.len())
-}
-
-impl Highlighter {
-    #[allow(clippy::unused_self, clippy::unnecessary_wraps)]
-    fn highlight(&self, theme: &CodeTheme, code: &str, lang: &str) -> LayoutJob {
-        self.highlight_impl(theme, code, lang).unwrap_or_else(|| {
-            // Fallback:
-            LayoutJob::simple(
-                code.into(),
-                egui::FontId::monospace(24.0),
-                if theme.dark_mode {
-                    egui::Color32::LIGHT_GRAY
-                } else {
-                    egui::Color32::DARK_GRAY
-                },
-                f32::INFINITY,
-            )
-        })
-    }
-
-    fn highlight_impl(&self, theme: &CodeTheme, text: &str, language: &str) -> Option<LayoutJob> {
-        use syntect::easy::HighlightLines;
-        use syntect::highlighting::FontStyle;
-        use syntect::util::LinesWithEndings;
-
-        let syntax = self
-            .ps
-            .find_syntax_by_name(language)
-            .or_else(|| self.ps.find_syntax_by_extension(language))?;
-
-        let theme = theme.syntect_theme.syntect_key_name();
-        let mut h = HighlightLines::new(syntax, &self.ts.themes[theme]);
-
-        use egui::text::{LayoutSection, TextFormat};
-
-        let mut job = LayoutJob {
-            text: text.into(),
-            ..Default::default()
-        };
-
-        for line in LinesWithEndings::from(text) {
-            for (style, range) in h.highlight_line(line, &self.ps).ok()? {
-                let fg = style.foreground;
-                let text_color = egui::Color32::from_rgb(fg.r, fg.g, fg.b);
-                let italics = style.font_style.contains(FontStyle::ITALIC);
-                let underline = style.font_style.contains(FontStyle::ITALIC);
-                let underline = if underline {
-                    egui::Stroke::new(1.0, text_color)
-                } else {
-                    egui::Stroke::none()
-                };
-                job.sections.push(LayoutSection {
-                    leading_space: 0.0,
-                    byte_range: as_byte_range(text, range),
-                    format: TextFormat {
-                        font_id: egui::FontId::monospace(24.0),
-                        color: text_color,
-                        italics,
-                        underline,
-                        ..Default::default()
-                    },
-                });
-            }
-        }
-
-        Some(job)
-    }
-}
-/// Memoized Code highlighting
-pub fn highlight(ctx: &egui::Context, theme: &CodeTheme, code: &str, language: &str) -> LayoutJob {
-    impl egui::util::cache::ComputerMut<(&CodeTheme, &str, &str), LayoutJob> for Highlighter {
-        fn compute(&mut self, (theme, code, lang): (&CodeTheme, &str, &str)) -> LayoutJob {
-            self.highlight(theme, code, lang)
-        }
-    }
-
-    type HighlightCache = egui::util::cache::FrameCache<LayoutJob, Highlighter>;
-
-    let mut memory = ctx.memory();
-    let highlight_cache = memory.caches.cache::<HighlightCache>();
-    highlight_cache.get((theme, code, language))
 }
 
 // #[derive(Default)]
@@ -333,13 +182,6 @@ impl eframe::App for MyApp {
             });
 
         egui::CentralPanel::default().show(ctx, |ui| {
-            let theme = CodeTheme::from_memory(ui.ctx());
-            let mut layouter = |ui: &egui::Ui, string: &str, wrap_width: f32| {
-                let mut layout_job = highlight(ui.ctx(), &theme, string, "rs");
-                layout_job.wrap.max_width = wrap_width;
-                ui.fonts().layout_job(layout_job)
-            };
-
             ui.add(
                 egui::TextEdit::multiline(&mut self.code)
                     .font(egui::TextStyle::Monospace)
@@ -347,7 +189,7 @@ impl eframe::App for MyApp {
                     .code_editor()
                     .desired_width(f32::INFINITY)
                     .lock_focus(true)
-                    .layouter(&mut layouter),
+                    .layouter(&mut get_layouter),
             );
 
             if ui
