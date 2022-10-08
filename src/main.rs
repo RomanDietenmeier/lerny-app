@@ -18,62 +18,15 @@ fn main() {
 
 #[derive(Clone, Copy, Hash, PartialEq)]
 enum SyntectTheme {
-    Base16EightiesDark,
     Base16MochaDark,
-    Base16OceanDark,
-    Base16OceanLight,
-    InspiredGitHub,
-    SolarizedDark,
     SolarizedLight,
 }
 
 impl SyntectTheme {
-    fn all() -> impl ExactSizeIterator<Item = Self> {
-        [
-            Self::Base16EightiesDark,
-            Self::Base16MochaDark,
-            Self::Base16OceanDark,
-            Self::Base16OceanLight,
-            Self::InspiredGitHub,
-            Self::SolarizedDark,
-            Self::SolarizedLight,
-        ]
-        .iter()
-        .copied()
-    }
-
-    fn name(&self) -> &'static str {
-        match self {
-            Self::Base16EightiesDark => "Base16 Eighties (dark)",
-            Self::Base16MochaDark => "Base16 Mocha (dark)",
-            Self::Base16OceanDark => "Base16 Ocean (dark)",
-            Self::Base16OceanLight => "Base16 Ocean (light)",
-            Self::InspiredGitHub => "InspiredGitHub (light)",
-            Self::SolarizedDark => "Solarized (dark)",
-            Self::SolarizedLight => "Solarized (light)",
-        }
-    }
-
     fn syntect_key_name(&self) -> &'static str {
         match self {
-            Self::Base16EightiesDark => "base16-eighties.dark",
             Self::Base16MochaDark => "base16-mocha.dark",
-            Self::Base16OceanDark => "base16-ocean.dark",
-            Self::Base16OceanLight => "base16-ocean.light",
-            Self::InspiredGitHub => "InspiredGitHub",
-            Self::SolarizedDark => "Solarized (dark)",
             Self::SolarizedLight => "Solarized (light)",
-        }
-    }
-
-    pub fn is_dark(&self) -> bool {
-        match self {
-            Self::Base16EightiesDark
-            | Self::Base16MochaDark
-            | Self::Base16OceanDark
-            | Self::SolarizedDark => true,
-
-            Self::Base16OceanLight | Self::InspiredGitHub | Self::SolarizedLight => false,
         }
     }
 }
@@ -142,7 +95,7 @@ impl Highlighter {
             // Fallback:
             LayoutJob::simple(
                 code.into(),
-                egui::FontId::monospace(12.0),
+                egui::FontId::monospace(24.0),
                 if theme.dark_mode {
                     egui::Color32::LIGHT_GRAY
                 } else {
@@ -188,7 +141,7 @@ impl Highlighter {
                     leading_space: 0.0,
                     byte_range: as_byte_range(text, range),
                     format: TextFormat {
-                        font_id: egui::FontId::monospace(12.0),
+                        font_id: egui::FontId::monospace(24.0),
                         color: text_color,
                         italics,
                         underline,
@@ -231,7 +184,7 @@ impl Default for MyApp {
                 width: 0.0,
                 color: Color32::TRANSPARENT,
             }),
-            code: "".into(),
+            code: "// A very simple example\nfn main() {\n\tprintln!(\"Hello world!\");\n}".into(),
         }
     }
 }
@@ -380,7 +333,7 @@ impl eframe::App for MyApp {
             });
 
         egui::CentralPanel::default().show(ctx, |ui| {
-            let mut theme = CodeTheme::from_memory(ui.ctx());
+            let theme = CodeTheme::from_memory(ui.ctx());
             let mut layouter = |ui: &egui::Ui, string: &str, wrap_width: f32| {
                 let mut layout_job = highlight(ui.ctx(), &theme, string, "rs");
                 layout_job.wrap.max_width = wrap_width;
@@ -389,6 +342,8 @@ impl eframe::App for MyApp {
 
             ui.add(
                 egui::TextEdit::multiline(&mut self.code)
+                    .font(egui::TextStyle::Monospace)
+                    .desired_rows(10)
                     .code_editor()
                     .desired_width(f32::INFINITY)
                     .lock_focus(true)
