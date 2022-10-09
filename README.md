@@ -7,7 +7,7 @@
 </div>
 
 ## Description
-Lerny-App will be an App to teach noobs programming
+Lerny-App will be an App to teach noobs programming.<br>
 The App should have the following features:
 
 ToDo:
