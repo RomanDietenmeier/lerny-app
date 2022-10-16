@@ -1,3 +1,9 @@
+use std::{
+    fs::{File, OpenOptions},
+    io::Read,
+    path::Path,
+};
+
 use eframe::{
     egui::{self, FontData, FontDefinitions, TextStyle},
     epaint::{Color32, FontFamily, FontId, Stroke},
@@ -11,17 +17,35 @@ pub struct MainApplication {
     searchbar_text: String,
     no_stroke_frame: egui::Frame,
     code: String,
+    code_file: File,
 }
 
 impl Default for MainApplication {
     fn default() -> Self {
+        let code_file_path = Path::new("./tmp/code.txt");
+        let mut code_file = match OpenOptions::new()
+            .read(true)
+            .write(true)
+            .append(true)
+            .open(code_file_path)
+        {
+            Err(why) => panic!("couldn't create: {}", why),
+            Ok(file) => file,
+        };
+
+        let mut code_file_content = String::new();
+        match code_file.read_to_string(&mut code_file_content) {
+            Err(why) => panic!("couldn't read: {}", why),
+            Ok(_) => {}
+        }
         Self {
             searchbar_text: String::default(),
             no_stroke_frame: egui::Frame::none().stroke(Stroke {
                 width: 0.0,
                 color: Color32::TRANSPARENT,
             }),
-            code: "// A very simple example\nfn main() {\n\tprintln!(\"Hello world!\");\n}".into(),
+            code: code_file_content,
+            code_file,
         }
     }
 }
