@@ -1,6 +1,6 @@
 use std::{
     fs::{File, OpenOptions},
-    io::Read,
+    io::{Read, Seek, Write},
     path::Path,
 };
 
@@ -26,7 +26,7 @@ impl Default for MainApplication {
         let mut code_file = match OpenOptions::new()
             .read(true)
             .write(true)
-            .append(true)
+            .create(true)
             .open(code_file_path)
         {
             Err(why) => panic!("couldn't create: {}", why),
@@ -194,7 +194,7 @@ impl eframe::App for MainApplication {
             });
 
         egui::CentralPanel::default().show(ctx, |ui| {
-            ui.add(
+            let code_response = ui.add(
                 egui::TextEdit::multiline(&mut self.code)
                     .font(egui::TextStyle::Monospace)
                     .desired_rows(10)
@@ -203,6 +203,16 @@ impl eframe::App for MainApplication {
                     .lock_focus(true)
                     .layouter(&mut get_layouter),
             );
+
+            if code_response.changed() {
+                match self.code_file.seek(std::io::SeekFrom::Start(0)) {
+                    Ok(_) => match self.code_file.write_all(self.code.as_bytes()) {
+                        Err(why) => panic!("couldn't write to: {}", why),
+                        Ok(_) => {}
+                    },
+                    Err(why) => panic!("could not seekt to the start of the file: {}", why),
+                }
+            }
 
             if ui
                 .button(
