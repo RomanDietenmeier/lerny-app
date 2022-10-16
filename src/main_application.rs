@@ -1,3 +1,9 @@
+use std::{
+    fs::{File, OpenOptions},
+    io::{Read, Seek, Write},
+    path::Path,
+};
+
 use eframe::{
     egui::{self, FontData, FontDefinitions, TextStyle},
     epaint::{Color32, FontFamily, FontId, Stroke},
@@ -11,17 +17,35 @@ pub struct MainApplication {
     searchbar_text: String,
     no_stroke_frame: egui::Frame,
     code: String,
+    code_file: File,
 }
 
 impl Default for MainApplication {
     fn default() -> Self {
+        let code_file_path = Path::new("./tmp/code.txt");
+        let mut code_file = match OpenOptions::new()
+            .read(true)
+            .write(true)
+            .create(true)
+            .open(code_file_path)
+        {
+            Err(why) => panic!("couldn't create: {}", why),
+            Ok(file) => file,
+        };
+
+        let mut code_file_content = String::new();
+        match code_file.read_to_string(&mut code_file_content) {
+            Err(why) => panic!("couldn't read: {}", why),
+            Ok(_) => {}
+        }
         Self {
             searchbar_text: String::default(),
             no_stroke_frame: egui::Frame::none().stroke(Stroke {
                 width: 0.0,
                 color: Color32::TRANSPARENT,
             }),
-            code: "// A very simple example\nfn main() {\n\tprintln!(\"Hello world!\");\n}".into(),
+            code: code_file_content,
+            code_file,
         }
     }
 }
@@ -170,7 +194,7 @@ impl eframe::App for MainApplication {
             });
 
         egui::CentralPanel::default().show(ctx, |ui| {
-            ui.add(
+            let code_response = ui.add(
                 egui::TextEdit::multiline(&mut self.code)
                     .font(egui::TextStyle::Monospace)
                     .desired_rows(10)
@@ -179,6 +203,16 @@ impl eframe::App for MainApplication {
                     .lock_focus(true)
                     .layouter(&mut get_layouter),
             );
+
+            if code_response.changed() {
+                match self.code_file.seek(std::io::SeekFrom::Start(0)) {
+                    Ok(_) => match self.code_file.write_all(self.code.as_bytes()) {
+                        Err(why) => panic!("couldn't write to: {}", why),
+                        Ok(_) => {}
+                    },
+                    Err(why) => panic!("could not seekt to the start of the file: {}", why),
+                }
+            }
 
             if ui
                 .button(
