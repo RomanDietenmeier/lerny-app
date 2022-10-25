@@ -2,6 +2,8 @@ use std::{
     fs::{File, OpenOptions},
     io::{Read, Seek, Write},
     path::Path,
+    process::Command,
+    str,
 };
 
 use eframe::{
@@ -22,7 +24,7 @@ pub struct MainApplication {
 
 impl Default for MainApplication {
     fn default() -> Self {
-        let code_file_path = Path::new("./tmp/code.txt");
+        let code_file_path = Path::new("./tmp/code.c");
         let mut code_file = match OpenOptions::new()
             .read(true)
             .write(true)
@@ -168,7 +170,7 @@ impl MainApplication {
 }
 
 impl eframe::App for MainApplication {
-    fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
+    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::TopBottomPanel::top("project_container")
             .frame(self.no_stroke_frame.fill(ctx.style().visuals.window_fill()))
             .show(ctx, |ui| {
@@ -201,10 +203,14 @@ impl eframe::App for MainApplication {
                     .code_editor()
                     .desired_width(f32::INFINITY)
                     .lock_focus(true)
-                    .layouter(&mut get_layouter),
+                    .layouter(&mut get_layouter("c")),
             );
 
             if code_response.changed() {
+                match self.code_file.set_len(self.code.len().try_into().unwrap()) {
+                    Ok(_) => {}
+                    Err(why) => panic!("could not truncatef the file: {}", why),
+                };
                 match self.code_file.seek(std::io::SeekFrom::Start(0)) {
                     Ok(_) => match self.code_file.write_all(self.code.as_bytes()) {
                         Err(why) => panic!("couldn't write to: {}", why),
@@ -214,15 +220,36 @@ impl eframe::App for MainApplication {
                 }
             }
 
-            if ui
-                .button(
-                    "Hello World!\nis Web? ".to_string().to_owned()
-                        + &frame.is_web().to_string().to_owned()
-                        + "\n",
-                )
-                .clicked()
-            {
+            if ui.button("RUN ▶️").clicked() {
                 print!("CLICK\n");
+                let mut output = if cfg!(target_os = "windows") {
+                    Command::new("gcc")
+                        .args([".\\tmp\\code.c", "-Wall", "-o", ".\\tmp\\code.exe"])
+                        .output()
+                        .expect("failed to execute process")
+                } else {
+                    todo!("Linux and Mac");
+                    // Command::new("sh")
+                    //     .arg("-c")
+                    //     .arg("pwd")
+                    //     .output()
+                    //     .expect("failed to execute process")
+                };
+                println!("{}", (&output.status));
+                output = if cfg!(target_os = "windows") {
+                    Command::new(".\\tmp\\code.exe")
+                        .output()
+                        .expect("failed to execute process")
+                } else {
+                    todo!("Linux and Mac");
+                };
+                println!(
+                    "{}",
+                    match str::from_utf8(&output.stdout) {
+                        Ok(v) => v,
+                        Err(e) => panic!("Invalid UTF-8 sequence: {}", e),
+                    }
+                );
             }
         });
     }
