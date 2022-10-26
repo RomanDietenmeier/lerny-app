@@ -228,12 +228,10 @@ impl eframe::App for MainApplication {
                         .output()
                         .expect("failed to execute process")
                 } else {
-                    todo!("Linux and Mac");
-                    // Command::new("sh")
-                    //     .arg("-c")
-                    //     .arg("pwd")
-                    //     .output()
-                    //     .expect("failed to execute process")
+                    Command::new("gcc")
+                        .args(["./tmp/code.c", "-Wall", "-o", "./tmp/code.exe"])
+                        .output()
+                        .expect("failed to execute process")
                 };
                 println!("{}", (&output.status));
                 output = if cfg!(target_os = "windows") {
@@ -241,7 +239,9 @@ impl eframe::App for MainApplication {
                         .output()
                         .expect("failed to execute process")
                 } else {
-                    todo!("Linux and Mac");
+                    Command::new("./tmp/code.exe")
+                        .output()
+                        .expect("failed to execute process")
                 };
                 println!(
                     "{}",
