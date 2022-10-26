@@ -21,27 +21,27 @@ impl SyntectTheme {
 }
 
 #[derive(Clone, Hash, PartialEq)]
-pub struct CodeTheme {
+struct CodeTheme {
     dark_mode: bool,
     syntect_theme: SyntectTheme,
 }
 
 impl CodeTheme {
-    pub fn dark() -> Self {
+    fn dark() -> Self {
         Self {
             dark_mode: true,
             syntect_theme: SyntectTheme::Base16MochaDark,
         }
     }
 
-    pub fn light() -> Self {
+    fn light() -> Self {
         Self {
             dark_mode: false,
             syntect_theme: SyntectTheme::SolarizedLight,
         }
     }
 
-    pub fn from_memory(ctx: &egui::Context) -> Self {
+    fn from_memory(ctx: &egui::Context) -> Self {
         if ctx.style().visuals.dark_mode {
             ctx.data()
                 .get_persisted(egui::Id::new("dark"))
@@ -144,7 +144,7 @@ impl Highlighter {
     }
 }
 
-pub fn highlight(ctx: &egui::Context, theme: &CodeTheme, code: &str, language: &str) -> LayoutJob {
+fn highlight(ctx: &egui::Context, theme: &CodeTheme, code: &str, language: &str) -> LayoutJob {
     impl egui::util::cache::ComputerMut<(&CodeTheme, &str, &str), LayoutJob> for Highlighter {
         fn compute(&mut self, (theme, code, lang): (&CodeTheme, &str, &str)) -> LayoutJob {
             self.highlight(theme, code, lang)
@@ -158,8 +158,24 @@ pub fn highlight(ctx: &egui::Context, theme: &CodeTheme, code: &str, language: &
     highlight_cache.get((theme, code, language))
 }
 
-pub fn get_layouter(ui: &egui::Ui, string: &str, wrap_width: f32) -> Arc<Galley> {
+pub fn get_layouter(
+    programming_language: &str,
+) -> fn(ui: &egui::Ui, string: &str, wrap_width: f32) -> Arc<Galley> {
+    match programming_language {
+        "c" => get_layouter_c,
+        "rs" => get_layouter_rust_lang,
+        _ => get_layouter_rust_lang,
+    }
+}
+
+pub fn get_layouter_rust_lang(ui: &egui::Ui, string: &str, wrap_width: f32) -> Arc<Galley> {
     let mut layout_job = highlight(ui.ctx(), &CodeTheme::from_memory(ui.ctx()), string, "rs");
+    layout_job.wrap.max_width = wrap_width;
+    ui.fonts().layout_job(layout_job)
+}
+
+pub fn get_layouter_c(ui: &egui::Ui, string: &str, wrap_width: f32) -> Arc<Galley> {
+    let mut layout_job = highlight(ui.ctx(), &CodeTheme::from_memory(ui.ctx()), string, "c");
     layout_job.wrap.max_width = wrap_width;
     ui.fonts().layout_job(layout_job)
 }
