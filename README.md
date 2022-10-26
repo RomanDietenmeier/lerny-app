@@ -21,6 +21,8 @@ ToDo:
 ## Development
 How to run and test the app:
 
+### <b>watchexec</b>
+Watchexec recompiles and reruns the programm on every file change.
 ```powershell
 watchexec -r 'cargo run'
 ```
@@ -29,3 +31,13 @@ watchexec can be installed as follows:
 cargo install watchexec-cli
 ```
 [Click to read more about watchexec](https://crates.io/crates/watchexec-cli)
+### <b>bacon</b>
+Bacon recompiles the programm on every file change.
+```powershell
+bacon
+```
+bacon can be installed as follows:
+```powershell
+cargo install bacon
+```
+
