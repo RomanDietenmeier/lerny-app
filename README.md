@@ -41,3 +41,8 @@ bacon can be installed as follows:
 cargo install bacon
 ```
 
+# Current ToDo's
+- show that your app is running in main app
+- - like changing the run button into an loading spinner, ...
+- make that compiling is non blocking!
+- - currently compiling blocks the main thread
