@@ -1,17 +1,19 @@
 use std::{
-    fs::{File, OpenOptions},
+    fs::{self, File, OpenOptions},
     io::{Read, Seek, Write},
     path::Path,
-    process::Command,
+    process::{Command, ExitStatus, Stdio},
     str,
 };
 
+use console::Term;
 use eframe::{
     egui::{self, FontData, FontDefinitions, TextStyle},
     epaint::{Color32, FontFamily, FontId, Stroke},
 };
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
+use sysinfo::{Pid, ProcessExt, ProcessStatus, System, SystemExt};
 
 use crate::code_editor::syntect_layouter::get_layouter;
 
@@ -20,10 +22,24 @@ pub struct MainApplication {
     no_stroke_frame: egui::Frame,
     code: String,
     code_file: File,
+    code_running_process_id: usize,
 }
 
 impl Default for MainApplication {
     fn default() -> Self {
+        match fs::metadata("./tmp") {
+            Ok(metadata) => {
+                if !metadata.is_dir() {
+                    fs::create_dir("./tmp").expect("could not create TMP folder");
+                }
+            }
+            Err(_) => {
+                println!(
+                    "could not get info about the TMP folder\ntrying to create the folder anyway"
+                );
+                fs::create_dir("./tmp").expect("could not create TMP folder");
+            }
+        }
         let code_file_path = Path::new("./tmp/code.c");
         let mut code_file = match OpenOptions::new()
             .read(true)
@@ -48,11 +64,64 @@ impl Default for MainApplication {
             }),
             code: code_file_content,
             code_file,
+            code_running_process_id: 0,
         }
     }
 }
 
 impl MainApplication {
+    fn capture_c_output(&mut self) {
+        if self.code_running_process_id != 0 {
+            if let Some(process) =
+                System::new_all().process(Pid::from(self.code_running_process_id))
+            {
+                if process.status() == ProcessStatus::Run {
+                    return;
+                }
+            }
+        }
+        Term::stdout()
+            .clear_screen()
+            .expect("Could not clear Console");
+
+        let child = if cfg!(target_os = "windows") {
+            Command::new("gcc")
+                .args([".\\tmp\\code.c", "-Wall", "-o", ".\\tmp\\code.exe"])
+                .stdin(Stdio::inherit())
+                .stdout(Stdio::inherit())
+                .stderr(Stdio::inherit())
+                .output()
+                .expect("failed to execute process")
+        } else {
+            Command::new("gcc")
+                .args(["./tmp/code.c", "-Wall", "-o", "./tmp/code.exe"])
+                .stdin(Stdio::inherit())
+                .stdout(Stdio::inherit())
+                .stderr(Stdio::inherit())
+                .output()
+                .expect("failed to execute process")
+        };
+        if ExitStatus::code(&child.status) == Some(0) {
+            let child = if cfg!(target_os = "windows") {
+                Command::new(".\\tmp\\code.exe")
+                    .stdin(Stdio::inherit())
+                    .stdout(Stdio::inherit())
+                    .stderr(Stdio::inherit())
+                    .spawn()
+                    .expect("failed to execute process")
+            } else {
+                Command::new("./tmp/code.exe")
+                    .stdin(Stdio::inherit())
+                    .stdout(Stdio::inherit())
+                    .stderr(Stdio::inherit())
+                    .spawn()
+                    .expect("failed to execute process")
+            };
+
+            self.code_running_process_id = child.id() as usize;
+        }
+    }
+
     pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
         // Customize egui here with cc.egui_ctx.set_fonts and cc.egui_ctx.set_visuals.
         // Restore app state using cc.storage (requires the "persistence" feature).
@@ -221,35 +290,7 @@ impl eframe::App for MainApplication {
             }
 
             if ui.button("RUN ▶️").clicked() {
-                print!("CLICK\n");
-                let mut output = if cfg!(target_os = "windows") {
-                    Command::new("gcc")
-                        .args([".\\tmp\\code.c", "-Wall", "-o", ".\\tmp\\code.exe"])
-                        .output()
-                        .expect("failed to execute process")
-                } else {
-                    Command::new("gcc")
-                        .args(["./tmp/code.c", "-Wall", "-o", "./tmp/code.exe"])
-                        .output()
-                        .expect("failed to execute process")
-                };
-                println!("{}", (&output.status));
-                output = if cfg!(target_os = "windows") {
-                    Command::new(".\\tmp\\code.exe")
-                        .output()
-                        .expect("failed to execute process")
-                } else {
-                    Command::new("./tmp/code.exe")
-                        .output()
-                        .expect("failed to execute process")
-                };
-                println!(
-                    "{}",
-                    match str::from_utf8(&output.stdout) {
-                        Ok(v) => v,
-                        Err(e) => panic!("Invalid UTF-8 sequence: {}", e),
-                    }
-                );
+                self.capture_c_output();
             }
         });
     }
