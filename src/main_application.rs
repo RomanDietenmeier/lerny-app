@@ -29,7 +29,7 @@ impl Default for MainApplication {
         match fs::metadata("./tmp") {
             Ok(metadata) => {
                 if !metadata.is_dir() {
-                    fs::create_dir("./tmp").expect("could not create TMP folder");
+                    panic!("Pls remove the existing data in your directory!");
                 }
             }
             Err(_) => {
