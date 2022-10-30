@@ -1,21 +1,20 @@
+pub mod main_application_helper;
+
 use std::{
     fs::{self, File, OpenOptions},
     io::{Read, Seek, Write},
     path::Path,
-    process::{Command, ExitStatus, Stdio},
-    str,
 };
 
-use console::Term;
 use eframe::{
-    egui::{self, FontData, FontDefinitions, TextStyle},
-    epaint::{Color32, FontFamily, FontId, Stroke},
+    egui::{self},
+    epaint::{Color32, Stroke},
 };
-use strum::IntoEnumIterator;
-use strum_macros::EnumIter;
-use sysinfo::{Pid, ProcessExt, ProcessStatus, System, SystemExt};
 
 use crate::code_editor::syntect_layouter::get_layouter;
+use crate::main_application::main_application_helper::new_main_application;
+
+use self::main_application_helper::capture_c_output;
 
 pub struct MainApplication {
     searchbar_text: String,
@@ -71,170 +70,11 @@ impl Default for MainApplication {
 
 impl MainApplication {
     fn capture_c_output(&mut self) {
-        if self.code_running_process_id != 0 {
-            if let Some(process) =
-                System::new_all().process(Pid::from(self.code_running_process_id))
-            {
-                if process.status() == ProcessStatus::Run {
-                    return;
-                }
-            }
-        }
-        Term::stdout()
-            .clear_screen()
-            .expect("Could not clear Console");
-
-        let child = if cfg!(target_os = "windows") {
-            Command::new("gcc")
-                .args([".\\tmp\\code.c", "-Wall", "-o", ".\\tmp\\code.exe"])
-                .stdin(Stdio::inherit())
-                .stdout(Stdio::inherit())
-                .stderr(Stdio::inherit())
-                .output()
-                .expect("failed to execute process")
-        } else {
-            Command::new("gcc")
-                .args(["./tmp/code.c", "-Wall", "-o", "./tmp/code.exe"])
-                .stdin(Stdio::inherit())
-                .stdout(Stdio::inherit())
-                .stderr(Stdio::inherit())
-                .output()
-                .expect("failed to execute process")
-        };
-        if ExitStatus::code(&child.status) == Some(0) {
-            let child = if cfg!(target_os = "windows") {
-                Command::new(".\\tmp\\code.exe")
-                    .stdin(Stdio::inherit())
-                    .stdout(Stdio::inherit())
-                    .stderr(Stdio::inherit())
-                    .spawn()
-                    .expect("failed to execute process")
-            } else {
-                Command::new("./tmp/code.exe")
-                    .stdin(Stdio::inherit())
-                    .stdout(Stdio::inherit())
-                    .stderr(Stdio::inherit())
-                    .spawn()
-                    .expect("failed to execute process")
-            };
-
-            self.code_running_process_id = child.id() as usize;
-        }
+        capture_c_output(self);
     }
 
     pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
-        // Customize egui here with cc.egui_ctx.set_fonts and cc.egui_ctx.set_visuals.
-        // Restore app state using cc.storage (requires the "persistence" feature).
-        // Use the cc.gl (a glow::Context) to create graphics shaders and buffers that you can use
-        // for e.g. egui::PaintCallback.
-
-        #[derive(EnumIter)]
-        enum Roboto {
-            Roboto100Thin,
-            Roboto300Light,
-            Roboto400Regular,
-            Roboto500Medium,
-            Roboto700Bold,
-            Roboto900Black,
-        }
-
-        impl Roboto {
-            fn value(&self) -> &str {
-                match *self {
-                    Roboto::Roboto100Thin => "Roboto-Thin-100",
-                    Roboto::Roboto300Light => "Roboto-Light-300",
-                    Roboto::Roboto400Regular => "Roboto-Regular-400",
-                    Roboto::Roboto500Medium => "Roboto-Medium-500",
-                    Roboto::Roboto700Bold => "Roboto-Bold-700",
-                    Roboto::Roboto900Black => "Roboto-Black-900",
-                }
-            }
-        }
-
-        let mut fonts = FontDefinitions::default();
-
-        fonts.font_data.insert(
-            "ConsolasRegular".to_owned(),
-            FontData::from_static(include_bytes!("../resources/fonts/consolas/CONSOLA.TTF")),
-        );
-        fonts.font_data.insert(
-            Roboto::Roboto100Thin.value().to_owned(),
-            FontData::from_static(include_bytes!("../resources/fonts/roboto/Roboto-Thin.ttf")),
-        );
-        fonts.font_data.insert(
-            Roboto::Roboto300Light.value().to_owned(),
-            FontData::from_static(include_bytes!("../resources/fonts/roboto/Roboto-Light.ttf")),
-        );
-        fonts.font_data.insert(
-            Roboto::Roboto400Regular.value().to_owned(),
-            FontData::from_static(include_bytes!(
-                "../resources/fonts/roboto/Roboto-Regular.ttf"
-            )),
-        );
-        fonts.font_data.insert(
-            Roboto::Roboto500Medium.value().to_owned(),
-            FontData::from_static(include_bytes!(
-                "../resources/fonts/roboto/Roboto-Medium.ttf"
-            )),
-        );
-        fonts.font_data.insert(
-            Roboto::Roboto700Bold.value().to_owned(),
-            FontData::from_static(include_bytes!("../resources/fonts/roboto/Roboto-Bold.ttf")),
-        );
-        fonts.font_data.insert(
-            Roboto::Roboto900Black.value().to_owned(),
-            FontData::from_static(include_bytes!("../resources/fonts/roboto/Roboto-Black.ttf")),
-        );
-
-        for font in Roboto::iter() {
-            fonts.families.insert(
-                eframe::epaint::FontFamily::Name(font.value().into()),
-                vec![font.value().to_owned()],
-            );
-        }
-        fonts.families.insert(
-            eframe::epaint::FontFamily::Name("ConsolasRegular".into()),
-            vec!["ConsolasRegular".to_owned()],
-        );
-
-        cc.egui_ctx.set_fonts(fonts);
-
-        let visuals = egui::Visuals::light();
-
-        cc.egui_ctx.set_visuals(visuals);
-
-        let mut style: egui::Style = (*cc.egui_ctx.style()).clone();
-
-        let font_body = FontId {
-            size: 24.0,
-            family: FontFamily::Name(Roboto::Roboto400Regular.value().into()), //family: FontFamily::Name("Linux Libertine G".into())
-        };
-        let font_heading = FontId {
-            size: 24.0,
-            family: FontFamily::Name(Roboto::Roboto700Bold.value().into()), //family: FontFamily::Name("Linux Libertine G".into())
-        };
-        let font_button = FontId {
-            size: 24.0,
-            family: FontFamily::Name(Roboto::Roboto900Black.value().into()), //family: FontFamily::Name("Linux Libertine G".into())
-        };
-        let font_small = FontId {
-            size: 24.0,
-            family: FontFamily::Name(Roboto::Roboto300Light.value().into()), //family: FontFamily::Name("Linux Libertine G".into())
-        };
-        let font_monospace = FontId {
-            size: 24.0,
-            family: FontFamily::Name("ConsolasRegular".into()), //family: FontFamily::Name("Linux Libertine G".into())
-        };
-
-        style
-            .text_styles
-            .insert(TextStyle::Monospace, font_monospace);
-        style.text_styles.insert(TextStyle::Small, font_small);
-        style.text_styles.insert(TextStyle::Body, font_body);
-        style.text_styles.insert(TextStyle::Button, font_button);
-        style.text_styles.insert(TextStyle::Heading, font_heading);
-        cc.egui_ctx.set_style(style);
-        Self::default()
+        new_main_application(cc)
     }
 }
 
