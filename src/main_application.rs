@@ -11,6 +11,8 @@ use eframe::{
     epaint::{Color32, Stroke},
 };
 
+use libc::pid_t;
+
 use crate::code_editor::syntect_layouter::get_layouter;
 use crate::main_application::main_application_helper::new_main_application;
 
@@ -21,7 +23,7 @@ pub struct MainApplication {
     no_stroke_frame: egui::Frame,
     code: String,
     code_file: File,
-    code_running_process_id: usize,
+    code_running_process_id: pid_t,
 }
 
 impl Default for MainApplication {
