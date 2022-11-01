@@ -11,19 +11,37 @@ use eframe::{
     epaint::{Color32, Stroke},
 };
 
-use libc::pid_t;
+use cfg_if::cfg_if;
+
+cfg_if! {
+    if #[cfg(target_os = "linux")] {
+        use libc::pid_t;
+    }
+}
 
 use crate::code_editor::syntect_layouter::get_layouter;
 use crate::main_application::main_application_helper::new_main_application;
 
 use self::main_application_helper::capture_c_output;
 
-pub struct MainApplication {
-    searchbar_text: String,
-    no_stroke_frame: egui::Frame,
-    code: String,
-    code_file: File,
-    code_running_process_id: pid_t,
+cfg_if! {
+    if #[cfg(target_os = "windows")] {
+        pub struct MainApplication {
+            searchbar_text: String,
+            no_stroke_frame: egui::Frame,
+            code: String,
+            code_file: File,
+            code_running_process_id: usize,
+        }
+    }else{
+        pub struct MainApplication {
+            searchbar_text: String,
+            no_stroke_frame: egui::Frame,
+            code: String,
+            code_file: File,
+            code_running_process_id: pid_t,
+        }
+    }
 }
 
 impl Default for MainApplication {
