@@ -9,6 +9,14 @@ use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 use sysinfo::{Pid, ProcessExt, ProcessStatus, System, SystemExt};
 
+use cfg_if::cfg_if;
+
+cfg_if! {
+    if #[cfg(target_os = "linux")] {
+        use libc::pid_t;
+    }
+}
+
 use super::MainApplication;
 
 pub fn capture_c_output(main_app: &mut MainApplication) {
@@ -59,7 +67,13 @@ pub fn capture_c_output(main_app: &mut MainApplication) {
                 .expect("failed to execute process")
         };
 
-        main_app.code_running_process_id = child.id() as usize;
+        cfg_if! {
+            if #[cfg(target_os = "linux")] {
+                main_app.code_running_process_id = child.id() as pid_t;
+            }else{
+                main_app.code_running_process_id = child.id() as usize;
+            }
+        }
     }
 }
 
