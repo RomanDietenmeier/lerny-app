@@ -25,13 +25,13 @@ use crate::main_application::main_application_helper::new_main_application;
 use self::main_application_helper::capture_c_output;
 
 cfg_if! {
-    if #[cfg(target_os = "windows")] {
+    if #[cfg(target_os = "linux")] {
         pub struct MainApplication {
             searchbar_text: String,
             no_stroke_frame: egui::Frame,
             code: String,
             code_file: File,
-            code_running_process_id: usize,
+            code_running_process_id: pid_t,
         }
     }else{
         pub struct MainApplication {
@@ -39,7 +39,7 @@ cfg_if! {
             no_stroke_frame: egui::Frame,
             code: String,
             code_file: File,
-            code_running_process_id: pid_t,
+            code_running_process_id: usize,
         }
     }
 }

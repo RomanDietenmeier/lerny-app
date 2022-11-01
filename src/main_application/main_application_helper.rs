@@ -68,10 +68,10 @@ pub fn capture_c_output(main_app: &mut MainApplication) {
         };
 
         cfg_if! {
-            if #[cfg(target_os = "windows")] {
-                main_app.code_running_process_id = child.id() as usize;
-            }else{
+            if #[cfg(target_os = "linux")] {
                 main_app.code_running_process_id = child.id() as pid_t;
+            }else{
+                main_app.code_running_process_id = child.id() as usize;
             }
         }
     }
