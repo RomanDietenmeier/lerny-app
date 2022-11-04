@@ -909,6 +909,7 @@ dependencies = [
  "console",
  "eframe",
  "enum-map",
+ "lazy_static",
  "libc",
  "strum",
  "strum_macros",
