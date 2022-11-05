@@ -1,5 +1,5 @@
 pub mod code_editor;
-pub mod global_singelton;
+pub mod global_singleton;
 pub mod main_application;
 
 use main_application::MainApplication;

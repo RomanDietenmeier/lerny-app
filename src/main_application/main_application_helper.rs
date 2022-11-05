@@ -7,7 +7,6 @@ use eframe::{
 };
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
-use sysinfo::{Pid, ProcessExt, ProcessStatus, System, SystemExt};
 
 use cfg_if::cfg_if;
 
@@ -17,64 +16,79 @@ cfg_if! {
     }
 }
 
+use crate::global_singleton::GLOBAL_SINGLETON;
+
 use super::MainApplication;
 
-pub fn capture_c_output(main_app: &mut MainApplication) {
-    if main_app.code_running_process_id != 0 {
-        if let Some(process) =
-            System::new_all().process(Pid::from(main_app.code_running_process_id))
-        {
-            if process.status() == ProcessStatus::Run {
+pub fn capture_c_output() {
+    match GLOBAL_SINGLETON.lock() {
+        Err(err) => {
+            println!("could not get GLOBAL_SINGLETON: {}", err);
+            return;
+        }
+        Ok(mut singleton) => {
+            if singleton.child_process.kill_process() {
                 return;
             }
         }
     }
+
     Term::stdout()
         .clear_screen()
         .expect("Could not clear Console");
 
-    let child = if cfg!(target_os = "windows") {
-        Command::new("gcc")
-            .args([".\\tmp\\code.c", "-Wall", "-o", ".\\tmp\\code.exe"])
-            .stdin(Stdio::inherit())
-            .stdout(Stdio::inherit())
-            .stderr(Stdio::inherit())
-            .output()
-            .expect("failed to execute process")
-    } else {
-        Command::new("gcc")
-            .args(["./tmp/code.c", "-Wall", "-o", "./tmp/code.exe"])
-            .stdin(Stdio::inherit())
-            .stdout(Stdio::inherit())
-            .stderr(Stdio::inherit())
-            .output()
-            .expect("failed to execute process")
-    };
-    if ExitStatus::code(&child.status) == Some(0) {
+    std::thread::spawn(|| {
         let child = if cfg!(target_os = "windows") {
-            Command::new(".\\tmp\\code.exe")
+            Command::new("gcc")
+                .args([".\\tmp\\code.c", "-Wall", "-o", ".\\tmp\\code.exe"])
                 .stdin(Stdio::inherit())
                 .stdout(Stdio::inherit())
                 .stderr(Stdio::inherit())
-                .spawn()
+                .output()
                 .expect("failed to execute process")
         } else {
-            Command::new("./tmp/code.exe")
+            Command::new("gcc")
+                .args(["./tmp/code.c", "-Wall", "-o", "./tmp/code.exe"])
                 .stdin(Stdio::inherit())
                 .stdout(Stdio::inherit())
                 .stderr(Stdio::inherit())
-                .spawn()
+                .output()
                 .expect("failed to execute process")
         };
+        if ExitStatus::code(&child.status) == Some(0) {
+            let mut child = if cfg!(target_os = "windows") {
+                Command::new(".\\tmp\\code.exe")
+                    .stdin(Stdio::inherit())
+                    .stdout(Stdio::inherit())
+                    .stderr(Stdio::inherit())
+                    .spawn()
+                    .expect("failed to execute process")
+            } else {
+                Command::new("./tmp/code.exe")
+                    .stdin(Stdio::inherit())
+                    .stdout(Stdio::inherit())
+                    .stderr(Stdio::inherit())
+                    .spawn()
+                    .expect("failed to execute process")
+            };
 
-        cfg_if! {
-            if #[cfg(target_os = "linux")] {
-                main_app.code_running_process_id = child.id() as pid_t;
-            }else{
-                main_app.code_running_process_id = child.id() as usize;
+            match GLOBAL_SINGLETON.lock() {
+                Err(err) => {
+                    println!("could not get GLOBAL_SINGLETON: {}", err);
+                    match child.kill() {
+                        Err(err) => {
+                            panic!("Could not kill child process: {}", err);
+                        }
+                        Ok(_) => {}
+                    }
+                    return;
+                }
+                Ok(mut singleton) => {
+                    singleton.child_process.child_process = Some(child);
+                }
             }
         }
-    }
+    });
 }
 
 pub fn new_main_application(cc: &eframe::CreationContext<'_>) -> MainApplication {
