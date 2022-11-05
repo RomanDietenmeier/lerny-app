@@ -8,13 +8,6 @@ use eframe::{
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 
-use cfg_if::cfg_if;
-
-cfg_if! {
-    if #[cfg(target_os = "linux")] {
-        use libc::pid_t;
-    }
-}
 
 use crate::global_singleton::GLOBAL_SINGLETON;
 
@@ -32,7 +25,7 @@ pub fn capture_c_output() {
             }
         }
     }
-
+    
     Term::stdout()
         .clear_screen()
         .expect("Could not clear Console");

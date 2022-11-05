@@ -11,13 +11,6 @@ use eframe::{
     epaint::{Color32, Stroke},
 };
 
-use cfg_if::cfg_if;
-
-cfg_if! {
-    if #[cfg(target_os = "linux")] {
-        use libc::pid_t;
-    }
-}
 
 use crate::main_application::main_application_helper::new_main_application;
 use crate::{code_editor::syntect_layouter::get_layouter, global_singleton::GLOBAL_SINGLETON};

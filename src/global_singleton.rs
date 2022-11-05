@@ -2,15 +2,11 @@ use std::{io::ErrorKind, process::Child, sync::Mutex};
 
 use cfg_if::cfg_if;
 use lazy_static::lazy_static;
-cfg_if! {
-    if #[cfg(target_os = "linux")] {
-        use libc::pid_t;
-    }
-}
+
 
 cfg_if! {
     if #[cfg(target_os = "linux")] {
-        pub struct ProcessIdAndSatus {
+        pub struct ProcessIdAndStatus {
             pub child_process: Option<Child>
         }
     }else{
