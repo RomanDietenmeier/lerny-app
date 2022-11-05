@@ -6,7 +6,11 @@
     "egui",
     "epaint",
     "Gamification",
+    "layouter",
     "lerny",
-    "roboto"
+    "libc",
+    "roboto",
+    "syntect",
+    "sysinfo"
   ]
 }

@@ -44,5 +44,7 @@ cargo install bacon
 # Current ToDo's
 - show that your app is running in main app
 - - like changing the run button into an loading spinner, ...
-- make that compiling is non blocking!
+- ✓ make that compiling is non blocking! 
 - - currently compiling blocks the main thread
+- start / stop button is currently always trying to stop the child, even when the child is done
+- - on Linux

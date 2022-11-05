@@ -11,37 +11,17 @@ use eframe::{
     epaint::{Color32, Stroke},
 };
 
-use cfg_if::cfg_if;
 
-cfg_if! {
-    if #[cfg(target_os = "linux")] {
-        use libc::pid_t;
-    }
-}
-
-use crate::code_editor::syntect_layouter::get_layouter;
 use crate::main_application::main_application_helper::new_main_application;
+use crate::{code_editor::syntect_layouter::get_layouter, global_singleton::GLOBAL_SINGLETON};
 
 use self::main_application_helper::capture_c_output;
 
-cfg_if! {
-    if #[cfg(target_os = "linux")] {
-        pub struct MainApplication {
-            searchbar_text: String,
-            no_stroke_frame: egui::Frame,
-            code: String,
-            code_file: File,
-            code_running_process_id: pid_t,
-        }
-    }else{
-        pub struct MainApplication {
-            searchbar_text: String,
-            no_stroke_frame: egui::Frame,
-            code: String,
-            code_file: File,
-            code_running_process_id: usize,
-        }
-    }
+pub struct MainApplication {
+    searchbar_text: String,
+    no_stroke_frame: egui::Frame,
+    code: String,
+    code_file: File,
 }
 
 impl Default for MainApplication {
@@ -83,14 +63,13 @@ impl Default for MainApplication {
             }),
             code: code_file_content,
             code_file,
-            code_running_process_id: 0,
         }
     }
 }
 
 impl MainApplication {
     fn capture_c_output(&mut self) {
-        capture_c_output(self);
+        capture_c_output();
     }
 
     pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
@@ -149,9 +128,20 @@ impl eframe::App for MainApplication {
                 }
             }
 
-            if ui.button("RUN ▶️").clicked() {
+            if ui.button("RUN/STOP").clicked() {
                 self.capture_c_output();
             }
         });
+    }
+
+    fn on_exit(&mut self, _gl: Option<&eframe::glow::Context>) {
+        match GLOBAL_SINGLETON.lock() {
+            Err(err) => {
+                println!("could not get GLOBAL_SINGLETON: {}", err);
+            }
+            Ok(mut singleton) => {
+                singleton.child_process.kill_process();
+            }
+        }
     }
 }
