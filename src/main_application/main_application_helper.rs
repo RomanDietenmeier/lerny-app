@@ -13,18 +13,6 @@ use crate::global_singleton::GLOBAL_SINGLETON;
 use super::MainApplication;
 
 pub fn capture_c_output() {
-    match GLOBAL_SINGLETON.lock() {
-        Err(err) => {
-            println!("could not get GLOBAL_SINGLETON: {}", err);
-            return;
-        }
-        Ok(mut singleton) => {
-            if singleton.child_process.kill_process() {
-                return;
-            }
-        }
-    }
-
     Term::stdout()
         .clear_screen()
         .expect("Could not clear Console");
@@ -47,21 +35,25 @@ pub fn capture_c_output() {
                 .output()
                 .expect("failed to execute process")
         };
-        if ExitStatus::code(&child.status) == Some(0) {
-            let mut child = if cfg!(target_os = "windows") {
-                Command::new(".\\tmp\\code.exe")
-                    .spawn()
-                    .expect("failed to execute process")
-            } else {
-                Command::new("./tmp/code.exe")
-                    .spawn()
-                    .expect("failed to execute process")
-            };
+        if ExitStatus::code(&child.status) != Some(0) {
+            return;
+        }
+        let child = if cfg!(target_os = "windows") {
+            Command::new(".\\tmp\\code.exe")
+                .spawn()
+                .expect("failed to execute process")
+        } else {
+            Command::new("./tmp/code.exe")
+                .spawn()
+                .expect("failed to execute process")
+        };
 
+        let real_child = Box::into_raw(Box::new(child));
+        unsafe {
             match GLOBAL_SINGLETON.lock() {
                 Err(err) => {
                     println!("could not get GLOBAL_SINGLETON: {}", err);
-                    match child.kill() {
+                    match (*real_child).kill() {
                         Err(err) => {
                             panic!("Could not kill child process: {}", err);
                         }
@@ -70,7 +62,7 @@ pub fn capture_c_output() {
                     return;
                 }
                 Ok(mut singleton) => {
-                    singleton.child_process.child_process = Some(child);
+                    singleton.processes.push(real_child);
                 }
             }
         }

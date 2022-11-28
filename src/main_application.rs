@@ -11,7 +11,6 @@ use eframe::{
     epaint::{Color32, Stroke},
 };
 
-
 use crate::main_application::main_application_helper::new_main_application;
 use crate::{code_editor::syntect_layouter::get_layouter, global_singleton::GLOBAL_SINGLETON};
 
@@ -135,12 +134,12 @@ impl eframe::App for MainApplication {
     }
 
     fn on_exit(&mut self, _gl: Option<&eframe::glow::Context>) {
-        match GLOBAL_SINGLETON.lock() {
-            Err(err) => {
-                println!("could not get GLOBAL_SINGLETON: {}", err);
-            }
-            Ok(mut singleton) => {
-                singleton.child_process.kill_process();
+        unsafe {
+            match GLOBAL_SINGLETON.lock() {
+                Err(err) => {
+                    println!("could not get GLOBAL_SINGLETON: {}", err);
+                }
+                Ok(mut singleton) => singleton.kill_all_processes(),
             }
         }
     }
