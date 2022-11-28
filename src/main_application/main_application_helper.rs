@@ -8,7 +8,6 @@ use eframe::{
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 
-
 use crate::global_singleton::GLOBAL_SINGLETON;
 
 use super::MainApplication;
@@ -25,7 +24,7 @@ pub fn capture_c_output() {
             }
         }
     }
-    
+
     Term::stdout()
         .clear_screen()
         .expect("Could not clear Console");
@@ -51,16 +50,10 @@ pub fn capture_c_output() {
         if ExitStatus::code(&child.status) == Some(0) {
             let mut child = if cfg!(target_os = "windows") {
                 Command::new(".\\tmp\\code.exe")
-                    .stdin(Stdio::inherit())
-                    .stdout(Stdio::inherit())
-                    .stderr(Stdio::inherit())
                     .spawn()
                     .expect("failed to execute process")
             } else {
                 Command::new("./tmp/code.exe")
-                    .stdin(Stdio::inherit())
-                    .stdout(Stdio::inherit())
-                    .stderr(Stdio::inherit())
                     .spawn()
                     .expect("failed to execute process")
             };
