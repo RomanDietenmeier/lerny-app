@@ -1,0 +1,29 @@
+{
+  "name": "lerny-app",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RomanDietenmeier/lerny-app.git"
+  },
+  "author": "Roman Dietenmeier",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RomanDietenmeier/lerny-app/issues"
+  },
+  "homepage": "https://github.com/RomanDietenmeier/lerny-app#readme",
+  "dependencies": {
+    "monaco-editor": "^0.34.1"
+  },
+  "devDependencies": {
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.0",
+    "css-loader": "^6.7.2",
+    "file-loader": "^6.2.0",
+    "style-loader": "^3.3.1"
+  }
+}
