@@ -4,6 +4,7 @@ import { Editor } from './components/Editor';
 import * as monaco from "monaco-editor";
 
 import { loader } from "@monaco-editor/react";
+import { XTermTerminal } from './components/Terminal';
 
 
 self.MonacoEnvironment = {
@@ -36,6 +37,7 @@ loader.config({ monaco });
             <div style={{ width: '100%', height: '100%' }}>
                 <p>Test110</p>
                 <Editor />
+                <XTermTerminal />
             </div>
         </React.StrictMode>,
         document.getElementById('root')

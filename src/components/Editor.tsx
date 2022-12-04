@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import MonacoEditor from "@monaco-editor/react";
 import { editor } from 'monaco-editor';
 
@@ -12,5 +12,6 @@ export function Editor(): JSX.Element {
         options={options}
         defaultLanguage="javascript"
         defaultValue="// some comment"
+        wrapperProps={{ style: { display: 'flex', position: 'relative', textAlign: 'initial', width: '100%', height: '100%', minHeight: '5rem' } as CSSProperties }}
     />
 };
