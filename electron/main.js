@@ -1,4 +1,10 @@
 const electron = require('electron');
+
+if (process.env.NODE_ENV === 'development') {
+    const path = require('path');
+    require('electron-reload')(path.join(__dirname, '..', 'dist'));
+}
+
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 

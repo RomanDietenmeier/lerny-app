@@ -2,11 +2,9 @@
   "name": "lerny-app",
   "version": "0.0.1",
   "description": "",
-  "main": "main.js",
   "scripts": {
     "electron": "electron electron/main.js",
-    "electron-dev": "electron electron/main-dev.js",
-    "start": "concurrently --kill-others \"npm run watch\" \"npm run electron-dev\"",
+    "start": "concurrently --kill-others \"npm run watch\" \"set NODE_ENV=development&&npm run electron\"",
     "watch": "webpack --mode=development --watch",
     "build": "webpack --mode=production --progress"
   },

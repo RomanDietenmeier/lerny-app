@@ -1,8 +1,6 @@
 const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 
-const isDevelopment = process.env.NODE_ENV !== 'production';
-
 module.exports = {
     entry: {
         app: './src/index.tsx',
@@ -19,7 +17,7 @@ module.exports = {
         globalObject: 'self',
         filename: '[name].bundle.js',
         path: path.resolve(__dirname, 'dist'),
-        publicPath: isDevelopment ? undefined : "./",
+        publicPath: "./",
         clean: true,
     },
     module: {
