@@ -1,38 +1,16 @@
-import React, { useRef, useEffect } from 'react';
-import * as monaco from 'monaco-editor';
+import React from 'react';
+import MonacoEditor from "@monaco-editor/react";
+import { editor } from 'monaco-editor';
 
-// @ts-ignore
-self.MonacoEnvironment = {
-    getWorkerUrl: function (_moduleId: any, label: string) {
-        if (label === 'json') {
-            return './json.worker.bundle.js';
-        }
-        if (label === 'css' || label === 'scss' || label === 'less') {
-            return './css.worker.bundle.js';
-        }
-        if (label === 'html' || label === 'handlebars' || label === 'razor') {
-            return './html.worker.bundle.js';
-        }
-        if (label === 'typescript' || label === 'javascript') {
-            return './ts.worker.bundle.js';
-        }
-        return './editor.worker.bundle.js';
-    }
+const options: editor.IStandaloneEditorConstructionOptions = {
+    minimap: { enabled: false },
 };
 
-export const Editor: React.FC = () => {
-    const divEl = useRef<HTMLDivElement>(null);
-    let editor: monaco.editor.IStandaloneCodeEditor;
-    useEffect(() => {
-        if (divEl.current) {
-            editor = monaco.editor.create(divEl.current, {
-                value: ['function x() {', '\tconsole.log("Hello world!");', '}'].join('\n'),
-                language: 'typescript'
-            });
-        }
-        return () => {
-            editor.dispose();
-        };
-    }, []);
-    return <div style={{ width: '100%', height: '100%', border: '1px solid #ccc' }} ref={divEl}></div>;
+export function Editor(): JSX.Element {
+    return <MonacoEditor
+        theme="vs-dark"
+        options={options}
+        defaultLanguage="javascript"
+        defaultValue="// some comment"
+    />
 };

@@ -1,4 +1,6 @@
 const electron = require('electron');
+// require('electron-reload')(`${__dirname}\\dist`);
+// console.log('__dirname',`${__dirname}\\dist`);
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 
@@ -9,7 +11,7 @@ app.whenReady().then(() => {
         show: false,
         webPreferences: { worldSafeExecuteJavaScript: true, devTools: true }
     });
-    mainWindow.loadURL(`file://${__dirname}/dist/index.html`);
+    mainWindow.loadURL(`file://${__dirname}/../dist/index.html`);
     mainWindow.maximize();
     mainWindow.show();
     mainWindow.webContents.openDevTools();

@@ -4,9 +4,11 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "start-electron": "electron .",
-    "start": "webpack-dev-server --env NODE_ENV=development",
-    "build": "webpack --env NODE_ENV=production --progress"
+    "electron": "electron electron/main.js",
+    "electron-dev": "electron electron/main-dev.js",
+    "start": "concurrently --kill-others \"npm run watch\" \"npm run electron-dev\"",
+    "watch": "webpack --mode=development --watch",
+    "build": "webpack --mode=production --progress"
   },
   "repository": {
     "type": "git",
@@ -19,7 +21,9 @@
   },
   "homepage": "https://github.com/RomanDietenmeier/lerny-app#readme",
   "dependencies": {
-    "monaco-editor": "0.34.1"
+    "@monaco-editor/react": "4.4.6",
+    "monaco-editor": "0.34.1",
+    "xterm": "5.0.0"
   },
   "devDependencies": {
     "@babel/core": "7.17.0",
@@ -30,8 +34,10 @@
     "@types/react": "17.0.39",
     "@types/react-dom": "17.0.11",
     "babel-loader": "8.2.3",
+    "concurrently": "7.6.0",
     "css-loader": "6.7.2",
     "electron": "22.0.0",
+    "electron-reload": "2.0.0-alpha.1",
     "file-loader": "6.2.0",
     "html-webpack-plugin": "5.5.0",
     "react": "17.0.2",
