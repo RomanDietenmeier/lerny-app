@@ -34,7 +34,7 @@ loader.config({ monaco });
     ReactDOM.render(
         <React.StrictMode>
             <div style={{ width: '100%', height: '100%' }}>
-                <p>Test3</p>
+                <p>Test99</p>
                 <Editor />
             </div>
         </React.StrictMode>,

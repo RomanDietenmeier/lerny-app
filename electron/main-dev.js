@@ -1,6 +1,11 @@
+const path = require('path');
 const electron = require('electron');
-// require('electron-reload')(`${__dirname}\\dist`);
-// console.log('__dirname',`${__dirname}\\dist`);
+
+require('electron-reload')(path.join(__dirname, '..', 'dist'), {
+    electron: path.join(__dirname, '..', 'node_modules', '.bin', 'electron'),
+    hardResetMethod: 'exit'
+});
+
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 
