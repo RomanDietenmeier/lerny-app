@@ -1,0 +1,48 @@
+{
+  "name": "lerny-app",
+  "version": "0.0.1",
+  "description": "",
+  "scripts": {
+    "electron": "electron electron/main.js",
+    "start": "concurrently --kill-others \"npm run watch\" \"set NODE_ENV=development&&npm run electron\"",
+    "watch": "webpack --mode=development --watch",
+    "build": "webpack --mode=production --progress"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RomanDietenmeier/lerny-app.git"
+  },
+  "author": "Roman Dietenmeier",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RomanDietenmeier/lerny-app/issues"
+  },
+  "homepage": "https://github.com/RomanDietenmeier/lerny-app#readme",
+  "dependencies": {
+    "@monaco-editor/react": "4.4.6",
+    "monaco-editor": "0.34.1",
+    "xterm": "5.0.0",
+    "xterm-addon-fit": "0.6.0"
+  },
+  "devDependencies": {
+    "@babel/core": "7.17.0",
+    "@babel/preset-env": "7.16.11",
+    "@babel/preset-react": "7.16.7",
+    "@babel/preset-typescript": "7.16.7",
+    "@types/react": "17.0.39",
+    "@types/react-dom": "17.0.11",
+    "babel-loader": "8.2.3",
+    "concurrently": "7.6.0",
+    "css-loader": "6.7.2",
+    "electron": "22.0.0",
+    "electron-reload": "2.0.0-alpha.1",
+    "file-loader": "6.2.0",
+    "html-webpack-plugin": "5.5.0",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "style-loader": "3.3.1",
+    "webpack": "5.75.0",
+    "webpack-cli": "5.0.0",
+    "webpack-dev-server": "4.11.1"
+  }
+}
