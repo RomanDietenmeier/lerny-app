@@ -12,6 +12,11 @@ export function XTermTerminal(): JSX.Element {
         terminal.loadAddon(fitAddon);
         terminal.open(terminalRef.current);
         fitAddon.fit();
+
+        //<TESTING THE TERMINAL>
+        terminal.write("Hello, World!");
+        terminal.onData(data => { terminal.write(data); })
+        //</TESTING THE TERMINAL>
     }, [terminalRef]);
     return <div ref={terminalRef} />
 }
