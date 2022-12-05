@@ -21,7 +21,9 @@
   "dependencies": {
     "@monaco-editor/react": "4.4.6",
     "monaco-editor": "0.34.1",
+    "node-pty": "0.10.1",
     "xterm": "5.0.0",
+    "xterm-addon-attach": "0.7.0",
     "xterm-addon-fit": "0.6.0"
   },
   "devDependencies": {
@@ -35,6 +37,7 @@
     "concurrently": "7.6.0",
     "css-loader": "6.7.2",
     "electron": "22.0.0",
+    "electron-rebuild": "3.2.9",
     "electron-reload": "2.0.0-alpha.1",
     "file-loader": "6.2.0",
     "html-webpack-plugin": "5.5.0",
