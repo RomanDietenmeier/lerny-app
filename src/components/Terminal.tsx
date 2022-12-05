@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
+import { AttachAddon } from 'xterm-addon-attach';
 
 export function XTermTerminal(): JSX.Element {
     const terminalRef = useRef<HTMLDivElement>(null);

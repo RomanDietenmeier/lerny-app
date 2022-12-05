@@ -13,7 +13,11 @@ let mainWindow;
 app.whenReady().then(() => {
     mainWindow = new BrowserWindow({
         show: false,
-        webPreferences: { worldSafeExecuteJavaScript: true, devTools: true }
+        webPreferences: {
+            worldSafeExecuteJavaScript: true,
+            devTools: true,
+            nodeIntegration: true
+        }
     });
     mainWindow.loadURL(`file://${__dirname}/../dist/index.html`);
     mainWindow.maximize();
