@@ -6,6 +6,7 @@ import * as monaco from "monaco-editor";
 import { loader } from "@monaco-editor/react";
 import { XTermTerminal } from './components/Terminal';
 import 'xterm/css/xterm.css';
+import { DefaultSpinner } from './constants/Spinners';
 
 
 self.MonacoEnvironment = {
@@ -36,9 +37,10 @@ loader.config({ monaco });
     ReactDOM.render(
         <React.StrictMode>
             <div style={{ width: '100%', height: '100%', backgroundColor: '#1e1e1e', color: '#fff' }}>
-                <p style={{ margin: '0' }}>Test110</p>
+                <p style={{ margin: '0' }}>Test112</p>
                 <Editor />
                 <XTermTerminal />
+                <DefaultSpinner />
             </div>
         </React.StrictMode>,
         document.getElementById('root')
