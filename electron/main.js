@@ -44,7 +44,6 @@ app.whenReady().then(() => {
     });
 
     electron.ipcMain.on("terminal.toTerminal", (evt, data) => {
-        console.log("terminal.toTerminal");
         ptyProcess.write(data);
     });
 
