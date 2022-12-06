@@ -2,6 +2,7 @@ const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 
 module.exports = {
+    target: 'web',
     entry: {
         app: './src/index.tsx',
         'editor.worker': 'monaco-editor/esm/vs/editor/editor.worker.js',
@@ -11,7 +12,7 @@ module.exports = {
         'ts.worker': 'monaco-editor/esm/vs/language/typescript/ts.worker'
     },
     resolve: {
-        extensions: ['*', '.js', '.jsx', '.tsx', '.ts']
+        extensions: ['*', '.js', '.jsx', '.tsx', '.ts'],
     },
     output: {
         globalObject: 'self',
