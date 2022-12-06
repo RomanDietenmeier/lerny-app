@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { AttachAddon } from 'xterm-addon-attach';
+import { ipcRenderer } from 'electron';
 
 export function XTermTerminal(): JSX.Element {
     const terminalRef = useRef<HTMLDivElement>(null);
@@ -13,10 +14,10 @@ export function XTermTerminal(): JSX.Element {
         terminal.open(terminalRef.current);
         fitAddon.fit();
 
-        //<TESTING THE TERMINAL>
-        terminal.write("Hello, World!");
-        terminal.onData(data => { terminal.write(data); })
-        //</TESTING THE TERMINAL>
+        terminal.onData(data => { window.electron.ipcRenderer.send("terminal.toTerminal", data); })
+        window.electron.ipcRenderer.on("terminal.incomingData", (evt, data) => {
+            terminal.write(data);
+        })
     }, [terminalRef]);
     return <div ref={terminalRef} />
 }
