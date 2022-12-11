@@ -2,11 +2,13 @@
   "name": "lerny-app",
   "version": "0.0.1",
   "description": "",
+  "main": "electron/main.js",
   "scripts": {
     "electron": "electron electron/main.js",
-    "start": "concurrently --kill-others \"npm run watch\" \"set NODE_ENV=development&&npm run electron\"",
-    "watch": "webpack --mode=development --watch",
-    "build": "webpack --mode=production --progress"
+    "start": "concurrently --kill-others \"npm run watch-web\" \"set NODE_ENV=development&&npm run electron\"",
+    "watch-web": "webpack --mode=development --watch",
+    "build-web": "webpack --mode=production",
+    "build": "npm run build-web && electron-packager . --out out --overwrite --ignore=\".\\b(gitignore)|\\b(src)|.\\b(nvmrc)|.\\b(vscode)|\\b(ReadMe.md)|\\b(tsconfig.json)|\\b(webpack.config.js)\" "
   },
   "repository": {
     "type": "git",
@@ -37,6 +39,7 @@
     "concurrently": "7.6.0",
     "css-loader": "6.7.2",
     "electron": "22.0.0",
+    "electron-packager": "17.1.1",
     "electron-rebuild": "3.2.9",
     "electron-reload": "2.0.0-alpha.1",
     "file-loader": "6.2.0",
