@@ -1,5 +1,5 @@
 import React, { CSSProperties, ReactElement, useEffect, useRef } from 'react';
-import MonacoEditor, { Monaco } from "@monaco-editor/react";
+import MonacoEditor from "@monaco-editor/react";
 import { editor } from 'monaco-editor';
 import { DefaultSpinner } from '../constants/Spinners';
 
