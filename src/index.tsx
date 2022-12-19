@@ -9,23 +9,37 @@ import { XTermTerminal } from './components/Terminal';
 import 'xterm/css/xterm.css';
 import { initKeyboardCapture } from './globals/keyboardCapture';
 
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//@ts-expect-error
+import * as editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//@ts-expect-error
+import * as jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//@ts-expect-error
+import * as cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//@ts-expect-error
+import * as htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//@ts-expect-error
+import * as tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
 
 self.MonacoEnvironment = {
     getWorkerUrl: function (_moduleId: unknown, label: string) {
         if (label === 'json') {
-            return './json.worker.bundle.js';
+            return jsonWorker();
         }
         if (label === 'css' || label === 'scss' || label === 'less') {
-            return './css.worker.bundle.js';
+            return cssWorker();
         }
         if (label === 'html' || label === 'handlebars' || label === 'razor') {
-            return './html.worker.bundle.js';
+            return htmlWorker();
         }
         if (label === 'typescript' || label === 'javascript') {
-            return './ts.worker.bundle.js';
+            return tsWorker();
         }
-        return './editor.worker.bundle.js';
+        return editorWorker();
     }
 };
 
