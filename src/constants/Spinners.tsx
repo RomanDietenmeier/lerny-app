@@ -1,3 +1,4 @@
+'use strict';
 import React from 'react';
 import { SpinnerCircular, SpinnerCircularProps } from 'spinners-react';
 

@@ -1,3 +1,4 @@
+'use strict';
 import React, { useEffect, useRef } from 'react';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
@@ -13,10 +14,10 @@ export function XTermTerminal(): JSX.Element {
         terminal.open(terminalRef.current);
         fitAddon.fit();
 
-        terminal.onData(data => { window.electron.ipcRenderer.send("terminal.toTerminal", data); })
-        window.electron.ipcRenderer.on("terminal.incomingData", (evt, data) => {
+        terminal.onData(data => { window.electron.ipcRenderer.send('terminal.toTerminal', data); });
+        window.electron.ipcRenderer.on('terminal.incomingData', (evt, data) => {
             terminal.write(data);
-        })
+        });
     }, [terminalRef]);
-    return <div ref={terminalRef} />
+    return <div ref={terminalRef} />;
 }

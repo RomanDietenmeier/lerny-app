@@ -1,3 +1,4 @@
+'use strict';
 function onKeyDown(evt: KeyboardEvent) {
     window.keyPressMap[evt.key] = true;
 }
@@ -15,5 +16,5 @@ export async function initKeyboardCapture() {
     window.addEventListener('focus', () => {
         //reset keyPressMap as focus was lost
         window.keyPressMap = {};
-    })
+    });
 }
