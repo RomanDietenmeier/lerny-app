@@ -1,18 +1,18 @@
+'use strict';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Editor } from './components/Editor';
-import * as monaco from "monaco-editor";
+import * as monaco from 'monaco-editor';
 
-import { loader } from "@monaco-editor/react";
+import { loader } from '@monaco-editor/react';
 import { XTermTerminal } from './components/Terminal';
 import 'xterm/css/xterm.css';
-import { DefaultSpinner } from './constants/Spinners';
 import { initKeyboardCapture } from './globals/keyboardCapture';
 
 
 
 self.MonacoEnvironment = {
-    getWorkerUrl: function (_moduleId: any, label: string) {
+    getWorkerUrl: function (_moduleId: unknown, label: string) {
         if (label === 'json') {
             return './json.worker.bundle.js';
         }
