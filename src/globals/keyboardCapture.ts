@@ -1,4 +1,4 @@
-'use strict';
+/* ToDo currently dead code*/
 function onKeyDown(evt: KeyboardEvent) {
     window.keyPressMap[evt.key] = true;
 }
