@@ -3,8 +3,7 @@ import MonacoEditor from '@monaco-editor/react';
 import { editor, KeyMod, KeyCode } from 'monaco-editor';
 import { DefaultSpinner } from '../constants/Spinners';
 
-type MonacoEditorType =
-    typeof import('../../node_modules/monaco-editor/esm/vs/editor/editor.api');
+type MonacoEditorType = typeof import('../../node_modules/monaco-editor/esm/vs/editor/editor.api');
 
 const options: editor.IStandaloneEditorConstructionOptions = {
     minimap: { enabled: false },
