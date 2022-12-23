@@ -39,6 +39,7 @@ app.whenReady().then(() => {
         cwd: process.env.HOME,
         env: process.env
     })
+    
     ptyProcess.onData((data) => {
         mainWindow.webContents.send("terminal.incomingData", data);
         process.stdout.write(data);
@@ -46,6 +47,10 @@ app.whenReady().then(() => {
 
     electron.ipcMain.on("terminal.toTerminal", (evt, data) => {
         ptyProcess.write(data);
+    });
+
+    electron.ipcMain.on("terminal.resize",(evt,data)=>{
+        ptyProcess.resize(data.cols,data.rows);
     });
 
     ptyProcesses.push(ptyProcess);
