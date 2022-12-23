@@ -7,7 +7,7 @@
     "electron": "electron electron/main.js",
     "start": "concurrently --kill-others \"npm run watch-web\" \"set NODE_ENV=development&&npm run electron\"",
     "watch-web": "webpack --mode=development --watch",
-    "build-web": "webpack --mode=production",
+    "build-web": "webpack --mode=production --progress",
     "build": "npm run build-web && electron-packager . --out out --overwrite --ignore=\".\\b(gitignore)|\\b(src)|.\\b(nvmrc)|.\\b(vscode)|\\b(ReadMe.md)|\\b(tsconfig.json)|\\b(webpack.config.js)\" "
   },
   "repository": {

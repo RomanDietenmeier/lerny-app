@@ -25,7 +25,8 @@ app.whenReady().then(() => {
             preload: path.join(__dirname, 'preload.js'),
             worldSafeExecuteJavaScript: true,
             devTools: true,
-            nodeIntegration: true
+            nodeIntegration: true,
+            nodeIntegrationWorker: true,
         }
     });
     mainWindow.loadURL(`file://${__dirname}/../dist/index.html`);
@@ -34,7 +35,7 @@ app.whenReady().then(() => {
     mainWindow.webContents.openDevTools();
 
     const ptyProcess = node_pty.spawn(shell, [], {
-        name: "lerny-xterm-terminal",
+        name: "xterm-color",
         cwd: process.env.HOME,
         env: process.env
     })
