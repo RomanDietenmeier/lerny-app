@@ -4,7 +4,8 @@ const os = require("os");
 const node_pty = require("node-pty");
 
 //on this line == instead of === is required
-const shell = os.platform == "win32" ? "powershell.exe" : "bash";
+const runningOnWindows = os.platform == "win32";
+const shell = runningOnWindows ? "powershell.exe" : "bash";
 
 if (process.env.NODE_ENV === 'development') {
     const path = require('path');
@@ -36,10 +37,10 @@ app.whenReady().then(() => {
 
     const ptyProcess = node_pty.spawn(shell, [], {
         name: "xterm-color",
-        cwd: process.env.HOME,
+        cwd: runningOnWindows ? process.env.USERPROFILE : process.env.HOME,
         env: process.env
     })
-    
+
     ptyProcess.onData((data) => {
         mainWindow.webContents.send("terminal.incomingData", data);
     });
@@ -48,8 +49,8 @@ app.whenReady().then(() => {
         ptyProcess.write(data);
     });
 
-    electron.ipcMain.on("terminal.resize",(evt,{cols,rows})=>{
-        ptyProcess.resize(cols,rows);
+    electron.ipcMain.on("terminal.resize", (evt, { cols, rows }) => {
+        ptyProcess.resize(cols, rows);
     });
 
     ptyProcesses.push(ptyProcess);
