@@ -5,7 +5,7 @@
   "main": "electron/main.js",
   "scripts": {
     "electron": "electron electron/main.js",
-    "start": "concurrently --kill-others \"npm run watch-web\" \"set NODE_ENV=development&&npm run electron\"",
+    "start": "concurrently --kill-others \"npm run watch-web\" \"cross-env NODE_ENV=development npm run electron\"",
     "watch-web": "webpack --mode=development --watch",
     "build-web": "webpack --mode=production --progress",
     "build": "npm run build-web && electron-packager . --out out --overwrite --ignore=\".\\b(gitignore)|\\b(src)|.\\b(nvmrc)|.\\b(vscode)|\\b(ReadMe.md)|\\b(tsconfig.json)|\\b(webpack.config.js)\" "
@@ -39,6 +39,7 @@
     "@typescript-eslint/parser": "5.47.0",
     "babel-loader": "8.2.3",
     "concurrently": "7.6.0",
+    "cross-env": "7.0.3",
     "css-loader": "6.7.2",
     "electron": "22.0.0",
     "electron-packager": "17.1.1",

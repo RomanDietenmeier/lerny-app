@@ -4,3 +4,4 @@
 # Possible install errors:
 * contpty.node was compiled against a different Node.js version
   * do: `.\node_modules\.bin\electron-rebuild`
+  * or: `./node_modules/.bin/electron-rebuild`

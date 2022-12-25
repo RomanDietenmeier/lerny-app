@@ -26,7 +26,7 @@ app.whenReady().then(() => {
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             worldSafeExecuteJavaScript: true,
-            devTools: true,
+            devTools: process.env.NODE_ENV==='development',
             nodeIntegration: true,
             nodeIntegrationWorker: true,
         },
