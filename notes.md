@@ -9,6 +9,6 @@
 - Monaco has Keyboard shortcuts build in! editor.addCommand You could for example auoformat the code, ...
 ## Todo
 - set Terminal Rows and Cols on RESIZE!
-
+- Light And Dark Theme
 # Terminal Todo's
 - disappear on exit!

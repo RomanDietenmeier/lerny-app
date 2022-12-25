@@ -21,6 +21,7 @@ const ptyProcesses = [];
 
 app.whenReady().then(() => {
     mainWindow = new BrowserWindow({
+        autoHideMenuBar: true,
         show: false,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
@@ -28,7 +29,7 @@ app.whenReady().then(() => {
             devTools: true,
             nodeIntegration: true,
             nodeIntegrationWorker: true,
-        }
+        },
     });
     mainWindow.loadURL(`file://${__dirname}/../dist/index.html`);
     mainWindow.maximize();
