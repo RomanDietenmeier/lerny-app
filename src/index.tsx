@@ -43,7 +43,7 @@ initKeyboardCapture();
                 <XTermTerminal />
             </div>
         </React.StrictMode>,
-        document.getElementById('root')
+        document.getElementById('root'),
     );
 })();
 
