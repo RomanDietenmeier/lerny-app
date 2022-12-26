@@ -25,7 +25,6 @@ electron.ipcMain.on('console.createConsole', (evt, id) => {
   const dispose = ptyProcess.onData((data) => {
     if (!terminals[id]) {
       dispose.dispose();
-      console.log('dispose');
       return;
     }
     mainWindow.webContents.send(`console.incomingData.${id}`, data);
