@@ -1,19 +1,38 @@
-const { ipcRenderer, contextBridge } = require("electron");
+const { contextBridge, ipcRenderer } = require('electron');
 const fs = require('fs');
 
-contextBridge.exposeInMainWorld("electron", {
-    ipcRenderer: {
-        send: (channel, ...args) => {
-            ipcRenderer.send(channel, ...args);
-        },
-        on: (channel, listener) => {
-            ipcRenderer.on(channel, listener);
-        }
+let uniqueId = new Date().getTime();
+function getUniqueId() {
+  return uniqueId++;
+}
+
+contextBridge.exposeInMainWorld('electron', {
+  console: {
+    createConsole() {
+      const id = getUniqueId();
+      ipcRenderer.send('console.createConsole', id);
+      return id;
     },
-    saveTextFile(text, filenameAndPath) {
-        fs.writeFile(`${process.env.HOME}/${filenameAndPath}`, text, (err) => {
-            if (!err) return;
-            console.error(err);
-        });
-    }
+    onIncomingData(id, listener) {
+      ipcRenderer.on(`console.incomingData.${id}`, listener);
+    },
+    sendToTerminal(id, data) {
+      ipcRenderer.send(`console.toTerminal.${id}`, data);
+    },
+    resizeTerminal(id, data) {
+      ipcRenderer.send(`console.resize.${id}`, data);
+    },
+    killAllConsoles() {
+      ipcRenderer.send('console.killAllConsoles');
+    },
+    killConsole(id) {
+      ipcRenderer.send('console.killConsole', id);
+    },
+  },
+  saveTextFile(text, filenameAndPath) {
+    fs.writeFile(`${process.env.HOME}/${filenameAndPath}`, text, (err) => {
+      if (!err) return;
+      console.error(err);
+    });
+  },
 });
