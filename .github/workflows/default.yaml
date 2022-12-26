@@ -1,6 +1,9 @@
 name: lint & build
 run-name: linting & building for ${{ github.actor }}
-on: [push]
+on: 
+  push:
+    branches-ignore:
+      - main
 jobs:
   lint:
       runs-on: ubuntu-latest
