@@ -23,6 +23,7 @@ electron.ipcMain.on('console.createConsole', (evt, id) => {
   terminals[id] = ptyProcess;
 
   ptyProcess.onData((data) => {
+    if(!terminals[id])return;
     mainWindow.webContents.send(`console.incomingData.${id}`, data);
   });
 
