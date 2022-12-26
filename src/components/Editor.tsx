@@ -35,7 +35,7 @@ export function Editor(): JSX.Element {
         onMount={handleEditorDidMount}
         theme="vs-dark"
         options={options}
-        defaultLanguage="c"
+        defaultLanguage="markdown"
         defaultValue={
           '#include<stdio.h>\n\nint main(int argc, char* argv[]){\n\n    for(int i=0;i<argc;i++){\n       printf("%2i %s\\n",i,argv[i]);\n    }\n}'
         }

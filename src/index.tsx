@@ -1,12 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Editor } from './components/Editor';
 import * as monaco from 'monaco-editor';
 
 import { loader } from '@monaco-editor/react';
-import { XTermTerminal } from './components/XTermTerminal';
 import 'xterm/css/xterm.css';
 import { initKeyboardCapture } from './globals/keyboardCapture';
+import { StartPage } from './pages/startPage';
+import { ThemeProvider } from 'styled-components';
+import { defaultTheme } from './styles/defaultTheme';
+import { HashRouter, NavLink, Route, Routes } from 'react-router-dom';
 
 self.MonacoEnvironment = {
   getWorkerUrl: function (_moduleId: unknown, label: string) {
@@ -25,6 +27,7 @@ self.MonacoEnvironment = {
     return './editor.worker.bundle.js';
   },
 };
+localStorage.setItem('test', localStorage.getItem('test') + '_');
 
 loader.config({ monaco });
 initKeyboardCapture();
@@ -33,7 +36,24 @@ initKeyboardCapture();
   await loader.init();
   ReactDOM.render(
     <React.StrictMode>
-      <div
+      <ThemeProvider theme={defaultTheme}>
+        <HashRouter>
+          <Routes>
+            <Route path="/" element={<StartPage />} />
+            <Route path="/create" element={<NavLink to="/">ROOT</NavLink>} />
+            <Route
+              path="*"
+              element={
+                <div style={{ color: '#fff' }}>
+                  <div>ERROR</div>
+                  <NavLink to="/">ROOT</NavLink>
+                </div>
+              }
+            />
+          </Routes>
+        </HashRouter>
+
+        {/* <div
         style={{
           width: '100%',
           height: '100%',
@@ -41,15 +61,17 @@ initKeyboardCapture();
           color: '#fff',
         }}
       >
+        <MarkdownViewer />
         <p style={{ margin: '0', padding: '1rem 0 0.25rem 1rem' }}>
           Write Code in here:
         </p>
-        <Editor />
+        <Editor /> 
         <p style={{ margin: '0', padding: '1rem 0 0.25rem 1rem' }}>
           Use the Console here:
         </p>
         <XTermTerminal />
-      </div>
+      </div> */}
+      </ThemeProvider>
     </React.StrictMode>,
     document.getElementById('root')
   );

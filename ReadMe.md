@@ -6,3 +6,12 @@
 
 - contpty.node was compiled against a different Node.js version
   - do: `./node_modules/.bin/electron-rebuild`
+
+# Build from source:
+
+- clone Project
+- open Terminal in Project
+- npm i (Node v16.14.2 is required)
+- ./node_modules/.bin/electron-rebuild
+- npm run build
+- then you can find your finished build in the "out" directory
