@@ -35,11 +35,15 @@ electron.ipcMain.on('console.createConsole', (evt, id) => {
   });
 });
 
-electron.ipcMain.on('console.killAllConsoles', (evt, data) => {
+function killAllConsoles() {
   for (const [id, terminal] of Object.entries(terminals)) {
     terminal.kill();
     delete terminals[id];
   }
+}
+
+electron.ipcMain.on('console.killAllConsoles', (evt, data) => {
+  killAllConsoles();
 });
 
 electron.ipcMain.on('console.killConsole', (evt, id) => {
@@ -52,7 +56,6 @@ const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 
 let mainWindow;
-
 app.whenReady().then(() => {
   mainWindow = new BrowserWindow({
     autoHideMenuBar: true,
@@ -69,11 +72,14 @@ app.whenReady().then(() => {
   mainWindow.maximize();
   mainWindow.show();
   mainWindow.webContents.openDevTools();
+  mainWindow.webContents.on('did-start-loading', (evt, data) => {
+    killAllConsoles();
+  });
 });
 
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') {
-    electron.ipcMain.emit('console.killAllConsoles');
+    killAllConsoles();
     app.quit();
   }
 });
