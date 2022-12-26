@@ -19,6 +19,7 @@ jobs:
           with:
             node-version: '16.14.2'
         - run: npm ci
+        - run: ./node_modules/.bin/electron-rebuild
         - run: npm run build
   build-windows:
       runs-on: windows-latest
@@ -28,6 +29,7 @@ jobs:
           with:
             node-version: '16.14.2'
         - run: npm ci
+        - run: ./node_modules/.bin/electron-rebuild
         - run: npm run build
   build-mac:
       runs-on: macos-latest
@@ -37,4 +39,5 @@ jobs:
           with:
             node-version: '16.14.2'
         - run: npm ci
+        - run: ./node_modules/.bin/electron-rebuild
         - run: npm run build
