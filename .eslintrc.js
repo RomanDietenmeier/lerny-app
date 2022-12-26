@@ -37,5 +37,10 @@ module.exports = {
             "always"
         ]
     },
-    "ignorePatterns": [".eslintrc.js", "webpack.config.js", "electron/**"]
+    "ignorePatterns": [".eslintrc.js", "webpack.config.js", "electron/**"],
+    "settings":{
+        "react": {
+            "version": "detect"
+        }
+    }
 }
