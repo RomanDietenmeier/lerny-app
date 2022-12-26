@@ -1,0 +1,46 @@
+name: lint & build
+run-name: linting & building for ${{ github.actor }}
+on: 
+  push:
+    branches-ignore:
+      - main
+jobs:
+  lint:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v3
+        - uses: actions/setup-node@v3
+          with:
+            node-version: '16.14.2'
+        - run: npm ci
+        - run: npm run lint
+  build-ubuntu:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v3
+        - uses: actions/setup-node@v3
+          with:
+            node-version: '16.14.2'
+        - run: npm ci
+        - run: ./node_modules/.bin/electron-rebuild
+        - run: npm run build
+  build-windows:
+      runs-on: windows-latest
+      steps:
+        - uses: actions/checkout@v3
+        - uses: actions/setup-node@v3
+          with:
+            node-version: '16.14.2'
+        - run: npm ci
+        - run: ./node_modules/.bin/electron-rebuild
+        - run: npm run build
+  build-mac:
+      runs-on: macos-latest
+      steps:
+        - uses: actions/checkout@v3
+        - uses: actions/setup-node@v3
+          with:
+            node-version: '16.14.2'
+        - run: npm ci
+        - run: ./node_modules/.bin/electron-rebuild
+        - run: npm run build
