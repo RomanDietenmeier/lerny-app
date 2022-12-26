@@ -22,8 +22,12 @@ electron.ipcMain.on('console.createConsole', (evt, id) => {
   });
   terminals[id] = ptyProcess;
 
-  ptyProcess.onData((data) => {
-    if(!terminals[id])return;
+  const dispose = ptyProcess.onData((data) => {
+    if (!terminals[id]) {
+      dispose.dispose();
+      console.log('dispose');
+      return;
+    }
     mainWindow.webContents.send(`console.incomingData.${id}`, data);
   });
 
@@ -36,10 +40,17 @@ electron.ipcMain.on('console.createConsole', (evt, id) => {
   });
 });
 
+function killConsole(id) {
+  if (!terminals[id]) return;
+  electron.ipcMain.removeAllListeners(`console.toTerminal.${id}`);
+  electron.ipcMain.removeAllListeners(`console.resize.${id}`);
+  terminals[id].kill();
+  delete terminals[id];
+}
+
 function killAllConsoles() {
-  for (const [id, terminal] of Object.entries(terminals)) {
-    terminal.kill();
-    delete terminals[id];
+  for (const id of Object.keys(terminals)) {
+    killConsole(id);
   }
 }
 
@@ -48,9 +59,7 @@ electron.ipcMain.on('console.killAllConsoles', (evt, data) => {
 });
 
 electron.ipcMain.on('console.killConsole', (evt, id) => {
-  if (!terminals[id]) return;
-  terminals[id].kill();
-  delete terminals[id];
+  killConsole(id);
 });
 
 const app = electron.app;
@@ -79,10 +88,8 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') {
-    killAllConsoles();
-    app.quit();
-  }
+  killAllConsoles();
+  app.quit();
 });
 
 app.on('activate', function () {
