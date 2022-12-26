@@ -1,5 +1,9 @@
 const { contextBridge, ipcRenderer } = require('electron');
+const os = require('os');
 const fs = require('fs');
+
+//on this line == instead of === is required
+const runningOnWindows = os.platform == 'win32';
 
 let uniqueId = new Date().getTime();
 function getUniqueId() {
@@ -30,9 +34,15 @@ contextBridge.exposeInMainWorld('electron', {
     },
   },
   saveTextFile(text, filenameAndPath) {
-    fs.writeFile(`${process.env.HOME}/${filenameAndPath}`, text, (err) => {
-      if (!err) return;
-      console.error(err);
-    });
+    fs.writeFile(
+      `${
+        runningOnWindows ? process.env.USERPROFILE : process.env.HOME
+      }/${filenameAndPath}`,
+      text,
+      (err) => {
+        if (!err) return;
+        console.error(err);
+      }
+    );
   },
 });
