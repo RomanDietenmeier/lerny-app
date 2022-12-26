@@ -42,7 +42,7 @@ export function Editor(): JSX.Element {
         loading={<DefaultSpinner />}
         wrapperProps={{
           style: {
-            display: "flex",
+            display: 'flex',
             position: 'relative',
             textAlign: 'initial',
             width: '100%',
