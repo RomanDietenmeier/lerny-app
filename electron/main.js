@@ -3,7 +3,14 @@ const path = require('path');
 const os = require('os');
 const node_pty = require('node-pty');
 
-if (process.env.NODE_ENV === 'development') {
+const inDevelopment = process.env.NODE_ENV === 'development';
+
+if (inDevelopment) {
+  var {
+    default: installDevToolExtension,
+    REDUX_DEVTOOLS,
+    REACT_DEVELOPER_TOOLS,
+  } = require('electron-devtools-installer');
   const path = require('path');
   require('electron-reload')(path.join(__dirname, '..', 'dist'));
 }
@@ -65,14 +72,21 @@ const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 
 let mainWindow;
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+  if (inDevelopment) {
+    await installDevToolExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS], {
+      loadExtensionOptions: { allowFileAccess: true },
+      forceDownload: false,
+    });
+  }
+
   mainWindow = new BrowserWindow({
     autoHideMenuBar: true,
     show: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       worldSafeExecuteJavaScript: true,
-      devTools: process.env.NODE_ENV === 'development',
+      devTools: true,
       nodeIntegration: true,
       nodeIntegrationWorker: true,
     },
