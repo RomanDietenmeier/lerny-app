@@ -5,7 +5,7 @@ import * as monaco from 'monaco-editor';
 import { loader } from '@monaco-editor/react';
 import 'xterm/css/xterm.css';
 import { initKeyboardCapture } from './globals/keyboardCapture';
-import { StartPage } from './pages/startPage';
+import { StartPage } from './pages/StartPage';
 import { ThemeProvider } from 'styled-components';
 import { defaultTheme } from './styles/defaultTheme';
 import { HashRouter, NavLink, Route, Routes } from 'react-router-dom';
