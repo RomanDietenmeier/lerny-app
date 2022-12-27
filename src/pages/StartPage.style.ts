@@ -26,6 +26,7 @@ export const StartPageButton = styled.button`
   border-radius: 1rem;
   padding: 1rem;
   width: inherit;
+  border: none;
 
   :hover {
     background-color: ${(p) => p.theme.backgroundColorHoverButton};
