@@ -8,7 +8,7 @@
     "start": "concurrently --kill-others \"npm run watch-web\" \"cross-env NODE_ENV=development npm run electron\"",
     "watch-web": "webpack --mode=development --watch",
     "build-web": "webpack --mode=production --progress",
-    "build": "npm run build-web && electron-packager . --out out --overwrite --ignore=\".\\b(gitignore)|\\b(src)|.\\b(nvmrc)|.\\b(vscode)|\\b(ReadMe.md)|\\b(tsconfig.json)|\\b(webpack.config.js)\" ",
+    "build": "npm run build-web && electron-packager . --out out --overwrite --ignore=\".\\b(gitignore)|\\b(src)|.\\b(nvmrc)|.\\b(vscode)|\\b(ReadMe.md).eslintrc.js|\\b(webpack.config.js)|\\b(notes.md)|.\\b(eslintrc.js)|.\\b(gitattributes)|.\\b(prettierrc)|.\\b(github)|\\b(tsconfig.json)\"",
     "lint": "eslint src/**/*.tsx src/**/*.ts"
   },
   "repository": {
