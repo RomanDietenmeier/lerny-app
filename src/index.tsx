@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Editor } from './components/Editor';
 import * as monaco from 'monaco-editor';
-
 import { loader } from '@monaco-editor/react';
-import { XTermTerminal } from './components/XTermTerminal';
 import 'xterm/css/xterm.css';
 import { initKeyboardCapture } from './globals/keyboardCapture';
+import { store } from './redux/store';
+import { Provider } from 'react-redux';
+import { App } from './App';
 
 self.MonacoEnvironment = {
   getWorkerUrl: function (_moduleId: unknown, label: string) {
@@ -25,6 +25,7 @@ self.MonacoEnvironment = {
     return './editor.worker.bundle.js';
   },
 };
+localStorage.setItem('test', localStorage.getItem('test') + '_');
 
 loader.config({ monaco });
 initKeyboardCapture();
@@ -33,23 +34,9 @@ initKeyboardCapture();
   await loader.init();
   ReactDOM.render(
     <React.StrictMode>
-      <div
-        style={{
-          width: '100%',
-          height: '100%',
-          backgroundColor: '#1e1e1e',
-          color: '#fff',
-        }}
-      >
-        <p style={{ margin: '0', padding: '1rem 0 0.25rem 1rem' }}>
-          Write Code in here:
-        </p>
-        <Editor />
-        <p style={{ margin: '0', padding: '1rem 0 0.25rem 1rem' }}>
-          Use the Console here:
-        </p>
-        <XTermTerminal />
-      </div>
+      <Provider store={store}>
+        <App />
+      </Provider>
     </React.StrictMode>,
     document.getElementById('root')
   );
