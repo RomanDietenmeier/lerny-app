@@ -15,6 +15,15 @@ if (inDevelopment) {
   require('electron-reload')(path.join(__dirname, '..', 'dist'));
 }
 
+async function installDevToolExtensions() {
+  if (inDevelopment) {
+    await installDevToolExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS], {
+      loadExtensionOptions: { allowFileAccess: true },
+      forceDownload: false,
+    });
+  }
+}
+
 //on this line == instead of === is required
 const runningOnWindows = os.platform == 'win32';
 const shell = runningOnWindows ? 'powershell.exe' : 'bash';
@@ -73,13 +82,7 @@ const BrowserWindow = electron.BrowserWindow;
 
 let mainWindow;
 app.whenReady().then(async () => {
-  if (inDevelopment) {
-    await installDevToolExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS], {
-      loadExtensionOptions: { allowFileAccess: true },
-      forceDownload: false,
-    });
-  }
-
+  await installDevToolExtensions();
   mainWindow = new BrowserWindow({
     autoHideMenuBar: true,
     show: false,
@@ -96,6 +99,7 @@ app.whenReady().then(async () => {
   mainWindow.show();
   mainWindow.webContents.openDevTools();
   mainWindow.webContents.on('did-start-loading', (evt, data) => {
+    installDevToolExtensions();
     killAllConsoles();
   });
 });

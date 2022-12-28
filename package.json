@@ -23,10 +23,12 @@
   "homepage": "https://github.com/RomanDietenmeier/lerny-app#readme",
   "dependencies": {
     "@monaco-editor/react": "4.4.6",
+    "@reduxjs/toolkit": "1.9.1",
     "lodash": "4.17.21",
     "markdown-it": "13.0.1",
     "monaco-editor": "0.34.1",
     "node-pty": "0.10.1",
+    "react-redux": "8.0.5",
     "react-router-dom": "6.6.1",
     "react-router-redux": "4.0.8",
     "spinners-react": "1.0.7",

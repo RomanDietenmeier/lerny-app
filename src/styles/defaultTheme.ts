@@ -7,3 +7,11 @@ export const defaultTheme: DefaultTheme = {
   color: '#fff',
   colorButton: '#ccc',
 };
+
+export const whiteTheme: DefaultTheme = {
+  backgroundColor: '#fff',
+  backgroundColorButton: '#252526',
+  backgroundColorHoverButton: '#2C2C2D',
+  color: '#000',
+  colorButton: '#ccc',
+};
