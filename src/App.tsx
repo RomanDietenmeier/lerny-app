@@ -15,7 +15,6 @@ export function App() {
     } else {
       dispatch(themeChangeCurrentTheme('dark'));
     }
-    console.log('theme', themeState.currentTheme);
   }
 
   return (

@@ -15,7 +15,6 @@ export function Editor(): JSX.Element {
 
   function save() {
     if (!editorRef.current) return;
-    console.log(editorRef.current.getValue());
     window.electron.saveTextFile(editorRef.current.getValue(), 'c.c');
   }
 
