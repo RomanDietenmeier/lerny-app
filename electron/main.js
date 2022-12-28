@@ -89,7 +89,7 @@ app.whenReady().then(async () => {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       worldSafeExecuteJavaScript: true,
-      devTools: true,
+      devTools: inDevelopment,
       nodeIntegration: true,
       nodeIntegrationWorker: true,
     },
