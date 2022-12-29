@@ -7,7 +7,7 @@
   - this can help the user find the right path more easy and quickly
 - Custom Documentation to Keyworads, ... with monaco
 - Custom Hover Actions in monaco: registerHoverProvider allows to show documentation on hover
-- Monaco has Keyboard shortcuts build in! editor.addCommand You could for example auoformat the code, ...
+- Monaco has Keyboard shortcuts build in! editor.addCommand You could for example autoformat the code, ...
 
 ## Todo
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { RouterRoutes } from '../constants/RouterRoutes';
 import {
   StartPageButton,
   StartPageButtonWrapper,
@@ -13,7 +14,7 @@ export function StartPage() {
         <NavLink to="/import">
           <StartPageButton>import</StartPageButton>
         </NavLink>
-        <NavLink to="/create">
+        <NavLink to={RouterRoutes.CreateLearnPage}>
           <StartPageButton>create</StartPageButton>
         </NavLink>
       </StartPageButtonWrapper>

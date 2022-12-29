@@ -2,6 +2,10 @@ import React from 'react';
 import MarkdownIt from 'markdown-it';
 const md = MarkdownIt();
 
-export function MarkdownViewer() {
-  return <div dangerouslySetInnerHTML={{ __html: md.render('# Title') }} />;
+type MarkdownViewerProps = {
+  content: string;
+};
+
+export function MarkdownViewer({ content }: MarkdownViewerProps) {
+  return <div dangerouslySetInnerHTML={{ __html: md.render(content) }} />;
 }

@@ -7,6 +7,7 @@ import { initKeyboardCapture } from './globals/keyboardCapture';
 import { store } from './redux/store';
 import { Provider } from 'react-redux';
 import { App } from './App';
+import { HashRouter } from 'react-router-dom';
 
 self.MonacoEnvironment = {
   getWorkerUrl: function (_moduleId: unknown, label: string) {
@@ -35,7 +36,9 @@ initKeyboardCapture();
   ReactDOM.render(
     <React.StrictMode>
       <Provider store={store}>
-        <App />
+        <HashRouter>
+          <App />
+        </HashRouter>
       </Provider>
     </React.StrictMode>,
     document.getElementById('root')
