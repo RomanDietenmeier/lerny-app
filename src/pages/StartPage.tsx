@@ -1,9 +1,9 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
 import { RouterRoutes } from '../constants/RouterRoutes';
 import {
   StartPageButton,
   StartPageButtonWrapper,
+  StartPageNavLink,
   StartPageWrapper,
 } from './StartPage.style';
 
@@ -11,12 +11,15 @@ export function StartPage() {
   return (
     <StartPageWrapper>
       <StartPageButtonWrapper>
-        <NavLink to="/import">
+        <StartPageNavLink to="/import">
           <StartPageButton>import</StartPageButton>
-        </NavLink>
-        <NavLink to={RouterRoutes.CreateLearnPage}>
+        </StartPageNavLink>
+        <StartPageNavLink to="/edit">
+          <StartPageButton>edit</StartPageButton>
+        </StartPageNavLink>
+        <StartPageNavLink to={RouterRoutes.CreateLearnPage}>
           <StartPageButton>create</StartPageButton>
-        </NavLink>
+        </StartPageNavLink>
       </StartPageButtonWrapper>
     </StartPageWrapper>
   );

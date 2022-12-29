@@ -1,3 +1,4 @@
+import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
 export const StartPageWrapper = styled.div`
@@ -19,13 +20,17 @@ export const StartPageButtonWrapper = styled.div`
   }
 `;
 
+export const StartPageNavLink = styled(NavLink)`
+  width: inherit;
+`;
+
 export const StartPageButton = styled.button`
   font-size: 3rem;
   background-color: ${(p) => p.theme.backgroundColorButton};
   color: ${(p) => p.theme.colorButton};
   border-radius: 1rem;
   padding: 1rem;
-  width: inherit;
+  width: 100%;
   border: none;
 
   :hover {

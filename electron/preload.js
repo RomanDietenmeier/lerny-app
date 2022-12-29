@@ -33,6 +33,9 @@ contextBridge.exposeInMainWorld('electron', {
       ipcRenderer.send('console.killConsole', id);
     },
   },
+  openExternalLink(link) {
+    ipcRenderer.send('openExternalLink', link);
+  },
   saveTextFile(text, filenameAndPath) {
     fs.writeFile(
       `${

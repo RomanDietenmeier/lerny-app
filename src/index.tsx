@@ -31,6 +31,10 @@ localStorage.setItem('test', localStorage.getItem('test') + '_');
 loader.config({ monaco });
 initKeyboardCapture();
 
+window.handleMarkdownAnchorClick = (href: string) => {
+  window.electron.openExternalLink(href);
+};
+
 (async () => {
   await loader.init();
   ReactDOM.render(

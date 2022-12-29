@@ -1,6 +1,13 @@
 import React from 'react';
 import MarkdownIt from 'markdown-it';
-const md = MarkdownIt();
+import { externalLinksPlugin } from '../markdown-it-extensions/externalLinksPlugin';
+const md = MarkdownIt('default', {
+  html: true,
+  linkify: true,
+  typographer: true,
+});
+
+md.use(externalLinksPlugin);
 
 type MarkdownViewerProps = {
   content: string;
