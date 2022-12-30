@@ -39,13 +39,22 @@ contextBridge.exposeInMainWorld('electron', {
   async saveLearnPage(content, title, learnProject) {
     try {
       await fs.promises.mkdir(
+        `${runningOnWindows ? process.env.appdata : process.env.HOME}/lerny-app`
+      );
+    } catch (err) {
+      if (err.code !== 'EEXIST') {
+        console.error(err);
+      }
+    }
+    try {
+      await fs.promises.mkdir(
         `${
           runningOnWindows ? process.env.appdata : process.env.HOME
         }/lerny-app/projects`
       );
     } catch (err) {
       if (err.code !== 'EEXIST') {
-        console.error('error1', err);
+        console.error(err);
       }
     }
     try {
@@ -56,7 +65,7 @@ contextBridge.exposeInMainWorld('electron', {
       );
     } catch (err) {
       if (err.code != 'EEXIST') {
-        console.error('error2', err);
+        console.error(err);
       }
     }
 
