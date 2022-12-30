@@ -1,7 +1,7 @@
 import { editor } from 'monaco-editor';
 import React, { useEffect, useState } from 'react';
 import { CodeEditor } from '../components/CodeEditor';
-import { MarkdownViewer } from '../components/MardownViewer';
+import { MarkdownViewer } from '../components/MarkdownViewer';
 import { CreateLearnPageWrapper } from './CreateLearnPage.style';
 import * as _ from 'lodash';
 
@@ -15,7 +15,6 @@ export function CreateLearnPage() {
     if (!editor) return;
     const updateMarkdownView = _.debounce(() => {
       setMarkDownContent(editor.getValue());
-      console.log('data', editor.getValue());
     }, 500);
     const disposeModelListener = editor.onDidChangeModelContent((_evt) => {
       updateMarkdownView();

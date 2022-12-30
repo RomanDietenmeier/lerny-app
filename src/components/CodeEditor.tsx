@@ -12,7 +12,7 @@ const options: editor.IStandaloneEditorConstructionOptions = {
 };
 
 type CodeEditorProps = {
-  monacoEditorProps: EditorProps;
+  monacoEditorProps?: EditorProps;
   setEditor?: (editor: editor.IStandaloneCodeEditor) => void;
 };
 
@@ -35,10 +35,10 @@ export function CodeEditor({
       {...monacoEditorProps}
       onMount={handleEditorDidMount}
       theme={
-        monacoEditorProps.theme || currentTheme.monacoEditorTheme || 'vs-dark'
+        monacoEditorProps?.theme || currentTheme.monacoEditorTheme || 'vs-dark'
       }
-      options={monacoEditorProps.options ?? options}
-      loading={monacoEditorProps.loading ?? <DefaultSpinner />}
+      options={monacoEditorProps?.options ?? options}
+      loading={monacoEditorProps?.loading ?? <DefaultSpinner />}
     />
   );
 }

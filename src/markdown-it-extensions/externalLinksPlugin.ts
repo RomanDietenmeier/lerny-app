@@ -2,8 +2,7 @@ import MarkdownIt from 'markdown-it';
 import StateCore from 'markdown-it/lib/rules_core/state_core';
 import Token from 'markdown-it/lib/token';
 
-export function externalLinksPlugin(mdIT: MarkdownIt, _options?: unknown) {
-  // options = options || {};
+export function markdownItExternalLinksPlugin(mdIT: MarkdownIt) {
   function processToken(token: Token) {
     for (const childToken of token.children || []) {
       processToken(childToken);
@@ -17,13 +16,6 @@ export function externalLinksPlugin(mdIT: MarkdownIt, _options?: unknown) {
         const quotationMark = token.content[startIndex];
         const endIndex = token.content.indexOf(quotationMark, startIndex + 1);
         const link = token.content.substring(startIndex + 1, endIndex);
-        console.log(
-          'token',
-          token,
-          token.attrs,
-          token.content.substring(startIndex),
-          link
-        );
         token.content = token.content.replace(
           quotationMark + link + quotationMark,
           `"javascript:void(0)" onclick="handleMarkdownAnchorClick('${link}')"`
@@ -40,10 +32,10 @@ export function externalLinksPlugin(mdIT: MarkdownIt, _options?: unknown) {
     }
   }
 
-  function externalLinks(state: StateCore) {
+  function processExternalLinks(state: StateCore) {
     for (const token of state.tokens) {
       processToken(token);
     }
   }
-  mdIT.core.ruler.push('ensureLinksAreExternal', externalLinks);
+  mdIT.core.ruler.push('markdownItExternalLinksPlugin', processExternalLinks);
 }
