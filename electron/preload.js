@@ -36,12 +36,35 @@ contextBridge.exposeInMainWorld('electron', {
   openExternalLink(link) {
     ipcRenderer.send('openExternalLink', link);
   },
-  saveTextFile(text, filenameAndPath) {
+  async saveLearnPage(content, title, learnProject) {
+    try {
+      await fs.promises.mkdir(
+        `${
+          runningOnWindows ? process.env.appdata : process.env.HOME
+        }/lerny-app/projects`
+      );
+    } catch (err) {
+      if (err.code !== 'EEXIST') {
+        console.error('error1', err);
+      }
+    }
+    try {
+      await fs.promises.mkdir(
+        `${
+          runningOnWindows ? process.env.appdata : process.env.HOME
+        }/lerny-app/projects/${learnProject}`
+      );
+    } catch (err) {
+      if (err.code != 'EEXIST') {
+        console.error('error2', err);
+      }
+    }
+
     fs.writeFile(
       `${
-        runningOnWindows ? process.env.USERPROFILE : process.env.HOME
-      }/${filenameAndPath}`,
-      text,
+        runningOnWindows ? process.env.appdata : process.env.HOME
+      }/lerny-app/projects/${learnProject}/${title}.lap`,
+      content,
       (err) => {
         if (!err) return;
         console.error(err);

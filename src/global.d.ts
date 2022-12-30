@@ -16,9 +16,10 @@ declare global {
         killConsole: (id: number) => void;
       };
       openExternalLink: (link: string) => void;
-      saveTextFile: (
-        text: string | NodeJS.ArrayBufferView,
-        filenameAndPath: fs.PathOrFileDescriptor
+      saveLearnPage: (
+        content: string,
+        title: string,
+        learnProject: string
       ) => void;
     };
     keyPressMap: { [key: string]: undefined | boolean };

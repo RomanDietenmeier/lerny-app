@@ -1,11 +1,15 @@
 import { editor } from 'monaco-editor';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   CodeEditor,
   defaultMonacoWrapperStyle,
 } from '../components/CodeEditor';
 import { MarkdownViewer } from '../components/MarkdownViewer';
-import { CreateLearnPageWrapper } from './CreateLearnPage.style';
+import {
+  CreateLearnPageSaveButton,
+  CreateLearnPageTitleInput,
+  CreateLearnPageWrapper,
+} from './CreateLearnPage.style';
 import * as _ from 'lodash';
 
 export function CreateLearnPage() {
@@ -13,6 +17,7 @@ export function CreateLearnPage() {
   const [editor, setEditor] = useState<
     editor.IStandaloneCodeEditor | undefined
   >(undefined);
+  const titleInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!editor) return;
@@ -28,9 +33,28 @@ export function CreateLearnPage() {
     };
   }, [editor]);
 
+  function saveLearnPage() {
+    if (!titleInputRef.current || !editor) return;
+    if (titleInputRef.current.value.length < 1)
+      titleInputRef.current.value = 'untitled';
+    window.electron.saveLearnPage(
+      editor.getValue(),
+      titleInputRef.current.value,
+      titleInputRef.current.value
+    );
+  }
+
   return (
     <CreateLearnPageWrapper>
+      <CreateLearnPageSaveButton onClick={saveLearnPage}>
+        SAVE
+      </CreateLearnPageSaveButton>
       <div>CREATE LEARN PAGE</div>
+      <CreateLearnPageTitleInput
+        type="text"
+        placeholder="Title"
+        ref={titleInputRef}
+      />
       <CodeEditor
         monacoEditorProps={{
           language: 'markdown',

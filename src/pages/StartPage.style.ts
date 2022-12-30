@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
+import { defaultButton } from '../styles/button.style';
 
 export const StartPageWrapper = styled.div`
   width: 100%;
@@ -24,16 +25,7 @@ export const StartPageNavLink = styled(NavLink)`
   width: inherit;
 `;
 
-export const StartPageButton = styled.button`
+export const StartPageButton = styled(defaultButton)`
   font-size: 3rem;
-  background-color: ${(p) => p.theme.backgroundColorButton};
-  color: ${(p) => p.theme.colorButton};
-  border-radius: 1rem;
-  padding: 1rem;
   width: 100%;
-  border: none;
-
-  :hover {
-    background-color: ${(p) => p.theme.backgroundColorHoverButton};
-  }
 `;

@@ -30,13 +30,6 @@ function renderMarkdownToJSX(markdown: string) {
       <span key={index++} dangerouslySetInnerHTML={{ __html: html }} />
     );
 
-    console.log(
-      'json',
-      markdown.substring(startCurlyBraces + 2, endCurlyBraces + 1),
-      endCurlyBraces,
-      markdown
-    );
-
     const json = JSON.parse(
       markdown.substring(startCurlyBraces + 2, endCurlyBraces + 1)
     ) as CodeEditorJson;
