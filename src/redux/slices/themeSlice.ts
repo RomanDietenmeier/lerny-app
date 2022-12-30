@@ -3,13 +3,21 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { DefaultTheme } from 'styled-components';
 import { defaultTheme, whiteTheme } from '../../styles/defaultTheme';
 
+type Theme = {
+  styledComponentsTheme: DefaultTheme;
+  monacoEditorTheme?: string;
+};
+
 export type ThemeState = {
-  themes: Record<string, DefaultTheme>;
+  themes: Record<string, Theme>;
   currentTheme: string;
 };
 
 const initialState: ThemeState = {
-  themes: { dark: defaultTheme, white: whiteTheme },
+  themes: {
+    dark: { styledComponentsTheme: defaultTheme, monacoEditorTheme: 'vs-dark' },
+    white: { styledComponentsTheme: whiteTheme, monacoEditorTheme: 'vs-light' },
+  },
   currentTheme: 'dark',
 };
 

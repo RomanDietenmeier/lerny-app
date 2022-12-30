@@ -1,16 +1,20 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { HashRouter, NavLink, Route, Routes } from 'react-router-dom';
+import { NavLink, Route, Routes, useNavigate } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
+import { AppWrapper } from './App.style';
+import { RouterRoutes } from './constants/RouterRoutes';
+import { CreateLearnPage } from './pages/CreateLearnPage';
 import { StartPage } from './pages/StartPage';
+import { selectCurrentTheme } from './redux/selectors/themeSelectors';
 import { themeChangeCurrentTheme } from './redux/slices/themeSlice';
-import { RootState } from './redux/store';
 
 export function App() {
-  const themeState = useSelector((state: RootState) => state.theme);
+  const navigate = useNavigate();
+  const currentTheme = useSelector(selectCurrentTheme);
   const dispatch = useDispatch();
   function swapTheme() {
-    if (themeState.currentTheme == 'dark') {
+    if (currentTheme.monacoEditorTheme == 'vs-dark') {
       dispatch(themeChangeCurrentTheme('white'));
     } else {
       dispatch(themeChangeCurrentTheme('dark'));
@@ -18,12 +22,22 @@ export function App() {
   }
 
   return (
-    <ThemeProvider theme={themeState.themes[themeState.currentTheme]}>
-      <HashRouter>
+    <ThemeProvider theme={currentTheme.styledComponentsTheme}>
+      <AppWrapper>
         <button onClick={swapTheme}>SWAP THEME</button>
+        <button
+          onClick={() => {
+            navigate(-1);
+          }}
+        >
+          GO BACK
+        </button>
         <Routes>
-          <Route path="/" element={<StartPage />} />
-          <Route path="/create" element={<NavLink to="/">ROOT</NavLink>} />
+          <Route path={RouterRoutes.Root} element={<StartPage />} />
+          <Route
+            path={RouterRoutes.CreateLearnPage}
+            element={<CreateLearnPage />}
+          />
           <Route
             path="*"
             element={
@@ -34,7 +48,7 @@ export function App() {
             }
           />
         </Routes>
-      </HashRouter>
+      </AppWrapper>
     </ThemeProvider>
   );
 }

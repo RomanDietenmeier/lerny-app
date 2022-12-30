@@ -2,6 +2,7 @@ const electron = require('electron');
 const path = require('path');
 const os = require('os');
 const node_pty = require('node-pty');
+const validator = require('validator');
 
 const inDevelopment = process.env.NODE_ENV === 'development';
 
@@ -75,6 +76,12 @@ electron.ipcMain.on('console.killAllConsoles', (evt, data) => {
 
 electron.ipcMain.on('console.killConsole', (evt, id) => {
   killConsole(id);
+});
+
+electron.ipcMain.on('openExternalLink', (evt, link) => {
+  if (!validator.isURL(link, { require_protocol: true, validate_length: true }))
+    return;
+  electron.shell.openExternal(link);
 });
 
 const app = electron.app;
