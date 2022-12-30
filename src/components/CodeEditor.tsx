@@ -15,7 +15,7 @@ export const defaultMonacoWrapperStyle = {
   height: '100%',
 };
 
-const options: editor.IStandaloneEditorConstructionOptions = {
+const monacoEditorOptions: editor.IStandaloneEditorConstructionOptions = {
   minimap: { enabled: false },
 };
 
@@ -49,7 +49,7 @@ export function CodeEditor({
         style: { ...defaultMonacoWrapperStyle, height: '20%' },
         ...monacoEditorProps?.wrapperProps,
       }}
-      options={{ ...options, ...monacoEditorProps?.options }}
+      options={{ ...monacoEditorOptions, ...monacoEditorProps?.options }}
       loading={monacoEditorProps?.loading ?? <DefaultSpinner />}
     />
   );
