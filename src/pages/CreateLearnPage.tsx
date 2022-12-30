@@ -1,6 +1,9 @@
 import { editor } from 'monaco-editor';
 import React, { useEffect, useState } from 'react';
-import { CodeEditor } from '../components/CodeEditor';
+import {
+  CodeEditor,
+  defaultMonacoWrapperStyle,
+} from '../components/CodeEditor';
 import { MarkdownViewer } from '../components/MarkdownViewer';
 import { CreateLearnPageWrapper } from './CreateLearnPage.style';
 import * as _ from 'lodash';
@@ -33,10 +36,7 @@ export function CreateLearnPage() {
           language: 'markdown',
           wrapperProps: {
             style: {
-              display: 'flex',
-              position: 'relative',
-              textAlign: 'initial',
-              width: '100%',
+              ...defaultMonacoWrapperStyle,
               height: '50%',
             },
           },

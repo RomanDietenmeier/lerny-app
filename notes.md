@@ -18,3 +18,7 @@
 # Terminal Todo's
 
 - disappear on exit!
+
+# MarkdownViewer
+
+- standard html tags brauchen noch einen DarkMode style vor allem Links!!!

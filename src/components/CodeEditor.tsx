@@ -7,6 +7,14 @@ import { selectCurrentTheme } from '../redux/selectors/themeSelectors';
 
 type MonacoEditorType = typeof import('monaco-editor');
 
+export const defaultMonacoWrapperStyle = {
+  display: 'flex',
+  position: 'relative',
+  textAlign: 'initial',
+  width: '100%',
+  height: '100%',
+};
+
 const options: editor.IStandaloneEditorConstructionOptions = {
   minimap: { enabled: false },
 };
@@ -37,7 +45,11 @@ export function CodeEditor({
       theme={
         monacoEditorProps?.theme || currentTheme.monacoEditorTheme || 'vs-dark'
       }
-      options={monacoEditorProps?.options ?? options}
+      wrapperProps={{
+        style: { ...defaultMonacoWrapperStyle, height: '20%' },
+        ...monacoEditorProps?.wrapperProps,
+      }}
+      options={{ ...options, ...monacoEditorProps?.options }}
       loading={monacoEditorProps?.loading ?? <DefaultSpinner />}
     />
   );
