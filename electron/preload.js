@@ -57,10 +57,16 @@ contextBridge.exposeInMainWorld('electron', {
     const ret = {};
     const projects = await fs.promises.readdir(localProjectsPath);
     for (const project of projects) {
-      const pages = await fs.promises.readdir(
-        `${localProjectsPath}/${project}`
-      );
-      ret[project] = pages;
+      try {
+        const pages = await fs.promises.readdir(
+          `${localProjectsPath}/${project}`
+        );
+        ret[project] = pages;
+      } catch (err) {
+        if (err.code !== 'ENOTDIR') {
+          console.error(err);
+        }
+      }
     }
     return ret;
   },
@@ -72,6 +78,9 @@ contextBridge.exposeInMainWorld('electron', {
       );
     },
     async save(content, learnPage, learnProject) {
+      if (!learnProject) {
+        learnProject = 'untitled';
+      }
       if (
         !(await createDirs([
           localDataPath,
@@ -81,16 +90,31 @@ contextBridge.exposeInMainWorld('electron', {
       ) {
         return;
       }
+      if (!learnPage) {
+        const filesInDir = await fs.promises.readdir(
+          `${localProjectsPath}/${learnProject}`
+        );
 
-      fs.writeFile(
+        let count = 0;
+        while (
+          filesInDir.includes(`untitled${++count}${learnPageExtension}`)
+        ) {}
+        learnPage = `untitled${count}`;
+      } else if (
+        learnPage.substring(learnPage.length - learnPageExtension.length) ===
+        learnPageExtension
+      ) {
+        learnPage = learnPage.substring(
+          0,
+          learnPage.length - learnPageExtension.length
+        );
+      }
+      await fs.promises.writeFile(
         `${localProjectsPath}/${learnProject}/${learnPage}${learnPageExtension}`,
         content,
-        'utf-8',
-        (err) => {
-          if (!err) return;
-          console.error(err);
-        }
+        'utf-8'
       );
+      return [learnPage, learnProject];
     },
   },
   openExternalLink(link) {

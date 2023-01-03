@@ -5,6 +5,7 @@ export const ShowLearnProjectsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  width: 100%;
 
   ::-webkit-scrollbar {
     width: 0;

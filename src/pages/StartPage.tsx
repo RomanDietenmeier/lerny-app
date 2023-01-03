@@ -36,7 +36,9 @@ export function StartPage() {
           <StartPageButton>create</StartPageButton>
         </StartPageNavLink>
       </StartPageButtonWrapper>
-      <ShowLearnProjects learnProjects={learnProjects} />
+      <div style={{ width: '50%', overflow: 'auto' }}>
+        <ShowLearnProjects learnProjects={learnProjects} />
+      </div>
     </StartPageWrapper>
   );
 }

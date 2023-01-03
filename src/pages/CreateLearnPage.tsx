@@ -16,9 +16,11 @@ import { useSearchParams } from 'react-router-dom';
 
 export const CreateLearnPageSearchParameterProject = 'project';
 export const CreateLearnPageSearchParameterPage = 'page';
+const learnPageExtension = '.lap';
 
 export function CreateLearnPage() {
   const [queryParameters] = useSearchParams();
+  const [learnProject, setLearnProject] = useState('');
   const [markDownContent, setMarkDownContent] = useState('');
   const [editor, setEditor] = useState<
     editor.IStandaloneCodeEditor | undefined
@@ -27,18 +29,30 @@ export function CreateLearnPage() {
 
   useAsyncEffect(
     async (isMounted) => {
-      if (!editor) return;
+      if (!editor || !titleInputRef.current) return;
 
       const learnProject = queryParameters.get(
         CreateLearnPageSearchParameterProject
       );
-      const learnPage = queryParameters.get(CreateLearnPageSearchParameterPage);
+      let learnPage = queryParameters.get(CreateLearnPageSearchParameterPage);
       if (learnProject && learnPage) {
         const newValue = await window.electron.learnPage.load(
           learnProject,
           learnPage
         );
         if (!isMounted()) return;
+        setLearnProject(learnProject);
+
+        if (
+          learnPage.substring(learnPage.length - learnPageExtension.length) ===
+          learnPageExtension
+        ) {
+          learnPage = learnPage.substring(
+            0,
+            learnPage.length - learnPageExtension.length
+          );
+        }
+        titleInputRef.current.value = learnPage;
         editor.setValue(newValue);
       }
 
@@ -53,18 +67,20 @@ export function CreateLearnPage() {
         disposeModelListener.dispose();
       };
     },
-    [editor]
+    [editor, titleInputRef.current]
   );
 
-  function saveLearnPage() {
+  async function saveLearnPage() {
     if (!titleInputRef.current || !editor) return;
-    if (titleInputRef.current.value.length < 1)
-      titleInputRef.current.value = 'untitled';
-    window.electron.learnPage.save(
-      editor.getValue(),
-      titleInputRef.current.value,
-      titleInputRef.current.value
-    );
+
+    const [learnPageName, learnProjectName] =
+      await window.electron.learnPage.save(
+        editor.getValue(),
+        titleInputRef.current.value,
+        learnProject.length > 0 ? learnProject : titleInputRef.current.value
+      );
+    titleInputRef.current.value = learnPageName;
+    setLearnProject(learnProjectName);
   }
 
   return (
