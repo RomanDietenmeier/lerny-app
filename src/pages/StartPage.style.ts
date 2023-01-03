@@ -29,27 +29,3 @@ export const StartPageButton = styled(defaultButton)`
   font-size: 3rem;
   width: 100%;
 `;
-
-export const StartPageLearnProjectsWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-
-  ::-webkit-scrollbar {
-    width: 0;
-  }
-`;
-
-export const StartPageLearnProjectsUnorderedList = styled.ul`
-  list-style-type: none;
-`;
-
-export const StartPageLeanProjectsListItem = styled.li`
-  margin-bottom: 0.5rem;
-`;
-
-export const StartPageLearnProjectsLearnPageButton = styled(defaultButton)`
-  font-size: 1.25rem;
-  padding: 0.5rem;
-  margin-right: 2px; /* so that the box-shadow is not cut off */
-`;

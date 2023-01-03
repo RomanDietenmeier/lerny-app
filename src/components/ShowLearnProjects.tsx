@@ -1,11 +1,12 @@
 import React from 'react';
-import {
-  StartPageLeanProjectsListItem,
-  StartPageLearnProjectsLearnPageButton,
-  StartPageLearnProjectsUnorderedList,
-  StartPageLearnProjectsWrapper,
-} from '../pages/StartPage.style';
+
 import { LearnProjects } from '../redux/slices/learnProjectsSlice';
+import {
+  ShowLearnProjectsLearnPageButton,
+  ShowLearnProjectsListItem,
+  ShowLearnProjectsUnorderedList,
+  ShowLearnProjectsWrapper,
+} from './ShowLearnProjects.style';
 
 type ShowLearnProjectsProps = {
   learnProjects: LearnProjects;
@@ -17,30 +18,30 @@ export function ShowLearnProjects({
   onClickOnLearnPage,
 }: ShowLearnProjectsProps): JSX.Element {
   return (
-    <StartPageLearnProjectsWrapper>
+    <ShowLearnProjectsWrapper>
       {Object.entries(learnProjects).map(([project, pages], index) => {
         return (
           <div key={index}>
             <h2>{project}</h2>
-            <StartPageLearnProjectsUnorderedList>
+            <ShowLearnProjectsUnorderedList>
               {pages.map((page, index) => {
                 return (
-                  <StartPageLeanProjectsListItem key={index}>
-                    <StartPageLearnProjectsLearnPageButton
+                  <ShowLearnProjectsListItem key={index}>
+                    <ShowLearnProjectsLearnPageButton
                       onClick={() => {
                         if (!onClickOnLearnPage) return;
                         onClickOnLearnPage(project, page);
                       }}
                     >
                       {page}
-                    </StartPageLearnProjectsLearnPageButton>
-                  </StartPageLeanProjectsListItem>
+                    </ShowLearnProjectsLearnPageButton>
+                  </ShowLearnProjectsListItem>
                 );
               })}
-            </StartPageLearnProjectsUnorderedList>
+            </ShowLearnProjectsUnorderedList>
           </div>
         );
       })}
-    </StartPageLearnProjectsWrapper>
+    </ShowLearnProjectsWrapper>
   );
 }
