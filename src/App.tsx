@@ -5,6 +5,7 @@ import { ThemeProvider } from 'styled-components';
 import { AppWrapper } from './App.style';
 import { RouterRoutes } from './constants/RouterRoutes';
 import { CreateLearnPage } from './pages/CreateLearnPage';
+import { EditSelectionPage } from './pages/EditSelectionPage';
 import { StartPage } from './pages/StartPage';
 import { selectCurrentTheme } from './redux/selectors/themeSelectors';
 import { themeChangeCurrentTheme } from './redux/slices/themeSlice';
@@ -37,6 +38,10 @@ export function App() {
           <Route
             path={RouterRoutes.CreateLearnPage}
             element={<CreateLearnPage />}
+          />
+          <Route
+            path={RouterRoutes.SelectLearnPageToEdit}
+            element={<EditSelectionPage />}
           />
           <Route
             path="*"

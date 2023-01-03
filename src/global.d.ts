@@ -1,3 +1,5 @@
+import { LearnProjects } from './redux/slices/learnProjectsSlice';
+
 declare global {
   interface Window {
     electron: {
@@ -15,11 +17,12 @@ declare global {
         killAllConsoles: () => void;
         killConsole: (id: number) => void;
       };
+      getLocalLearnProjectAndLearnPages: () => LearnProjects;
+      learnPage: {
+        load: (learnProject: string, learnPage: string) => string;
+        save: (content: string, title: string, learnProject: string) => void;
+      };
       openExternalLink: (link: string) => void;
-      saveTextFile: (
-        text: string | NodeJS.ArrayBufferView,
-        filenameAndPath: fs.PathOrFileDescriptor
-      ) => void;
     };
     keyPressMap: { [key: string]: undefined | boolean };
     handleMarkdownAnchorClick: (href: string) => void;
