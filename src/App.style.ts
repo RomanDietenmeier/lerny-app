@@ -6,4 +6,5 @@ export const AppWrapper = styled.div`
   display: flex;
   flex-direction: column;
   color: ${(p) => p.theme.color};
+  overflow: hidden;
 `;

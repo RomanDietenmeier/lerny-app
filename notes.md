@@ -14,6 +14,7 @@
 - set Terminal Rows and Cols on RESIZE!
 - Light And Dark Theme
 - the Electron Reload is shit! Redux Dev Tools kill them selfs because of it
+- find lerny-app dirs (%appdata% equivalents) for mac and linux!!!!
 
 # Terminal Todo's
 
