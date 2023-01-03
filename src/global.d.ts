@@ -20,7 +20,7 @@ declare global {
       getLocalLearnProjectAndLearnPages: () => LearnProjects;
       learnPage: {
         load: (learnProject: string, learnPage: string) => string;
-        save: (content: string, title: string, learnProject: string) => void;
+        save: (content: string, title?: string, learnProject?: string) => [string,string];
       };
       openExternalLink: (link: string) => void;
     };
