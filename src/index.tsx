@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import * as monaco from 'monaco-editor';
 import { loader } from '@monaco-editor/react';
 import 'xterm/css/xterm.css';
+import './styles/xtermOverride.css';
 import { initKeyboardCapture } from './globals/keyboardCapture';
 import { store } from './redux/store';
 import { Provider } from 'react-redux';
