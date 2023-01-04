@@ -30,9 +30,6 @@ export function markdownItComponentPlugin(componentTag: markdownItJsxJSONs) {
         );
         token.type = componentTag;
       }
-      for (const childToken of token.children || []) {
-        processToken(childToken);
-      }
     }
 
     function processState(state: StateCore) {
