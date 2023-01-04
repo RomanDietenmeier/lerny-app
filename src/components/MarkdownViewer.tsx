@@ -1,12 +1,13 @@
 import React from 'react';
 import MarkdownIt from 'markdown-it';
-import { markdownItExternalLinksPlugin } from '../markdown-it-extensions/externalLinksPlugin';
+import { markdownItExternalLinksPlugin } from '../markdown-it-extensions/markdownItExternalLinksPlugin';
 import {
-  CodeEditorJson,
-  JSXJSONs,
-  markdownItEditorPlugin,
-} from '../markdown-it-extensions/editorPlugin';
+  markdownItJsxJSONs,
+  markdownItComponentJson,
+  markdownItComponentPlugin,
+} from '../markdown-it-extensions/markdownItComponentPlugin';
 import { CodeEditor } from './CodeEditor';
+import { XTermTerminal } from './XTermTerminal';
 
 const md = MarkdownIt('default', {
   html: true,
@@ -15,7 +16,8 @@ const md = MarkdownIt('default', {
 });
 
 md.use(markdownItExternalLinksPlugin);
-md.use(markdownItEditorPlugin);
+md.use(markdownItComponentPlugin(markdownItJsxJSONs.CodeEditor));
+md.use(markdownItComponentPlugin(markdownItJsxJSONs.Terminal));
 
 function renderMarkdownToJSX(markdown: string) {
   markdown = md.render(markdown);
@@ -32,10 +34,10 @@ function renderMarkdownToJSX(markdown: string) {
 
     const json = JSON.parse(
       markdown.substring(startCurlyBraces + 2, endCurlyBraces + 1)
-    ) as CodeEditorJson;
+    ) as markdownItComponentJson;
 
     switch (json.component) {
-      case JSXJSONs.CodeEditor: {
+      case markdownItJsxJSONs.CodeEditor: {
         try {
           jsxElements.push(
             <CodeEditor key={index++} {...JSON.parse(json.jsonProps)} />
@@ -47,6 +49,21 @@ function renderMarkdownToJSX(markdown: string) {
 
           jsxElements.push(<CodeEditor key={index++} />);
         }
+        break;
+      }
+      case markdownItJsxJSONs.Terminal: {
+        try {
+          jsxElements.push(
+            <XTermTerminal key={index++} {...JSON.parse(json.jsonProps)} />
+          );
+        } catch (error) {
+          if (json.jsonProps.length > 0) {
+            console.error(error);
+          }
+
+          jsxElements.push(<XTermTerminal key={index++} />);
+        }
+        break;
       }
     }
     markdown = markdown.substring(endCurlyBraces + 3);
