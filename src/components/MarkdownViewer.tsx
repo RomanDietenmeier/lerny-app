@@ -8,6 +8,7 @@ import {
 } from '../markdown-it-extensions/markdownItComponentPlugin';
 import { CodeEditor } from './CodeEditor';
 import { XTermTerminal } from './XTermTerminal';
+import { MarkdownViewerWrapper } from './MarkdownViewer.style';
 
 const md = MarkdownIt('default', {
   html: true,
@@ -82,8 +83,8 @@ type MarkdownViewerProps = {
 
 export function MarkdownViewer({ content }: MarkdownViewerProps) {
   return (
-    <div style={{ height: '100%', width: '100%' }}>
+    <MarkdownViewerWrapper>
       {renderMarkdownToJSX(content).map((element) => element)}
-    </div>
+    </MarkdownViewerWrapper>
   );
 }
