@@ -1,6 +1,7 @@
 # Dependencies
 
 - check if you have the required Dependencies of [node-pty](https://www.npmjs.com/package/node-pty)
+- "xdg-utils" are needed on Linux to open external Links in LearnPages
 
 # Possible install errors:
 
