@@ -36,7 +36,7 @@ export function CreateLearnPage() {
       );
       let learnPage = queryParameters.get(CreateLearnPageSearchParameterPage);
       if (learnProject && learnPage) {
-        const newValue = await window.electron.learnPage.load(
+        const newValue = await window.electron.learnPage.loadLearnPage(
           learnProject,
           learnPage
         );
@@ -74,7 +74,7 @@ export function CreateLearnPage() {
     if (!titleInputRef.current || !editor) return;
 
     const [learnPageName, learnProjectName] =
-      await window.electron.learnPage.save(
+      await window.electron.learnPage.saveLearnPage(
         editor.getValue(),
         titleInputRef.current.value,
         learnProject.length > 0 ? learnProject : titleInputRef.current.value

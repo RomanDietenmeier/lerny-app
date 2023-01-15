@@ -19,8 +19,21 @@ declare global {
       };
       getLocalLearnProjectAndLearnPages: () => LearnProjects;
       learnPage: {
-        load: (learnProject: string, learnPage: string) => string;
-        save: (content: string, title?: string, learnProject?: string) => [string,string];
+        loadLearnPage: (
+          learnProject: string,
+          learnPage: string
+        ) => Promise<string>;
+        saveFile: (
+          content: string,
+          learnProject: string,
+          filename: string,
+          folderStructure?: Array<string>
+        ) => void;
+        saveLearnPage: (
+          content: string,
+          title?: string,
+          learnProject?: string
+        ) => Promise<[string, string]>;
       };
       openExternalLink: (link: string) => void;
     };

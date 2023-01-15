@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import MonacoEditor, { EditorProps } from '@monaco-editor/react';
-import { editor } from 'monaco-editor';
+import { editor, KeyCode, KeyMod } from 'monaco-editor';
 import { DefaultSpinner } from '../constants/Spinners';
 import { useSelector } from 'react-redux';
 import { selectCurrentTheme } from '../redux/selectors/themeSelectors';
@@ -22,21 +22,50 @@ const monacoEditorOptions: editor.IStandaloneEditorConstructionOptions = {
 type CodeEditorProps = {
   monacoEditorProps?: EditorProps;
   setEditor?: (editor: editor.IStandaloneCodeEditor) => void;
+  learnProject?: string;
+  folderStructure?: Array<string>;
+  filename?: string;
 };
 
 export function CodeEditor({
   monacoEditorProps,
   setEditor,
+  learnProject,
+  folderStructure,
+  filename,
 }: CodeEditorProps): JSX.Element {
   const currentTheme = useSelector(selectCurrentTheme);
+  const [codeEditor, SetCodeEditor] =
+    useState<editor.IStandaloneCodeEditor | null>(null);
 
   function handleEditorDidMount(
     editor: editor.IStandaloneCodeEditor,
     _monaco: MonacoEditorType
   ) {
+    SetCodeEditor(editor);
+
     if (!setEditor) return;
     setEditor(editor);
   }
+
+  useEffect(() => {
+    if (!codeEditor) return;
+
+    function saveFile() {
+      if (!learnProject || !filename || !codeEditor) return;
+
+      window.electron.learnPage.saveFile(
+        codeEditor.getValue(),
+        learnProject,
+        filename,
+        folderStructure
+      );
+    }
+
+    codeEditor.addCommand(KeyMod.CtrlCmd | KeyCode.KeyS, () => {
+      saveFile();
+    });
+  }, [learnProject, folderStructure, filename, codeEditor]);
 
   return (
     <MonacoEditor

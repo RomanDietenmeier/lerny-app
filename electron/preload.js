@@ -4,12 +4,17 @@ const fs = require('fs');
 
 //on this line == instead of === is required
 const runningOnWindows = os.platform == 'win32';
-const localDataRootPath = runningOnWindows
+const persistentLocalDataRootPath = runningOnWindows
   ? process.env.appdata
   : process.env.HOME;
-const localDataPath = `${localDataRootPath}/lerny-app`;
-const localProjectsPath = `${localDataPath}/projects`;
+const localPersistentDataPath = `${persistentLocalDataRootPath}/lerny-app`;
+const localPersistentProjectsPath = `${localPersistentDataPath}/projects`;
 const learnPageExtension = '.lap';
+
+const dumpLocalDataRootPath = runningOnWindows
+  ? process.env.localappdata
+  : `${process.env.HOME}/dump`;
+const localDumpDataPath = `${dumpLocalDataRootPath}/lerny-app`;
 
 let uniqueId = new Date().getTime();
 function getUniqueId() {
@@ -23,7 +28,7 @@ async function createDirs(paths) {
     } catch (err) {
       if (err.code !== 'EEXIST') {
         console.error('Could not create Directory:', err);
-        return false;
+        continue;
       }
     }
   }
@@ -55,11 +60,11 @@ contextBridge.exposeInMainWorld('electron', {
   },
   async getLocalLearnProjectAndLearnPages() {
     const ret = {};
-    const projects = await fs.promises.readdir(localProjectsPath);
+    const projects = await fs.promises.readdir(localPersistentProjectsPath);
     for (const project of projects) {
       try {
         const pages = await fs.promises.readdir(
-          `${localProjectsPath}/${project}`
+          `${localPersistentProjectsPath}/${project}`
         );
         ret[project] = pages;
       } catch (err) {
@@ -71,28 +76,50 @@ contextBridge.exposeInMainWorld('electron', {
     return ret;
   },
   learnPage: {
-    async load(learnProject, learnPage) {
+    async loadLearnPage(learnProject, learnPage) {
       return await fs.promises.readFile(
-        `${localProjectsPath}/${learnProject}/${learnPage}`,
+        `${localPersistentProjectsPath}/${learnProject}/${learnPage}`,
         { encoding: 'utf-8' }
       );
     },
-    async save(content, learnPage, learnProject) {
+    async saveFile(content, learnProject, filename, folderStructure = []) {
+      if (!content || !learnProject || !filename) {
+        return;
+      }
+      let dir = `${localDumpDataPath}/${learnProject}`;
+      const dirsToCreate = [];
+      for (const folder of folderStructure) {
+        dir = `${dir}/${folder}`;
+        dirsToCreate.push(dir);
+      }
+      if (
+        !(await createDirs([
+          dumpLocalDataRootPath,
+          localDumpDataPath,
+          `${localDumpDataPath}/${learnProject}`,
+          ...dirsToCreate,
+        ]))
+      ) {
+        return;
+      }
+      await fs.promises.writeFile(`${dir}/${filename}`, content, 'utf-8');
+    },
+    async saveLearnPage(content, learnPage, learnProject) {
       if (!learnProject) {
         learnProject = 'untitled';
       }
       if (
         !(await createDirs([
-          localDataPath,
-          localProjectsPath,
-          `${localProjectsPath}/${learnProject}`,
+          localPersistentDataPath,
+          localPersistentProjectsPath,
+          `${localPersistentProjectsPath}/${learnProject}`,
         ]))
       ) {
         return;
       }
       if (!learnPage) {
         const filesInDir = await fs.promises.readdir(
-          `${localProjectsPath}/${learnProject}`
+          `${localPersistentProjectsPath}/${learnProject}`
         );
 
         let count = 0;
@@ -110,7 +137,7 @@ contextBridge.exposeInMainWorld('electron', {
         );
       }
       await fs.promises.writeFile(
-        `${localProjectsPath}/${learnProject}/${learnPage}${learnPageExtension}`,
+        `${localPersistentProjectsPath}/${learnProject}/${learnPage}${learnPageExtension}`,
         content,
         'utf-8'
       );
