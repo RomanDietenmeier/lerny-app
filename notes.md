@@ -11,7 +11,6 @@
 
 ## Todo
 
-- set Terminal Rows and Cols on RESIZE!
 - Light And Dark Theme
 - the Electron Reload is shit! Redux Dev Tools kill them selfs because of it
 - find lerny-app dirs (%appdata% equivalents) for mac and linux!!!!
@@ -22,4 +21,4 @@
 
 # MarkdownViewer
 
-- standard html tags brauchen noch einen DarkMode style vor allem Links!!!
+- standard html tags need a DarkMode style, links are a great example for that!!!
