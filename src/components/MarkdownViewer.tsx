@@ -44,9 +44,9 @@ function renderMarkdownToJSX(markdown: string) {
           try {
             const parsedJson = JSON.parse(json.jsonProps);
             jsxElements.push(<CodeEditor key={index++} {...parsedJson} />);
-          } catch (error) {
+          } catch (err) {
             if (json.jsonProps.length > 0) {
-              console.error(error);
+              console.error(err);
             }
 
             jsxElements.push(<CodeEditor key={index++} />);
@@ -58,9 +58,9 @@ function renderMarkdownToJSX(markdown: string) {
             jsxElements.push(
               <XTermTerminal key={index++} {...JSON.parse(json.jsonProps)} />
             );
-          } catch (error) {
+          } catch (err) {
             if (json.jsonProps.length > 0) {
-              console.error(error);
+              console.error(err);
             }
 
             jsxElements.push(<XTermTerminal key={index++} />);
@@ -68,11 +68,11 @@ function renderMarkdownToJSX(markdown: string) {
           break;
         }
       }
-    } catch (error) {
-      if (error instanceof SyntaxError) {
+    } catch (err) {
+      if (err instanceof SyntaxError) {
         continue;
       }
-      console.error(error);
+      console.error(err);
       break;
     } finally {
       markdown = markdown.substring(endCurlyBraces + 3);
