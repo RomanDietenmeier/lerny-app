@@ -60,13 +60,15 @@ contextBridge.exposeInMainWorld('electron', {
   },
   async getLocalLearnProjectAndLearnPages() {
     const ret = {};
+    const projects = [];
     try {
-      const projects = await fs.promises.readdir(localPersistentProjectsPath);
+      projects.push.apply(
+        projects,
+        await fs.promises.readdir(localPersistentProjectsPath)
+      );
     } catch (err) {
       if (err.code !== 'ENOENT') {
         console.error(err);
-      } else {
-        projects = [];
       }
     }
 
@@ -134,7 +136,7 @@ contextBridge.exposeInMainWorld('electron', {
         let count = 0;
         while (
           filesInDir.includes(`untitled${++count}${learnPageExtension}`)
-        ) { }
+        ) {}
         learnPage = `untitled${count}`;
       } else if (
         learnPage.substring(learnPage.length - learnPageExtension.length) ===
