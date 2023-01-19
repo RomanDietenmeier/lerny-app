@@ -1,3 +1,7 @@
+# LERNY-APP
+
+![Learn Page Example](./ReadMeContents/Lerny%20App%20example%20Learn%20Page%20showcase.jpg 'Learn Page')
+
 # Dependencies
 
 - check if you have the required Dependencies of [node-pty](https://www.npmjs.com/package/node-pty)
