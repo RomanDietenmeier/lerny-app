@@ -7,6 +7,28 @@ import { selectCurrentTheme } from '../redux/selectors/themeSelectors';
 
 type MonacoEditorType = typeof import('monaco-editor');
 
+const codeEditorCommands: {
+  commands: Record<number, Array<editor.ICommandHandler>>;
+  addCommand: (keybinding: number, handler: editor.ICommandHandler) => void;
+  removeCommand: (keybinding: number, handler: editor.ICommandHandler) => void;
+} = {
+  commands: {},
+  addCommand: function (keybinding: number, handler: editor.ICommandHandler) {
+    if (!this.commands[keybinding]) {
+      this.commands[keybinding] = [];
+    }
+    this.commands[keybinding].push(handler);
+  },
+  removeCommand: function (
+    keybinding: number,
+    handler: editor.ICommandHandler
+  ) {
+    this.commands[keybinding] = this.commands[keybinding].filter(
+      (currentHandler) => currentHandler !== handler
+    );
+  },
+};
+
 export const defaultMonacoWrapperStyle = {
   display: 'flex',
   position: 'relative',
@@ -38,16 +60,6 @@ export function CodeEditor({
   const [codeEditor, SetCodeEditor] =
     useState<editor.IStandaloneCodeEditor | null>(null);
 
-  function handleEditorDidMount(
-    editor: editor.IStandaloneCodeEditor,
-    _monaco: MonacoEditorType
-  ) {
-    SetCodeEditor(editor);
-
-    if (!setEditor) return;
-    setEditor(editor);
-  }
-
   useEffect(() => {
     if (!codeEditor) return;
 
@@ -62,10 +74,36 @@ export function CodeEditor({
       );
     }
 
-    codeEditor.addCommand(KeyMod.CtrlCmd | KeyCode.KeyS, () => {
-      saveFile();
-    });
+    codeEditorCommands.addCommand(KeyMod.CtrlCmd | KeyCode.KeyS, saveFile);
+    console.log('addCommand', filename, codeEditorCommands);
+    updateCodeEditorCommands();
+    return () => {
+      codeEditorCommands.removeCommand(KeyMod.CtrlCmd | KeyCode.KeyS, saveFile);
+      console.log('removeCommand', filename, codeEditorCommands);
+      updateCodeEditorCommands();
+    };
   }, [learnProject, folderStructure, filename, codeEditor]);
+
+  function handleEditorDidMount(
+    editor: editor.IStandaloneCodeEditor,
+    _monaco: MonacoEditorType
+  ) {
+    SetCodeEditor(editor);
+    console.log('editor', filename);
+
+    if (!setEditor) return;
+    setEditor(editor);
+  }
+
+  function updateCodeEditorCommands() {
+    for (const [key, handlers] of Object.entries(codeEditorCommands.commands)) {
+      codeEditor?.addCommand(parseInt(key), () => {
+        for (const handler of handlers) {
+          handler();
+        }
+      });
+    }
+  }
 
   return (
     <MonacoEditor
@@ -83,3 +121,9 @@ export function CodeEditor({
     />
   );
 }
+
+// Hermann Repo schicken
+// AddCommand geht so auch nicht, weil jetzt tut es alle speicher wenn man nur eins speichern will
+// Try editor.addAction() instead
+
+// no project exists cant fetch projects error
