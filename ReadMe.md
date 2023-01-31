@@ -2,21 +2,33 @@
 
 ![Learn Page Example](./ReadMeContents/Lerny%20App%20example%20Learn%20Page%20showcase.jpg 'Learn Page')
 
-# Dependencies
+# Set up Development Environment
 
-- check if you have the required Dependencies of [node-pty](https://www.npmjs.com/package/node-pty)
-- "xdg-utils" are needed on Linux to open external Links in LearnPages
+- clone project
+- use node version v16.14.2
+  - nvm install 16.14.2
+  - nvm use 16.14.2
+- check "node-pty" dependencies:
+  - [node-pty](https://www.npmjs.com/package/node-pty)
+    <br>
+    For example on Windows:
+    - make sure python3 is installed
+    - install the [Windows SDK](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk) features for "Desktop C++ Apps"
+    - npm install --global --production windows-build-tools
+- npm i
+- npm run start
 
-# Possible install errors:
+## Hints and possible Problems
 
-- contpty.node was compiled against a different Node.js version
-  - do: `./node_modules/.bin/electron-rebuild`
+### "contpty.node" was compiled against a different Node.js version
+
+- do: `./node_modules/.bin/electron-rebuild`
+
+### External Links on Linux
+
+- "xdg-utils" are needed to be installed to open external Links in LearnPages
 
 # Build from source:
 
-- clone Project
-- open Terminal in Project
-- npm i (Node v16.14.2 is required)
-- ./node_modules/.bin/electron-rebuild
+- setup Development Environment
 - npm run build
-- then you can find your finished build in the "out" directory
