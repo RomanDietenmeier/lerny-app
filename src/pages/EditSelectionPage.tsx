@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { ShowLearnProjects } from '../components/ShowLearnProjects';
-import { RouterRoutes } from '../constants/RouterRoutes';
+import { RouterRoutes } from '../constants/routerRoutes';
 import { selectLearnProjects } from '../redux/selectors/learnProjectsSelectors';
 import { LearnProjects } from '../redux/slices/learnProjectsSlice';
 import { sliceObjectInTwo } from '../utilities/helper';

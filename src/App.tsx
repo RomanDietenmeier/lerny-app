@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, Route, Routes, useNavigate } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { AppWrapper } from './App.style';
-import { RouterRoutes } from './constants/RouterRoutes';
+import { RouterRoutes } from './constants/routerRoutes';
 import { CreateLearnPage } from './pages/CreateLearnPage';
 import { EditSelectionPage } from './pages/EditSelectionPage';
 import { StartPage } from './pages/StartPage';

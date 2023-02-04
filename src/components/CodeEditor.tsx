@@ -1,33 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import MonacoEditor, { EditorProps } from '@monaco-editor/react';
-import { editor, KeyCode, KeyMod } from 'monaco-editor';
+import { editor } from 'monaco-editor';
 import { DefaultSpinner } from '../constants/Spinners';
 import { useSelector } from 'react-redux';
 import { selectCurrentTheme } from '../redux/selectors/themeSelectors';
+import _ from 'lodash';
+import { Timeouts } from '../constants/timeouts';
 
 type MonacoEditorType = typeof import('monaco-editor');
-
-const codeEditorCommands: {
-  commands: Record<number, Array<editor.ICommandHandler>>;
-  addCommand: (keybinding: number, handler: editor.ICommandHandler) => void;
-  removeCommand: (keybinding: number, handler: editor.ICommandHandler) => void;
-} = {
-  commands: {},
-  addCommand: function (keybinding: number, handler: editor.ICommandHandler) {
-    if (!this.commands[keybinding]) {
-      this.commands[keybinding] = [];
-    }
-    this.commands[keybinding].push(handler);
-  },
-  removeCommand: function (
-    keybinding: number,
-    handler: editor.ICommandHandler
-  ) {
-    this.commands[keybinding] = this.commands[keybinding].filter(
-      (currentHandler) => currentHandler !== handler
-    );
-  },
-};
 
 export const defaultMonacoWrapperStyle = {
   display: 'flex',
@@ -73,14 +53,17 @@ export function CodeEditor({
         folderStructure
       );
     }
+    const saveFileDebounced = _.debounce(
+      saveFile,
+      Timeouts.DebounceSaveTimeout
+    );
 
-    codeEditorCommands.addCommand(KeyMod.CtrlCmd | KeyCode.KeyS, saveFile);
-    console.log('addCommand', filename, codeEditorCommands);
-    updateCodeEditorCommands();
+    const disposeModelListener = codeEditor.onDidChangeModelContent((_evt) => {
+      saveFileDebounced();
+    });
     return () => {
-      codeEditorCommands.removeCommand(KeyMod.CtrlCmd | KeyCode.KeyS, saveFile);
-      console.log('removeCommand', filename, codeEditorCommands);
-      updateCodeEditorCommands();
+      disposeModelListener.dispose();
+      saveFile();
     };
   }, [learnProject, folderStructure, filename, codeEditor]);
 
@@ -89,20 +72,9 @@ export function CodeEditor({
     _monaco: MonacoEditorType
   ) {
     SetCodeEditor(editor);
-    console.log('editor', filename);
 
     if (!setEditor) return;
     setEditor(editor);
-  }
-
-  function updateCodeEditorCommands() {
-    for (const [key, handlers] of Object.entries(codeEditorCommands.commands)) {
-      codeEditor?.addCommand(parseInt(key), () => {
-        for (const handler of handlers) {
-          handler();
-        }
-      });
-    }
   }
 
   return (
@@ -121,9 +93,3 @@ export function CodeEditor({
     />
   );
 }
-
-// Hermann Repo schicken
-// AddCommand geht so auch nicht, weil jetzt tut es alle speicher wenn man nur eins speichern will
-// Try editor.addAction() instead
-
-// no project exists cant fetch projects error

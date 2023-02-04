@@ -7,12 +7,12 @@ import {
 } from '../components/CodeEditor';
 import { MarkdownViewer } from '../components/MarkdownViewer';
 import {
-  CreateLearnPageSaveButton,
   CreateLearnPageTitleInput,
   CreateLearnPageWrapper,
 } from './CreateLearnPage.style';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { useSearchParams } from 'react-router-dom';
+import { Timeouts } from '../constants/timeouts';
 
 export const CreateLearnPageSearchParameterProject = 'project';
 export const CreateLearnPageSearchParameterPage = 'page';
@@ -58,7 +58,8 @@ export function CreateLearnPage() {
 
       const updateMarkdownView = _.debounce(() => {
         setMarkDownContent(editor.getValue());
-      }, 500);
+        saveLearnPage();
+      }, Timeouts.DebounceSaveTimeout);
       const disposeModelListener = editor.onDidChangeModelContent((_evt) => {
         updateMarkdownView();
       });
@@ -85,9 +86,6 @@ export function CreateLearnPage() {
 
   return (
     <CreateLearnPageWrapper>
-      <CreateLearnPageSaveButton onClick={saveLearnPage}>
-        SAVE
-      </CreateLearnPageSaveButton>
       <div>CREATE LEARN PAGE</div>
       <CreateLearnPageTitleInput
         type="text"
