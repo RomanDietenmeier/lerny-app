@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useAsyncEffect from 'use-async-effect';
 import { ShowLearnProjects } from '../components/ShowLearnProjects';
-import { RouterRoutes } from '../constants/RouterRoutes';
+import { RouterRoutes } from '../constants/routerRoutes';
 import { selectLearnProjects } from '../redux/selectors/learnProjectsSelectors';
 import { setLearnProjects } from '../redux/slices/learnProjectsSlice';
 import {

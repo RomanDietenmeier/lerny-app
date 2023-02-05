@@ -4,15 +4,15 @@ import useAsyncEffect from 'use-async-effect';
 import {
   CodeEditor,
   defaultMonacoWrapperStyle,
-} from '../components/CodeEditor';
+} from '../web-components/code-editor/CodeEditor';
 import { MarkdownViewer } from '../components/MarkdownViewer';
 import {
-  CreateLearnPageSaveButton,
   CreateLearnPageTitleInput,
   CreateLearnPageWrapper,
 } from './CreateLearnPage.style';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { useSearchParams } from 'react-router-dom';
+import { Timeouts } from '../constants/timeouts';
 
 export const CreateLearnPageSearchParameterProject = 'project';
 export const CreateLearnPageSearchParameterPage = 'page';
@@ -36,7 +36,7 @@ export function CreateLearnPage() {
       );
       let learnPage = queryParameters.get(CreateLearnPageSearchParameterPage);
       if (learnProject && learnPage) {
-        const newValue = await window.electron.learnPage.load(
+        const newValue = await window.electron.learnPage.loadLearnPage(
           learnProject,
           learnPage
         );
@@ -56,13 +56,14 @@ export function CreateLearnPage() {
         editor.setValue(newValue);
       }
 
-      const updateMarkdownView = _.debounce(() => {
+      const updateFileDebounced = _.debounce(() => {
         setMarkDownContent(editor.getValue());
-      }, 500);
+        saveLearnPage();
+      }, Timeouts.DebounceSaveTimeout);
       const disposeModelListener = editor.onDidChangeModelContent((_evt) => {
-        updateMarkdownView();
+        updateFileDebounced();
       });
-      updateMarkdownView();
+      updateFileDebounced();
       return () => {
         disposeModelListener.dispose();
       };
@@ -71,10 +72,12 @@ export function CreateLearnPage() {
   );
 
   async function saveLearnPage() {
-    if (!titleInputRef.current || !editor) return;
+    if (!titleInputRef.current || !titleInputRef.current.value || !editor) {
+      return;
+    }
 
     const [learnPageName, learnProjectName] =
-      await window.electron.learnPage.save(
+      await window.electron.learnPage.saveLearnPage(
         editor.getValue(),
         titleInputRef.current.value,
         learnProject.length > 0 ? learnProject : titleInputRef.current.value
@@ -85,9 +88,6 @@ export function CreateLearnPage() {
 
   return (
     <CreateLearnPageWrapper>
-      <CreateLearnPageSaveButton onClick={saveLearnPage}>
-        SAVE
-      </CreateLearnPageSaveButton>
       <div>CREATE LEARN PAGE</div>
       <CreateLearnPageTitleInput
         type="text"

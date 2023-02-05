@@ -25,7 +25,7 @@ export function markdownItComponentPlugin(componentTag: markdownItJsxJSONs) {
         token.children = [];
         token.content = token.content.substring(
           token.content.indexOf(openComponentString) +
-            openComponentString.length,
+          openComponentString.length,
           token.content.indexOf(closeComponentString)
         );
         token.type = componentTag;
@@ -39,11 +39,9 @@ export function markdownItComponentPlugin(componentTag: markdownItJsxJSONs) {
     }
     mdIT.core.ruler.push(`markdownIt${componentTag}Plugin`, processState);
 
-    mdIT.renderer.rules[componentTag] = (tokens) => {
-      const componentToken = tokens.find(
-        (token) => token.type === componentTag
-      );
+    mdIT.renderer.rules[componentTag] = (tokens, index) => {
 
+      const componentToken = tokens[index];
       if (!componentToken) return '';
       return `{{${JSON.stringify({
         component: componentTag,

@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import MonacoEditor, { EditorProps } from '@monaco-editor/react';
 import { editor } from 'monaco-editor';
-import { DefaultSpinner } from '../constants/Spinners';
+import { DefaultSpinner } from '../../constants/Spinners';
 import { useSelector } from 'react-redux';
-import { selectCurrentTheme } from '../redux/selectors/themeSelectors';
+import { selectCurrentTheme } from '../../redux/selectors/themeSelectors';
+import _ from 'lodash';
+import { Timeouts } from '../../constants/timeouts';
+import 'xterm/css/xterm.css';
+import '../../styles/xtermOverride.css';
 
 type MonacoEditorType = typeof import('monaco-editor');
 
@@ -19,21 +23,58 @@ const monacoEditorOptions: editor.IStandaloneEditorConstructionOptions = {
   minimap: { enabled: false },
 };
 
-type CodeEditorProps = {
+export type CodeEditorProps = {
+  filename?: string;
+  folderStructure?: Array<string>;
+  learnProject?: string;
   monacoEditorProps?: EditorProps;
   setEditor?: (editor: editor.IStandaloneCodeEditor) => void;
 };
 
 export function CodeEditor({
+  filename,
+  folderStructure,
+  learnProject,
   monacoEditorProps,
   setEditor,
 }: CodeEditorProps): JSX.Element {
   const currentTheme = useSelector(selectCurrentTheme);
+  const [codeEditor, SetCodeEditor] =
+    useState<editor.IStandaloneCodeEditor | null>(null);
+
+  useEffect(() => {
+    if (!codeEditor) return;
+
+    function saveFile() {
+      if (!learnProject || !filename || !codeEditor) return;
+
+      window.electron.learnPage.saveFile(
+        codeEditor.getValue(),
+        learnProject,
+        filename,
+        folderStructure
+      );
+    }
+    const saveFileDebounced = _.debounce(
+      saveFile,
+      Timeouts.DebounceSaveTimeout
+    );
+
+    const disposeModelListener = codeEditor.onDidChangeModelContent((_evt) => {
+      saveFileDebounced();
+    });
+    return () => {
+      disposeModelListener.dispose();
+      saveFile();
+    };
+  }, [learnProject, folderStructure, filename, codeEditor]);
 
   function handleEditorDidMount(
     editor: editor.IStandaloneCodeEditor,
     _monaco: MonacoEditorType
   ) {
+    SetCodeEditor(editor);
+
     if (!setEditor) return;
     setEditor(editor);
   }
@@ -46,7 +87,7 @@ export function CodeEditor({
         monacoEditorProps?.theme || currentTheme.monacoEditorTheme || 'vs-dark'
       }
       wrapperProps={{
-        style: { ...defaultMonacoWrapperStyle, height: '20%' },
+        style: { ...defaultMonacoWrapperStyle },
         ...monacoEditorProps?.wrapperProps,
       }}
       options={{ ...monacoEditorOptions, ...monacoEditorProps?.options }}

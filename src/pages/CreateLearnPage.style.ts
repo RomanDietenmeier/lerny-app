@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { defaultButton } from '../styles/button.style';
 
 export const CreateLearnPageWrapper = styled.div`
   width: 100%;
@@ -8,13 +7,6 @@ export const CreateLearnPageWrapper = styled.div`
   flex-direction: column;
   background-color: ${(p) => p.theme.backgroundColor};
   overflow: auto;
-`;
-
-export const CreateLearnPageSaveButton = styled(defaultButton)`
-  position: absolute;
-  right: 1rem;
-  bottom: 1rem;
-  z-index: 1;
 `;
 
 export const CreateLearnPageTitleInput = styled.input`
