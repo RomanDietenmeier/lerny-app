@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import MonacoEditor, { EditorProps } from '@monaco-editor/react';
 import { editor } from 'monaco-editor';
-import { DefaultSpinner } from '../constants/Spinners';
+import { DefaultSpinner } from '../../constants/Spinners';
 import { useSelector } from 'react-redux';
-import { selectCurrentTheme } from '../redux/selectors/themeSelectors';
+import { selectCurrentTheme } from '../../redux/selectors/themeSelectors';
 import _ from 'lodash';
-import { Timeouts } from '../constants/timeouts';
+import { Timeouts } from '../../constants/timeouts';
+import 'xterm/css/xterm.css';
+import '../../styles/xtermOverride.css';
 
 type MonacoEditorType = typeof import('monaco-editor');
 

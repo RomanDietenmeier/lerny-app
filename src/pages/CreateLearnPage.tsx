@@ -4,7 +4,7 @@ import useAsyncEffect from 'use-async-effect';
 import {
   CodeEditor,
   defaultMonacoWrapperStyle,
-} from '../components/CodeEditor';
+} from '../web-components/code-editor/CodeEditor';
 import { MarkdownViewer } from '../components/MarkdownViewer';
 import {
   CreateLearnPageTitleInput,
@@ -56,14 +56,14 @@ export function CreateLearnPage() {
         editor.setValue(newValue);
       }
 
-      const updateMarkdownView = _.debounce(() => {
+      const updateFileDebounced = _.debounce(() => {
         setMarkDownContent(editor.getValue());
         saveLearnPage();
       }, Timeouts.DebounceSaveTimeout);
       const disposeModelListener = editor.onDidChangeModelContent((_evt) => {
-        updateMarkdownView();
+        updateFileDebounced();
       });
-      updateMarkdownView();
+      updateFileDebounced();
       return () => {
         disposeModelListener.dispose();
       };
@@ -72,7 +72,9 @@ export function CreateLearnPage() {
   );
 
   async function saveLearnPage() {
-    if (!titleInputRef.current || !editor) return;
+    if (!titleInputRef.current || !titleInputRef.current.value || !editor) {
+      return;
+    }
 
     const [learnPageName, learnProjectName] =
       await window.electron.learnPage.saveLearnPage(

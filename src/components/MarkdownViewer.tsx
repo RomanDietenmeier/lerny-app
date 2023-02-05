@@ -6,8 +6,8 @@ import {
   markdownItComponentJson,
   markdownItComponentPlugin,
 } from '../markdown-it-extensions/markdownItComponentPlugin';
-import { CodeEditor } from './CodeEditor';
-import { XTermTerminal } from './XTermTerminal';
+import { CodeEditor } from '../web-components/code-editor/CodeEditor';
+import { XTermTerminal } from '../web-components/terminal/XTermTerminal';
 import { MarkdownViewerWrapper } from './MarkdownViewer.style';
 
 const md = MarkdownIt('default', {

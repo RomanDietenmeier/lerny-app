@@ -1,6 +1,6 @@
 # LERNY-APP
 
-![Learn Page Example](./ReadMeContents/Lerny%20App%20example%20Learn%20Page%20showcase.jpg 'Learn Page')
+![Learn Page Example](./read-me-contents/Lerny%20App%20example%20Learn%20Page%20showcase.jpg 'Learn Page')
 
 # Set up Development Environment
 
