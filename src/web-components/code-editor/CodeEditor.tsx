@@ -23,20 +23,20 @@ const monacoEditorOptions: editor.IStandaloneEditorConstructionOptions = {
   minimap: { enabled: false },
 };
 
-type CodeEditorProps = {
+export type CodeEditorProps = {
+  filename?: string;
+  folderStructure?: Array<string>;
+  learnProject?: string;
   monacoEditorProps?: EditorProps;
   setEditor?: (editor: editor.IStandaloneCodeEditor) => void;
-  learnProject?: string;
-  folderStructure?: Array<string>;
-  filename?: string;
 };
 
 export function CodeEditor({
+  filename,
+  folderStructure,
+  learnProject,
   monacoEditorProps,
   setEditor,
-  learnProject,
-  folderStructure,
-  filename,
 }: CodeEditorProps): JSX.Element {
   const currentTheme = useSelector(selectCurrentTheme);
   const [codeEditor, SetCodeEditor] =
@@ -87,7 +87,7 @@ export function CodeEditor({
         monacoEditorProps?.theme || currentTheme.monacoEditorTheme || 'vs-dark'
       }
       wrapperProps={{
-        style: { ...defaultMonacoWrapperStyle, height: '20%' },
+        style: { ...defaultMonacoWrapperStyle },
         ...monacoEditorProps?.wrapperProps,
       }}
       options={{ ...monacoEditorOptions, ...monacoEditorProps?.options }}
