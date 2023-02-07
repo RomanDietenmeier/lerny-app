@@ -26,6 +26,7 @@ const monacoEditorOptions: editor.IStandaloneEditorConstructionOptions = {
 export type CodeEditorProps = {
   filename?: string;
   folderStructure?: Array<string>;
+  initialCodeEditorValue?: string;
   learnProject?: string;
   monacoEditorProps?: EditorProps;
   setEditor?: (editor: editor.IStandaloneCodeEditor) => void;
@@ -34,12 +35,13 @@ export type CodeEditorProps = {
 export function CodeEditor({
   filename,
   folderStructure,
+  initialCodeEditorValue,
   learnProject,
   monacoEditorProps,
   setEditor,
 }: CodeEditorProps): JSX.Element {
   const currentTheme = useSelector(selectCurrentTheme);
-  const [codeEditor, SetCodeEditor] =
+  const [codeEditor, setCodeEditor] =
     useState<editor.IStandaloneCodeEditor | null>(null);
 
   useEffect(() => {
@@ -73,7 +75,8 @@ export function CodeEditor({
     editor: editor.IStandaloneCodeEditor,
     _monaco: MonacoEditorType
   ) {
-    SetCodeEditor(editor);
+    setCodeEditor(editor);
+    editor.setValue(initialCodeEditorValue || '');
 
     if (!setEditor) return;
     setEditor(editor);
