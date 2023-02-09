@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { defaultButton } from '../styles/button.style';
+import { DefaultButton } from '../styles/button.style';
 
 export const ShowLearnProjectsWrapper = styled.div`
   display: flex;
@@ -20,7 +20,7 @@ export const ShowLearnProjectsListItem = styled.li`
   margin-bottom: 0.5rem;
 `;
 
-export const ShowLearnProjectsLearnPageButton = styled(defaultButton)`
+export const ShowLearnProjectsLearnPageButton = styled(DefaultButton)`
   font-size: 1.25rem;
   padding: 0.5rem;
   margin-right: 2px; /* so that the box-shadow is not cut off */

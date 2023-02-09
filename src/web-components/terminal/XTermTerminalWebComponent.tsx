@@ -9,7 +9,16 @@ import { XTermTerminal } from './XTermTerminal';
 
 export const XTermTerminalWebComponentHTMLTag = 'xterm-terminal';
 
-class XTermTerminalWebComponent extends HTMLElement {
+export class XTermTerminalWebComponent extends HTMLElement {
+  private consoleId: number;
+
+  constructor() {
+    super();
+    this.consoleId = window.electron.console.createConsole(
+      this.getAttributeOrUndefined('folderPath')
+    );
+  }
+
   connectedCallback() {
     const shadowRoot = this.attachShadow({ mode: 'open' });
     const styleSlot = document.createElement('section');
@@ -33,7 +42,8 @@ class XTermTerminalWebComponent extends HTMLElement {
             theme={selectCurrentTheme(store.getState()).styledComponentsTheme}
           >
             <XTermTerminal
-              folderPath={this.getAttributeOrUndefined('folderPath')}
+              consoleId={this.consoleId}
+              disableStdin={this.getDisableStdin()}
               height={this.getAttributeOrUndefined('height')}
               initialInput={window.webComponent.getContentOfHTMLCommentString(
                 this.innerHTML
@@ -46,8 +56,16 @@ class XTermTerminalWebComponent extends HTMLElement {
     );
   }
 
+  private getDisableStdin() {
+    return this.getAttribute('disableStdin') !== null;
+  }
+
   private getAttributeOrUndefined(attribute: string): string | undefined {
-    return super.getAttribute(attribute) ?? undefined;
+    return this.getAttribute(attribute) ?? undefined;
+  }
+
+  public sendInputToTerminal(input: string) {
+    window.electron.console.sendToTerminal(this.consoleId, input + '\r');
   }
 }
 

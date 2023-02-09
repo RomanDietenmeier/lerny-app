@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import * as monaco from 'monaco-editor';
 import { loader } from '@monaco-editor/react';
 import './web-components/code-editor/CodeEditorWebComponent';
-import { initKeyboardCapture } from './globals/keyboardCapture';
 import { store } from './redux/store';
 import { Provider } from 'react-redux';
 import { App } from './App';
@@ -29,7 +28,6 @@ self.MonacoEnvironment = {
 localStorage.setItem('test', localStorage.getItem('test') + '_');
 
 loader.config({ monaco });
-initKeyboardCapture();
 
 window.handleMarkdownAnchorClick = (href: string) => {
   window.electron.openExternalLink(href);

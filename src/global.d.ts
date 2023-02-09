@@ -43,7 +43,6 @@ declare global {
       openExternalLink: (link: string) => void;
     };
     handleMarkdownAnchorClick: (href: string) => void;
-    keyPressMap: { [key: string]: undefined | boolean };
     webComponent: {
       getContentOfHTMLCommentString(string: string): string;
     };
