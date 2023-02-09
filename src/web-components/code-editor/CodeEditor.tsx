@@ -26,6 +26,7 @@ const monacoEditorOptions: editor.IStandaloneEditorConstructionOptions = {
 export type CodeEditorProps = {
   filename?: string;
   folderStructure?: Array<string>;
+  initialCodeEditorValue?: string;
   learnProject?: string;
   monacoEditorProps?: EditorProps;
   setEditor?: (editor: editor.IStandaloneCodeEditor) => void;
@@ -34,12 +35,13 @@ export type CodeEditorProps = {
 export function CodeEditor({
   filename,
   folderStructure,
+  initialCodeEditorValue,
   learnProject,
   monacoEditorProps,
   setEditor,
 }: CodeEditorProps): JSX.Element {
   const currentTheme = useSelector(selectCurrentTheme);
-  const [codeEditor, SetCodeEditor] =
+  const [codeEditor, setCodeEditor] =
     useState<editor.IStandaloneCodeEditor | null>(null);
 
   useEffect(() => {
@@ -69,11 +71,21 @@ export function CodeEditor({
     };
   }, [learnProject, folderStructure, filename, codeEditor]);
 
-  function handleEditorDidMount(
+  async function handleEditorDidMount(
     editor: editor.IStandaloneCodeEditor,
     _monaco: MonacoEditorType
   ) {
-    SetCodeEditor(editor);
+    setCodeEditor(editor);
+    const loadedSourceFile =
+      !learnProject || !filename
+        ? undefined
+        : await window.electron.learnPage.loadFile(
+            learnProject,
+            filename,
+            folderStructure
+          );
+
+    editor.setValue(loadedSourceFile || initialCodeEditorValue || '');
 
     if (!setEditor) return;
     setEditor(editor);

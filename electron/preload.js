@@ -10,6 +10,7 @@ const persistentLocalDataRootPath = runningOnWindows
 const localPersistentDataPath = `${persistentLocalDataRootPath}/lerny-app`;
 const localPersistentProjectsPath = `${localPersistentDataPath}/projects`;
 const learnPageExtension = '.lap';
+const textFileEncoding = 'utf-8';
 
 const dumpLocalDataRootPath = runningOnWindows
   ? process.env.localappdata
@@ -90,8 +91,26 @@ contextBridge.exposeInMainWorld('electron', {
     async loadLearnPage(learnProject, learnPage) {
       return await fs.promises.readFile(
         `${localPersistentProjectsPath}/${learnProject}/${learnPage}`,
-        { encoding: 'utf-8' }
+        { encoding: textFileEncoding }
       );
+    },
+    async loadFile(learnProject, filename, folderStructure = []) {
+      let dir = `${localDumpDataPath}/${learnProject}/`;
+      for (const folder of folderStructure) {
+        dir += `${folder}/`;
+      }
+      const filePath = `${dir}/${filename}`;
+      try {
+        return await fs.promises.readFile(filePath, {
+          encoding: textFileEncoding,
+        });
+      } catch (err) {
+        if (err && err.code === 'ENOENT') {
+          console.warn(`${`${dir}/${filename}`} does not exist`);
+          return undefined;
+        }
+        console.error(err);
+      }
     },
     async saveFile(content, learnProject, filename, folderStructure = []) {
       if (!content || !learnProject || !filename) {
@@ -113,7 +132,11 @@ contextBridge.exposeInMainWorld('electron', {
       ) {
         return;
       }
-      await fs.promises.writeFile(`${dir}/${filename}`, content, 'utf-8');
+      await fs.promises.writeFile(
+        `${dir}/${filename}`,
+        content,
+        textFileEncoding
+      );
     },
     async saveLearnPage(content, learnPage, learnProject) {
       if (!learnProject) {
@@ -150,7 +173,7 @@ contextBridge.exposeInMainWorld('electron', {
       await fs.promises.writeFile(
         `${localPersistentProjectsPath}/${learnProject}/${learnPage}${learnPageExtension}`,
         content,
-        'utf-8'
+        textFileEncoding
       );
       return [learnPage, learnProject];
     },

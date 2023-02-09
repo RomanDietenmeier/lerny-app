@@ -10,21 +10,14 @@ import { editor } from 'monaco-editor';
 import { EditorProps } from '@monaco-editor/react';
 
 type Methods = {
-  filename?: (filename: string) => void;
-  folderStructure?: (folderStructure: Array<string>) => void;
-  learnProject?: (learnProject: string) => void;
-  monacoEditorProps?: (monacoEditorProps: EditorProps) => void;
+  filename?: (filename?: string) => void;
+  folderStructure?: (folderStructure?: Array<string>) => void;
+  initialCodeEditorValue?: (initialCodeEditorValue?: string) => void;
+  learnProject?: (learnProject?: string) => void;
+  monacoEditorProps?: (monacoEditorProps?: EditorProps) => void;
   setEditor?: (
-    setEditor: (editor: editor.IStandaloneCodeEditor) => void
+    setEditor?: (editor: editor.IStandaloneCodeEditor) => void
   ) => void;
-};
-
-type MethodValues = {
-  filename?: string;
-  folderStructure?: Array<string>;
-  learnProject?: string;
-  monacoEditorProps?: EditorProps;
-  setEditor?: (editor: editor.IStandaloneCodeEditor) => void;
 };
 
 export const CodeEditorWebComponentHTMLTag = 'code-editor';
@@ -37,7 +30,7 @@ class CodeEditorWebComponent extends HTMLElement {
 
   private async callMethod<T extends keyof Methods>(
     method: T,
-    value: MethodValues[T]
+    value: CodeEditorProps[T]
   ) {
     if (!this.methodsSetup) {
       return setTimeout(() => {
@@ -64,6 +57,9 @@ class CodeEditorWebComponent extends HTMLElement {
     const [folderStructure, setFolderStructure] = useState(
       props.folderStructure
     );
+    const [initialCodeEditorValue, setInitialCodeEditorValue] = useState(
+      props.initialCodeEditorValue
+    );
     const [learnProject, setLearnProject] = useState(props.learnProject);
     const [monacoEditorProps, setMonacoEditorProps] = useState(
       props.monacoEditorProps
@@ -73,6 +69,7 @@ class CodeEditorWebComponent extends HTMLElement {
     useEffect(() => {
       this.methods['filename'] = setFilename;
       this.methods['folderStructure'] = setFolderStructure;
+      this.methods['initialCodeEditorValue'] = setInitialCodeEditorValue;
       this.methods['learnProject'] = setLearnProject;
       this.methods['monacoEditorProps'] = setMonacoEditorProps;
       this.methods['setEditor'] = setSetEditor;
@@ -83,6 +80,7 @@ class CodeEditorWebComponent extends HTMLElement {
       <CodeEditor
         filename={filename}
         folderStructure={folderStructure}
+        initialCodeEditorValue={initialCodeEditorValue}
         learnProject={learnProject}
         setEditor={setEditor}
         monacoEditorProps={monacoEditorProps}
@@ -115,6 +113,11 @@ class CodeEditorWebComponent extends HTMLElement {
             <this.CodeEditor
               filename={this.getAttributeOrUndefined('filename')}
               folderStructure={this.getAttributeFolderStructure()}
+              //ToDo this should be a function not exclusive to this webComponent
+              initialCodeEditorValue={this.innerHTML.substring(
+                4,
+                this.innerHTML.length - 3
+              )}
               learnProject={this.getAttributeOrUndefined('learnProject')}
               monacoEditorProps={{
                 language: this.getAttributeOrUndefined('language'),

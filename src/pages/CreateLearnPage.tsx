@@ -56,9 +56,9 @@ export function CreateLearnPage() {
         editor.setValue(newValue);
       }
 
-      const updateFileDebounced = _.debounce(() => {
+      const updateFileDebounced = _.debounce(async () => {
         setMarkDownContent(editor.getValue());
-        saveLearnPage();
+        await saveLearnPage();
       }, Timeouts.DebounceSaveTimeout);
       const disposeModelListener = editor.onDidChangeModelContent((_evt) => {
         updateFileDebounced();
