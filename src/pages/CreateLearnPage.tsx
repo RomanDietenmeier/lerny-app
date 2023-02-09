@@ -11,16 +11,15 @@ import {
   CreateLearnPageWrapper,
 } from './CreateLearnPage.style';
 import _ from 'lodash';
-import { useSearchParams } from 'react-router-dom';
 import { Timeouts } from '../constants/timeouts';
+import { useSearchParamsOnSelectedLearnPage } from '../hooks/LearnPageHooks';
 
-export const CreateLearnPageSearchParameterProject = 'project';
-export const CreateLearnPageSearchParameterPage = 'page';
 const learnPageExtension = '.lap';
 
 export function CreateLearnPage() {
-  const [queryParameters] = useSearchParams();
-  const [learnProject, setLearnProject] = useState('');
+  const { learnProject: searchParameterLearnProject, learnPage } =
+    useSearchParamsOnSelectedLearnPage();
+  const [learnProject, setLearnProject] = useState(searchParameterLearnProject);
   const [markDownContent, setMarkDownContent] = useState('');
   const [editor, setEditor] = useState<
     editor.IStandaloneCodeEditor | undefined
@@ -31,29 +30,29 @@ export function CreateLearnPage() {
     async (isMounted) => {
       if (!editor || !titleInputRef.current) return;
 
-      const learnProject = queryParameters.get(
-        CreateLearnPageSearchParameterProject
-      );
-      let learnPage = queryParameters.get(CreateLearnPageSearchParameterPage);
       if (learnProject && learnPage) {
-        const newValue = await window.electron.learnPage.loadLearnPage(
-          learnProject,
-          learnPage
-        );
-        if (!isMounted()) return;
         setLearnProject(learnProject);
 
         if (
           learnPage.substring(learnPage.length - learnPageExtension.length) ===
           learnPageExtension
         ) {
-          learnPage = learnPage.substring(
+          titleInputRef.current.value = learnPage.substring(
             0,
             learnPage.length - learnPageExtension.length
           );
+        } else {
+          titleInputRef.current.value = learnPage;
         }
-        titleInputRef.current.value = learnPage;
-        editor.setValue(newValue);
+
+        const loadedLearnPageContent =
+          await window.electron.learnPage.loadLearnPage(
+            learnProject,
+            learnPage
+          );
+        if (!isMounted()) return;
+
+        editor.setValue(loadedLearnPageContent);
       }
 
       const updateFileDebounced = _.debounce(async () => {

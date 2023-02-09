@@ -4,6 +4,8 @@ export const MarkdownViewerWrapper = styled.div`
   height: 100%;
   width: 100%;
 
+  background-color: ${(p) => p.theme.backgroundColor};
+
   overflow-y: scroll;
   overflow-x: auto;
 

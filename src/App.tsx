@@ -1,17 +1,25 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { NavLink, Route, Routes, useNavigate } from 'react-router-dom';
+import {
+  NavLink,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { AppWrapper } from './App.style';
 import { RouterRoutes } from './constants/routerRoutes';
 import { CreateLearnPage } from './pages/CreateLearnPage';
 import { EditSelectionPage } from './pages/EditSelectionPage';
+import { LearnPage } from './pages/LearnPage';
 import { StartPage } from './pages/StartPage';
 import { selectCurrentTheme } from './redux/selectors/themeSelectors';
 import { themeChangeCurrentTheme } from './redux/slices/themeSlice';
 
 export function App() {
   const navigate = useNavigate();
+  const { pathname: pagePathName } = useLocation();
   const currentTheme = useSelector(selectCurrentTheme);
   const dispatch = useDispatch();
   function swapTheme() {
@@ -35,10 +43,12 @@ export function App() {
         </button>
         <Routes>
           <Route path={RouterRoutes.Root} element={<StartPage />} />
+
           <Route
             path={RouterRoutes.CreateLearnPage}
             element={<CreateLearnPage />}
           />
+          <Route path={RouterRoutes.LearnPage} element={<LearnPage />} />
           <Route
             path={RouterRoutes.SelectLearnPageToEdit}
             element={<EditSelectionPage />}
@@ -47,7 +57,7 @@ export function App() {
             path="*"
             element={
               <div style={{ color: '#fff' }}>
-                <div>ERROR</div>
+                <h2>&quot;{pagePathName}&quot; does not exist yet</h2>
                 <NavLink to="/">ROOT</NavLink>
               </div>
             }

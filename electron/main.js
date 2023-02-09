@@ -1,10 +1,9 @@
 const electron = require('electron');
 const path = require('path');
-const os = require('os');
 const fs = require('fs');
 const node_pty = require('node-pty');
 const validator = require('validator');
-const { localDumpDataPath } = require('./electronConstants');
+const { localDumpDataPath, runningOnWindows } = require('./electronConstants');
 
 const inDevelopment = process.env.NODE_ENV === 'development';
 
@@ -27,8 +26,6 @@ async function installDevToolExtensions() {
   }
 }
 
-//on this line == instead of === is required
-const runningOnWindows = os.platform == 'win32';
 const shell = runningOnWindows ? 'powershell.exe' : 'bash';
 
 const terminals = {};
