@@ -1,8 +1,10 @@
 const electron = require('electron');
 const path = require('path');
 const os = require('os');
+const fs = require('fs');
 const node_pty = require('node-pty');
 const validator = require('validator');
+const { localDumpDataPath } = require('./electronConstants');
 
 const inDevelopment = process.env.NODE_ENV === 'development';
 
@@ -31,12 +33,15 @@ const shell = runningOnWindows ? 'powershell.exe' : 'bash';
 
 const terminals = {};
 
-electron.ipcMain.on('console.createConsole', (evt, id) => {
-  const ptyProcess = node_pty.spawn(shell, [], {
+electron.ipcMain.on('console.createConsole', (evt, id, folderPath) => {
+  const fullFolderPath = `${localDumpDataPath}/${folderPath || ''}`;
+
+  ptyProcess = node_pty.spawn(shell, [], {
     name: 'xterm-color',
-    cwd: runningOnWindows ? process.env.USERPROFILE : process.env.HOME,
+    cwd: fs.existsSync(fullFolderPath) ? fullFolderPath : localDumpDataPath,
     env: process.env,
   });
+
   terminals[id] = ptyProcess;
 
   const dispose = ptyProcess.onData((data) => {

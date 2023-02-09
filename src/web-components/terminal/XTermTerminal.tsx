@@ -3,7 +3,17 @@ import { Terminal } from 'xterm';
 import { FitAddon, ITerminalDimensions } from 'xterm-addon-fit';
 import * as _ from 'lodash';
 
-export function XTermTerminal(): JSX.Element {
+export type XTermTerminalProps = {
+  initialInput?: string;
+  folderPath?: string;
+  height?: string;
+};
+
+export function XTermTerminal({
+  initialInput,
+  folderPath,
+  height,
+}: XTermTerminalProps): JSX.Element {
   const terminalRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!terminalRef.current) return;
@@ -15,7 +25,7 @@ export function XTermTerminal(): JSX.Element {
     fitAddon.activate(terminal);
     fitAddon.fit();
 
-    const consoleId = window.electron.console.createConsole();
+    const consoleId = window.electron.console.createConsole(folderPath);
     window.electron.console.onIncomingData(consoleId, (evt, data) => {
       terminal.write(data);
     });
@@ -36,10 +46,14 @@ export function XTermTerminal(): JSX.Element {
     }, 500);
     window.addEventListener('resize', resizeTerminalDebounces);
 
+    if (initialInput) {
+      window.electron.console.sendToTerminal(consoleId, initialInput);
+    }
+
     return () => {
       window.removeEventListener('resize', resizeTerminalDebounces);
       window.electron.console.killConsole(consoleId);
     };
   }, [terminalRef]);
-  return <div ref={terminalRef} />;
+  return <div style={{ height }} ref={terminalRef} />;
 }
