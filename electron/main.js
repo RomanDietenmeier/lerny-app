@@ -54,6 +54,7 @@ electron.ipcMain.on('console.createConsole', (evt, id, folderPath) => {
   });
 
   electron.ipcMain.on(`console.resize.${id}`, (evt, { cols, rows }) => {
+    if (!cols || !rows) return;
     ptyProcess.resize(cols, rows);
   });
 });

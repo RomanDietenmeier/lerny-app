@@ -12,7 +12,7 @@ export type XTermTerminalProps = {
 export function XTermTerminal({
   initialInput,
   folderPath,
-  height,
+  height = '4rem',
 }: XTermTerminalProps): JSX.Element {
   const terminalRef = useRef<HTMLDivElement>(null);
   useEffect(() => {

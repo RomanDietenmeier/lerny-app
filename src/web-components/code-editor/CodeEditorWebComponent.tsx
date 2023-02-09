@@ -95,7 +95,10 @@ class CodeEditorWebComponent extends HTMLElement {
       shadowRoot.append(duplicateElement);
     }
 
-    styleSlot.style.setProperty('height', this.getAttribute('height'));
+    styleSlot.style.setProperty(
+      'height',
+      this.getAttribute('height') ?? '4rem'
+    );
 
     shadowRoot.append(styleSlot);
     styleSlot.append(mountPoint);
