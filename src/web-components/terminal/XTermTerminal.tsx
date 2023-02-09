@@ -4,20 +4,24 @@ import { FitAddon, ITerminalDimensions } from 'xterm-addon-fit';
 import * as _ from 'lodash';
 
 export type XTermTerminalProps = {
-  initialInput?: string;
+  consoleId: number;
+  disableStdin?: boolean;
   folderPath?: string;
   height?: string;
+  initialInput?: string;
 };
 
 export function XTermTerminal({
-  initialInput,
-  folderPath,
+  consoleId,
+  disableStdin,
   height = '4rem',
+  initialInput,
 }: XTermTerminalProps): JSX.Element {
   const terminalRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (!terminalRef.current) return;
-    const terminal = new Terminal({ disableStdin: false });
+    const terminal = new Terminal({ disableStdin });
     terminal.open(terminalRef.current);
 
     const fitAddon = new FitAddon();
@@ -25,7 +29,6 @@ export function XTermTerminal({
     fitAddon.activate(terminal);
     fitAddon.fit();
 
-    const consoleId = window.electron.console.createConsole(folderPath);
     window.electron.console.onIncomingData(consoleId, (evt, data) => {
       terminal.write(data);
     });
