@@ -23,6 +23,11 @@ declare global {
           learnProject: string,
           learnPage: string
         ) => Promise<string>;
+        loadFile: (
+          learnProject: string,
+          filename: string,
+          folderStructure?: Array<string>
+        ) => Promise<string>;
         saveFile: (
           content: string,
           learnProject: string,

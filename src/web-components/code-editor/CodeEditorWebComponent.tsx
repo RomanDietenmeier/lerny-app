@@ -113,6 +113,7 @@ class CodeEditorWebComponent extends HTMLElement {
             <this.CodeEditor
               filename={this.getAttributeOrUndefined('filename')}
               folderStructure={this.getAttributeFolderStructure()}
+              //ToDo this should be a function not exclusive to this webComponent
               initialCodeEditorValue={this.innerHTML.substring(
                 4,
                 this.innerHTML.length - 3

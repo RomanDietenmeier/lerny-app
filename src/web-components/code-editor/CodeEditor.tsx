@@ -71,12 +71,21 @@ export function CodeEditor({
     };
   }, [learnProject, folderStructure, filename, codeEditor]);
 
-  function handleEditorDidMount(
+  async function handleEditorDidMount(
     editor: editor.IStandaloneCodeEditor,
     _monaco: MonacoEditorType
   ) {
     setCodeEditor(editor);
-    editor.setValue(initialCodeEditorValue || '');
+    const loadedSourceFile =
+      !learnProject || !filename
+        ? undefined
+        : await window.electron.learnPage.loadFile(
+            learnProject,
+            filename,
+            folderStructure
+          );
+
+    editor.setValue(loadedSourceFile || initialCodeEditorValue || '');
 
     if (!setEditor) return;
     setEditor(editor);
