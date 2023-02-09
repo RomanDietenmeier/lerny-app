@@ -1,21 +1,15 @@
 const { contextBridge, ipcRenderer } = require('electron');
-const os = require('os');
+
 const fs = require('fs');
 
-//on this line == instead of === is required
-const runningOnWindows = os.platform == 'win32';
-const persistentLocalDataRootPath = runningOnWindows
-  ? process.env.appdata
-  : process.env.HOME;
-const localPersistentDataPath = `${persistentLocalDataRootPath}/lerny-app`;
-const localPersistentProjectsPath = `${localPersistentDataPath}/projects`;
-const learnPageExtension = '.lap';
-const textFileEncoding = 'utf-8';
-
-const dumpLocalDataRootPath = runningOnWindows
-  ? process.env.localappdata
-  : `${process.env.HOME}/dump`;
-const localDumpDataPath = `${dumpLocalDataRootPath}/lerny-app`;
+const {
+  dumpLocalDataRootPath,
+  learnPageExtension,
+  localDumpDataPath,
+  localPersistentDataPath,
+  localPersistentProjectsPath,
+  textFileEncoding,
+} = require('./electronConstants');
 
 let uniqueId = new Date().getTime();
 function getUniqueId() {
@@ -38,9 +32,9 @@ async function createDirs(paths) {
 
 contextBridge.exposeInMainWorld('electron', {
   console: {
-    createConsole() {
+    createConsole(folderPath) {
       const id = getUniqueId();
-      ipcRenderer.send('console.createConsole', id);
+      ipcRenderer.send('console.createConsole', id, folderPath);
       return id;
     },
     onIncomingData(id, listener) {

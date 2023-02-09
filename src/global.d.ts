@@ -4,7 +4,7 @@ declare global {
   interface Window {
     electron: {
       console: {
-        createConsole: () => number;
+        createConsole: (folderPath?: string) => number;
         onIncomingData: (
           id: number,
           listener: (event: Electron.IpcRendererEvent, data: string) => void
@@ -42,8 +42,11 @@ declare global {
       };
       openExternalLink: (link: string) => void;
     };
-    keyPressMap: { [key: string]: undefined | boolean };
     handleMarkdownAnchorClick: (href: string) => void;
+    keyPressMap: { [key: string]: undefined | boolean };
+    webComponent: {
+      getContentOfHTMLCommentString(string: string): string;
+    };
   }
 }
 

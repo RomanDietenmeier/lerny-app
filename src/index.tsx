@@ -35,6 +35,11 @@ window.handleMarkdownAnchorClick = (href: string) => {
   window.electron.openExternalLink(href);
 };
 
+window.webComponent = {
+  getContentOfHTMLCommentString: (string) =>
+    string.substring(4, string.length - 3).replaceAll('\n', '\r'),
+};
+
 (async () => {
   await loader.init();
   ReactDOM.render(

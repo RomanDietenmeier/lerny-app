@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import useAsyncEffect from 'use-async-effect';
 import { ShowLearnProjects } from '../components/ShowLearnProjects';
 import { RouterRoutes } from '../constants/routerRoutes';
+import { useNavigateOnSelectedLearnPage } from '../hooks/LearnPageHooks';
 import { selectLearnProjects } from '../redux/selectors/learnProjectsSelectors';
 import { setLearnProjects } from '../redux/slices/learnProjectsSlice';
 import {
@@ -14,6 +15,9 @@ import {
 
 export function StartPage() {
   const dispatch = useDispatch();
+  const [onClickOnLearnPage] = useNavigateOnSelectedLearnPage(
+    RouterRoutes.LearnPage
+  );
   const learnProjects = useSelector(selectLearnProjects);
 
   useAsyncEffect(async () => {
@@ -26,18 +30,24 @@ export function StartPage() {
   return (
     <StartPageWrapper>
       <StartPageButtonWrapper>
-        <StartPageNavLink to="/import">
-          <StartPageButton>import</StartPageButton>
+        <StartPageNavLink to={RouterRoutes.CreateLearnPage}>
+          <StartPageButton>create</StartPageButton>
         </StartPageNavLink>
         <StartPageNavLink to={RouterRoutes.SelectLearnPageToEdit}>
           <StartPageButton>edit</StartPageButton>
         </StartPageNavLink>
-        <StartPageNavLink to={RouterRoutes.CreateLearnPage}>
-          <StartPageButton>create</StartPageButton>
+        <StartPageNavLink to="/import">
+          <StartPageButton>import</StartPageButton>
+        </StartPageNavLink>
+        <StartPageNavLink to="/export">
+          <StartPageButton>export</StartPageButton>
         </StartPageNavLink>
       </StartPageButtonWrapper>
       <div style={{ width: '50%', overflow: 'auto' }}>
-        <ShowLearnProjects learnProjects={learnProjects} />
+        <ShowLearnProjects
+          learnProjects={learnProjects}
+          onClickOnLearnPage={onClickOnLearnPage}
+        />
       </div>
     </StartPageWrapper>
   );

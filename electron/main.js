@@ -1,8 +1,9 @@
 const electron = require('electron');
 const path = require('path');
-const os = require('os');
+const fs = require('fs');
 const node_pty = require('node-pty');
 const validator = require('validator');
+const { localDumpDataPath, runningOnWindows } = require('./electronConstants');
 
 const inDevelopment = process.env.NODE_ENV === 'development';
 
@@ -25,18 +26,19 @@ async function installDevToolExtensions() {
   }
 }
 
-//on this line == instead of === is required
-const runningOnWindows = os.platform == 'win32';
 const shell = runningOnWindows ? 'powershell.exe' : 'bash';
 
 const terminals = {};
 
-electron.ipcMain.on('console.createConsole', (evt, id) => {
-  const ptyProcess = node_pty.spawn(shell, [], {
+electron.ipcMain.on('console.createConsole', (evt, id, folderPath) => {
+  const fullFolderPath = `${localDumpDataPath}/${folderPath || ''}`;
+
+  ptyProcess = node_pty.spawn(shell, [], {
     name: 'xterm-color',
-    cwd: runningOnWindows ? process.env.USERPROFILE : process.env.HOME,
+    cwd: fs.existsSync(fullFolderPath) ? fullFolderPath : localDumpDataPath,
     env: process.env,
   });
+
   terminals[id] = ptyProcess;
 
   const dispose = ptyProcess.onData((data) => {
@@ -52,6 +54,7 @@ electron.ipcMain.on('console.createConsole', (evt, id) => {
   });
 
   electron.ipcMain.on(`console.resize.${id}`, (evt, { cols, rows }) => {
+    if (!cols || !rows) return;
     ptyProcess.resize(cols, rows);
   });
 });
