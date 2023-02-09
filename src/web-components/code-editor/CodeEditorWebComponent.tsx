@@ -113,7 +113,10 @@ class CodeEditorWebComponent extends HTMLElement {
             <this.CodeEditor
               filename={this.getAttributeOrUndefined('filename')}
               folderStructure={this.getAttributeFolderStructure()}
-              initialCodeEditorValue={this.innerHTML}
+              initialCodeEditorValue={this.innerHTML.substring(
+                4,
+                this.innerHTML.length - 3
+              )}
               learnProject={this.getAttributeOrUndefined('learnProject')}
               monacoEditorProps={{
                 language: this.getAttributeOrUndefined('language'),

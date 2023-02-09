@@ -9,6 +9,9 @@ import {
 import { CodeEditor } from '../web-components/code-editor/CodeEditor';
 import { XTermTerminal } from '../web-components/terminal/XTermTerminal';
 import { MarkdownViewerWrapper } from './MarkdownViewer.style';
+import * as base64 from 'base-64';
+import { base64Tag } from '../web-components/base64/base64ConverterWebComponent';
+import { webComponentTagsToWrap } from '../constants/webComponentTags';
 
 const md = MarkdownIt('default', {
   html: true,
@@ -21,6 +24,42 @@ md.use(markdownItComponentPlugin(markdownItJsxJSONs.CodeEditor));
 md.use(markdownItComponentPlugin(markdownItJsxJSONs.Terminal));
 
 function renderMarkdownToJSX(markdown: string) {
+  for (const componentTag of webComponentTagsToWrap) {
+    const openComponentString = `<${componentTag}`;
+    const closeComponentString = `</${componentTag}>`;
+
+    let startPoint = 0;
+
+    while (startPoint > -1) {
+      const startComponentIndex = markdown.indexOf(
+        openComponentString,
+        startPoint
+      );
+      const endStartComponentIndex = markdown.indexOf(
+        closeComponentString,
+        startPoint
+      );
+      const endComponentIndex =
+        endStartComponentIndex + closeComponentString.length;
+
+      if (startComponentIndex > -1 && endStartComponentIndex > -1) {
+        const componentSubstring = markdown.substring(
+          startComponentIndex,
+          endComponentIndex
+        );
+        markdown = markdown.replace(
+          componentSubstring,
+          `${base64Tag.open}${base64.encode(componentSubstring)}${
+            base64Tag.end
+          }`
+        );
+      }
+
+      startPoint =
+        endStartComponentIndex > startPoint ? endStartComponentIndex : -1;
+    }
+  }
+
   markdown = md.render(markdown);
   const jsxElements: Array<JSX.Element> = [];
   let index = 0;
