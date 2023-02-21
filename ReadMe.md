@@ -3,7 +3,7 @@
 ![Learn Page Example](./read-me-contents/Lerny%20App%20example%20Learn%20Page%20showcase.jpg 'Learn Page')
 
 # Set up Development Environment
-
+- [Windows Setup Video](https://youtu.be/fH2xYBm0YYg)
 - clone project
 - use node version v16.14.2
   - nvm install 16.14.2
