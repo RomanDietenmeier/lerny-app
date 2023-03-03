@@ -10,10 +10,15 @@ import { StyleSheetManager } from 'styled-components';
 export const CodeEditorWebComponentHTMLTag = 'code-editor';
 
 class CodeEditorWebComponent extends HTMLElement {
+  private reactRenderNode: HTMLSpanElement | null = null;
+
   connectedCallback() {
+    if (!this.isConnected || this.reactRenderNode) {
+      return;
+    }
     const shadowRoot = this.attachShadow({ mode: 'open' });
     const styleSlot = document.createElement('section');
-    const mountPoint = document.createElement('span');
+    this.reactRenderNode = document.createElement('span');
     const styleElements = document.head.querySelectorAll('style');
 
     for (const element of styleElements) {
@@ -25,10 +30,10 @@ class CodeEditorWebComponent extends HTMLElement {
       'height',
       this.getAttribute('height') ?? '4rem'
     );
-    mountPoint.style.setProperty('height', '100%');
+    this.reactRenderNode.style.setProperty('height', '100%');
 
     shadowRoot.append(styleSlot);
-    styleSlot.append(mountPoint);
+    styleSlot.append(this.reactRenderNode);
 
     const terminal: CodeEditorTerminalProps = {
       runCommand: this.getAttributeOrUndefined('runCommand'),
@@ -57,7 +62,7 @@ class CodeEditorWebComponent extends HTMLElement {
           </ThemeProvider>
         </StyleSheetManager>
       </Provider>,
-      mountPoint
+      this.reactRenderNode
     );
   }
 
@@ -71,6 +76,11 @@ class CodeEditorWebComponent extends HTMLElement {
       return undefined;
     }
     return folderStructure.split('/');
+  }
+
+  disconnectedCallback() {
+    if (!this.reactRenderNode) return;
+    ReactDOM.unmountComponentAtNode(this.reactRenderNode);
   }
 }
 
