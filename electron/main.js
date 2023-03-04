@@ -33,7 +33,7 @@ const terminals = {};
 electron.ipcMain.on('console.createConsole', (evt, id, folderPath) => {
   const fullFolderPath = `${localDumpDataPath}/${folderPath || ''}`;
 
-  ptyProcess = node_pty.spawn(shell, [], {
+  let ptyProcess = node_pty.spawn(shell, [], {
     name: 'xterm-color',
     cwd: fs.existsSync(fullFolderPath) ? fullFolderPath : localDumpDataPath,
     env: process.env,
