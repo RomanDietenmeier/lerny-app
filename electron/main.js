@@ -33,7 +33,7 @@ const terminals = {};
 electron.ipcMain.on('console.createConsole', (evt, id, folderPath) => {
   const fullFolderPath = `${localDumpDataPath}/${folderPath || ''}`;
 
-  ptyProcess = node_pty.spawn(shell, [], {
+  let ptyProcess = node_pty.spawn(shell, [], {
     name: 'xterm-color',
     cwd: fs.existsSync(fullFolderPath) ? fullFolderPath : localDumpDataPath,
     env: process.env,
@@ -53,8 +53,9 @@ electron.ipcMain.on('console.createConsole', (evt, id, folderPath) => {
     ptyProcess.write(data);
   });
 
-  electron.ipcMain.on(`console.resize.${id}`, (evt, { cols, rows }) => {
-    if (!cols || !rows) return;
+  electron.ipcMain.on(`console.resize.${id}`, (evt, colsAndRows) => {
+    if (!colsAndRows || !colsAndRows.cols || !colsAndRows.rows) return;
+    const { cols, rows } = colsAndRows;
     ptyProcess.resize(cols, rows);
   });
 });

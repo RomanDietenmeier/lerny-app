@@ -11,6 +11,7 @@ export const XTermTerminalWebComponentHTMLTag = 'xterm-terminal';
 
 export class XTermTerminalWebComponent extends HTMLElement {
   private consoleId: number;
+  private reactRenderNode: HTMLSpanElement | null = null;
 
   constructor() {
     super();
@@ -22,7 +23,7 @@ export class XTermTerminalWebComponent extends HTMLElement {
   connectedCallback() {
     const shadowRoot = this.attachShadow({ mode: 'open' });
     const styleSlot = document.createElement('section');
-    const mountPoint = document.createElement('span');
+    this.reactRenderNode = document.createElement('span');
     const styleElements = document.head.querySelectorAll('style');
 
     for (const element of styleElements) {
@@ -33,7 +34,7 @@ export class XTermTerminalWebComponent extends HTMLElement {
     styleSlot.style.setProperty('height', this.getAttribute('height'));
 
     shadowRoot.append(styleSlot);
-    styleSlot.append(mountPoint);
+    styleSlot.append(this.reactRenderNode);
 
     ReactDOM.render(
       <Provider store={store}>
@@ -52,7 +53,7 @@ export class XTermTerminalWebComponent extends HTMLElement {
           </ThemeProvider>
         </StyleSheetManager>
       </Provider>,
-      mountPoint
+      this.reactRenderNode
     );
   }
 
@@ -66,6 +67,11 @@ export class XTermTerminalWebComponent extends HTMLElement {
 
   public sendInputToTerminal(input: string) {
     window.electron.console.sendToTerminal(this.consoleId, input + '\r');
+  }
+
+  disconnectedCallback() {
+    if (!this.reactRenderNode) return;
+    ReactDOM.unmountComponentAtNode(this.reactRenderNode);
   }
 }
 
