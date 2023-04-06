@@ -36,6 +36,7 @@
     "styled-components": "5.3.6",
     "use-async-effect": "2.2.7",
     "validator": "13.7.0",
+    "xml-js": "1.6.11",
     "xterm": "5.0.0",
     "xterm-addon-fit": "0.6.0"
   },

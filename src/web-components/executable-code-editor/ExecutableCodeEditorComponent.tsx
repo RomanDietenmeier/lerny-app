@@ -7,6 +7,7 @@ import { store } from 'redux/store';
 import { StyleSheetManager, ThemeProvider } from 'styled-components';
 import { CodeEditor } from 'web-components/code-editor/CodeEditor';
 import { XTermTerminal } from 'web-components/terminal/XTermTerminal';
+import { xml2js } from 'xml-js';
 
 export const ExecutableCodeEditorComponentHtmlTag = 'executable-code-editor';
 
@@ -54,6 +55,10 @@ class ExecutableCodeEditorComponent extends HTMLElement {
     shadowRoot.append(styleSlot);
     styleSlot.append(this.reactRenderNode);
 
+    const { starterCode } = retrieveXmlData(
+      window.webComponent.getContentOfHTMLCommentString(this.innerHTML)
+    );
+
     ReactDOM.render(
       <Provider store={store}>
         <StyleSheetManager target={styleSlot}>
@@ -61,7 +66,7 @@ class ExecutableCodeEditorComponent extends HTMLElement {
             theme={selectCurrentTheme(store.getState()).styledComponentsTheme}
           >
             <div style={{ height: codeEditorHeight }}>
-              <CodeEditor />
+              <CodeEditor initialCodeEditorValue={starterCode} />
             </div>
             <div style={{ height: terminalHeight }}>
               <XTermTerminal
@@ -76,18 +81,6 @@ class ExecutableCodeEditorComponent extends HTMLElement {
     );
   }
 
-  private getAttributeOrUndefined(attribute: string): string | undefined {
-    return this.getAttribute(attribute) ?? undefined;
-  }
-
-  private getAttributeFolderStructure(): Array<string> | undefined {
-    const folderStructure = this.getAttribute('folderStructure');
-    if (!folderStructure) {
-      return undefined;
-    }
-    return folderStructure.split('/');
-  }
-
   disconnectedCallback() {
     if (!this.reactRenderNode) return;
     ReactDOM.unmountComponentAtNode(this.reactRenderNode);
@@ -98,3 +91,10 @@ window.customElements.define(
   ExecutableCodeEditorComponentHtmlTag,
   ExecutableCodeEditorComponent
 );
+
+function retrieveXmlData(xmlString: string) {
+  const xml = xml2js(xmlString, { compact: true }) as {
+    'starter-code'?: { _text: string };
+  };
+  return { starterCode: xml['starter-code']?._text };
+}
