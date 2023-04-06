@@ -1,15 +1,15 @@
 {
   "name": "lerny-app",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "",
   "main": "electron/main.js",
   "scripts": {
+    "start": "concurrently --kill-others \"npm run webpack\" \"npm run electron\"",
+    "build": "npm run webpack-build && electron-packager . --out out --overwrite --ignore=\".\\b(gitignore)|\\b(src)|.\\b(nvmrc)|.\\b(vscode)|\\b(ReadMe.md).eslintrc.js|\\b(webpack.config.js)|\\b(notes.md)|.\\b(eslintrc.js)|.\\b(gitattributes)|.\\b(prettierrc)|.\\b(github)|\\b(tsconfig.json)\"",
+    "lint": "eslint src/**/*.tsx src/**/*.ts",
     "electron": "cross-env NODE_ENV=development electron electron/main.js",
-    "start": "concurrently --kill-others \"npm run watch-web\" \"npm run electron\"",
-    "watch-web": "webpack --mode=development --watch",
-    "build-web": "webpack --mode=production --progress",
-    "build": "npm run build-web && electron-packager . --out out --overwrite --ignore=\".\\b(gitignore)|\\b(src)|.\\b(nvmrc)|.\\b(vscode)|\\b(ReadMe.md).eslintrc.js|\\b(webpack.config.js)|\\b(notes.md)|.\\b(eslintrc.js)|.\\b(gitattributes)|.\\b(prettierrc)|.\\b(github)|\\b(tsconfig.json)\"",
-    "lint": "eslint src/**/*.tsx src/**/*.ts"
+    "webpack": "webpack --mode=development --watch",
+    "webpack-build": "webpack --mode=production --progress"
   },
   "repository": {
     "type": "git",
