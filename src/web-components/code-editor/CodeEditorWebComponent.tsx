@@ -14,7 +14,6 @@ const enum Attributes {
   FolderStructure = 'FolderStructure',
   Height = 'Height',
   Language = 'Language',
-  LearnProject = 'LearnProject',
 }
 
 class CodeEditorWebComponent extends HTMLElement {
@@ -55,9 +54,9 @@ class CodeEditorWebComponent extends HTMLElement {
               initialCodeEditorValue={window.webComponent.getContentOfHTMLCommentString(
                 this.innerHTML
               )}
-              learnProject={this.getAttributeOrUndefined(
-                Attributes.LearnProject
-              )}
+              learnProject={
+                store.getState().activeLearnPage.learnProject || undefined
+              }
               monacoEditorProps={{
                 language: this.getAttributeOrUndefined(Attributes.Language),
               }}

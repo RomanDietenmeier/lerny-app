@@ -10,7 +10,7 @@ export const XTermTerminalWebComponentHtmlTag = 'xterm-terminal';
 
 const enum Attributes {
   DisableStdin = 'DisableStdin',
-  FolderPath = 'FolderPath',
+  FolderStructure = 'FolderStructure',
   Height = 'Height',
 }
 
@@ -20,8 +20,11 @@ export class XTermTerminalWebComponent extends HTMLElement {
 
   constructor() {
     super();
+
     this.consoleId = window.electron.console.createConsole(
-      this.getAttributeOrUndefined(Attributes.FolderPath)
+      `${store.getState().activeLearnPage.learnProject || '.'}/${
+        this.getAttribute(Attributes.FolderStructure) || '.'
+      }`
     );
   }
 

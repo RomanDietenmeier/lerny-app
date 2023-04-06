@@ -1,10 +1,11 @@
 import { AppWrapper } from 'App.style';
 import { RouterRoutes } from 'constants/routerRoutes';
+import { useSearchParamsOnSelectedLearnPage } from 'hooks/LearnPageHooks';
 import { CreateLearnPage } from 'pages/CreateLearnPage';
 import { EditSelectionPage } from 'pages/EditSelectionPage';
 import { LearnPage } from 'pages/LearnPage';
 import { StartPage } from 'pages/StartPage';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   NavLink,
@@ -14,14 +15,17 @@ import {
   useNavigate,
 } from 'react-router-dom';
 import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
+import { setActiveLearnPage } from 'redux/slices/activeLearnPage';
 import { themeChangeCurrentTheme } from 'redux/slices/themeSlice';
 import { ThemeProvider } from 'styled-components';
 
 export function App() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const { pathname: pagePathName } = useLocation();
+  const activeLearnPage = useSearchParamsOnSelectedLearnPage();
   const currentTheme = useSelector(selectCurrentTheme);
-  const dispatch = useDispatch();
+
   function swapTheme() {
     if (currentTheme.monacoEditorTheme == 'vs-dark') {
       dispatch(themeChangeCurrentTheme('white'));
@@ -29,6 +33,10 @@ export function App() {
       dispatch(themeChangeCurrentTheme('dark'));
     }
   }
+
+  useEffect(() => {
+    dispatch(setActiveLearnPage(activeLearnPage));
+  }, [activeLearnPage]);
 
   return (
     <ThemeProvider theme={currentTheme.styledComponentsTheme}>

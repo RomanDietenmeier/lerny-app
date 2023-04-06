@@ -15,7 +15,6 @@ export const ExecutableCodeEditorComponentHtmlTag = 'executable-code-editor';
 const enum Attributes {
   FileName = 'FileName',
   FolderStructure = 'FolderStructure',
-  LearnProject = 'LearnProject',
   HeightCodeEditor = 'HeightCodeEditor',
   HeightTerminal = 'HeightTerminal',
   Language = 'Language',
@@ -27,8 +26,9 @@ class ExecutableCodeEditorComponent extends HTMLElement {
 
   constructor() {
     super();
+
     this.consoleId = window.electron.console.createConsole(
-      `${this.getAttribute(Attributes.LearnProject) || '.'}/${
+      `${store.getState().activeLearnPage.learnProject || '.'}/${
         this.getAttribute(Attributes.FolderStructure) || '.'
       }`
     );
@@ -79,9 +79,9 @@ class ExecutableCodeEditorComponent extends HTMLElement {
               <CodeEditor
                 filename={this.getAttributeOrUndefined(Attributes.FileName)}
                 folderStructure={this.getAttributeFolderStructure()}
-                learnProject={this.getAttributeOrUndefined(
-                  Attributes.LearnProject
-                )}
+                learnProject={
+                  store.getState().activeLearnPage.learnProject || undefined
+                }
                 initialCodeEditorValue={starterCode}
                 monacoEditorProps={{
                   language: this.getAttributeOrUndefined(Attributes.Language),
