@@ -9,6 +9,14 @@ import { CodeEditor } from 'web-components/code-editor/CodeEditor';
 
 export const CodeEditorWebComponentHtmlTag = 'code-editor';
 
+const enum Attributes {
+  Filename = 'Filename',
+  FolderStructure = 'FolderStructure',
+  Height = 'Height',
+  Language = 'Language',
+  LearnProject = 'LearnProject',
+}
+
 class CodeEditorWebComponent extends HTMLElement {
   private reactRenderNode: HTMLSpanElement | null = null;
 
@@ -28,7 +36,7 @@ class CodeEditorWebComponent extends HTMLElement {
 
     styleSlot.style.setProperty(
       'height',
-      this.getAttribute('height') ?? size.default.codeEditorHeight
+      this.getAttribute(Attributes.Height) ?? size.default.codeEditorHeight
     );
     this.reactRenderNode.style.setProperty('height', '100%');
 
@@ -42,14 +50,16 @@ class CodeEditorWebComponent extends HTMLElement {
             theme={selectCurrentTheme(store.getState()).styledComponentsTheme}
           >
             <CodeEditor
-              filename={this.getAttributeOrUndefined('filename')}
+              filename={this.getAttributeOrUndefined(Attributes.Filename)}
               folderStructure={this.getAttributeFolderStructure()}
               initialCodeEditorValue={window.webComponent.getContentOfHTMLCommentString(
                 this.innerHTML
               )}
-              learnProject={this.getAttributeOrUndefined('learnProject')}
+              learnProject={this.getAttributeOrUndefined(
+                Attributes.LearnProject
+              )}
               monacoEditorProps={{
-                language: this.getAttributeOrUndefined('language'),
+                language: this.getAttributeOrUndefined(Attributes.Language),
               }}
             />
           </ThemeProvider>
@@ -59,21 +69,21 @@ class CodeEditorWebComponent extends HTMLElement {
     );
   }
 
+  disconnectedCallback() {
+    if (!this.reactRenderNode) return;
+    ReactDOM.unmountComponentAtNode(this.reactRenderNode);
+  }
+
   private getAttributeOrUndefined(attribute: string): string | undefined {
     return this.getAttribute(attribute) ?? undefined;
   }
 
   private getAttributeFolderStructure(): Array<string> | undefined {
-    const folderStructure = this.getAttribute('folderStructure');
+    const folderStructure = this.getAttribute(Attributes.FolderStructure);
     if (!folderStructure) {
       return undefined;
     }
     return folderStructure.split('/');
-  }
-
-  disconnectedCallback() {
-    if (!this.reactRenderNode) return;
-    ReactDOM.unmountComponentAtNode(this.reactRenderNode);
   }
 }
 
