@@ -7,11 +7,6 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
 import 'styles/xtermOverride.css';
-import {
-  CodeEditorButton,
-  CodeEditorButtonsWrapper,
-} from 'web-components/code-editor/CodeEditor.style';
-import { XTermTerminalWebComponent } from 'web-components/terminal/XTermTerminalWebComponent';
 import 'xterm/css/xterm.css';
 
 type MonacoEditorType = typeof import('monaco-editor');
@@ -28,8 +23,6 @@ const monacoEditorOptions: editor.IStandaloneEditorConstructionOptions = {
   minimap: { enabled: false },
 };
 
-const executeTestButtonSpaceHeight = '2rem';
-
 export type CodeEditorTerminalProps = {
   runCommand?: string;
   testCommand?: string;
@@ -43,7 +36,6 @@ export type CodeEditorProps = {
   learnProject?: string;
   monacoEditorProps?: EditorProps;
   setEditor?: (editor: editor.IStandaloneCodeEditor) => void;
-  terminal?: CodeEditorTerminalProps;
 };
 
 export function CodeEditor({
@@ -53,7 +45,6 @@ export function CodeEditor({
   learnProject,
   monacoEditorProps,
   setEditor,
-  terminal = {},
 }: CodeEditorProps): JSX.Element {
   const currentTheme = useSelector(selectCurrentTheme);
   const [codeEditor, setCodeEditor] =
@@ -106,19 +97,6 @@ export function CodeEditor({
     setEditor(editor);
   }
 
-  const { terminalHtmlId, runCommand, testCommand } = terminal;
-  const terminalWebComponent =
-    (document.getElementById(
-      terminalHtmlId || ''
-    ) as XTermTerminalWebComponent) || null;
-
-  const monacoWrapperStyle = !terminalHtmlId
-    ? defaultMonacoWrapperStyle
-    : {
-        ...defaultMonacoWrapperStyle,
-        height: `calc(${defaultMonacoWrapperStyle.height} - ${executeTestButtonSpaceHeight})`,
-      };
-
   return (
     <>
       <MonacoEditor
@@ -130,34 +108,12 @@ export function CodeEditor({
           'vs-dark'
         }
         wrapperProps={{
-          style: { ...monacoWrapperStyle },
+          style: defaultMonacoWrapperStyle,
           ...monacoEditorProps?.wrapperProps,
         }}
         options={{ ...monacoEditorOptions, ...monacoEditorProps?.options }}
         loading={monacoEditorProps?.loading ?? <DefaultSpinner />}
       />
-      {!terminalWebComponent || (!runCommand && !testCommand) ? null : (
-        <CodeEditorButtonsWrapper height={executeTestButtonSpaceHeight}>
-          {!runCommand ? null : (
-            <CodeEditorButton
-              onClick={() =>
-                terminalWebComponent.sendInputToTerminal(runCommand)
-              }
-            >
-              RUN
-            </CodeEditorButton>
-          )}
-          {!testCommand ? null : (
-            <CodeEditorButton
-              onClick={() =>
-                terminalWebComponent.sendInputToTerminal(testCommand)
-              }
-            >
-              TEST
-            </CodeEditorButton>
-          )}
-        </CodeEditorButtonsWrapper>
-      )}
     </>
   );
 }

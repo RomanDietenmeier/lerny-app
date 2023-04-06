@@ -1,13 +1,11 @@
+import { size } from 'constants/metrics';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
 import { store } from 'redux/store';
 import { StyleSheetManager, ThemeProvider } from 'styled-components';
-import {
-  CodeEditor,
-  CodeEditorTerminalProps,
-} from 'web-components/code-editor/CodeEditor';
+import { CodeEditor } from 'web-components/code-editor/CodeEditor';
 
 export const CodeEditorWebComponentHtmlTag = 'code-editor';
 
@@ -30,18 +28,12 @@ class CodeEditorWebComponent extends HTMLElement {
 
     styleSlot.style.setProperty(
       'height',
-      this.getAttribute('height') ?? '4rem'
+      this.getAttribute('height') ?? size.default.codeEditorHeight
     );
     this.reactRenderNode.style.setProperty('height', '100%');
 
     shadowRoot.append(styleSlot);
     styleSlot.append(this.reactRenderNode);
-
-    const terminal: CodeEditorTerminalProps = {
-      runCommand: this.getAttributeOrUndefined('runCommand'),
-      terminalHtmlId: this.getAttributeOrUndefined('terminalHtmlId'),
-      testCommand: this.getAttributeOrUndefined('testCommand'),
-    };
 
     ReactDOM.render(
       <Provider store={store}>
@@ -50,7 +42,6 @@ class CodeEditorWebComponent extends HTMLElement {
             theme={selectCurrentTheme(store.getState()).styledComponentsTheme}
           >
             <CodeEditor
-              terminal={terminal}
               filename={this.getAttributeOrUndefined('filename')}
               folderStructure={this.getAttributeFolderStructure()}
               initialCodeEditorValue={window.webComponent.getContentOfHTMLCommentString(
