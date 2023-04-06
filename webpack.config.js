@@ -17,6 +17,9 @@ module.exports = {
       path.join(__dirname, 'src'),
     ],
     extensions: ['*', '.js', '.jsx', '.tsx', '.ts'],
+    fallback: {
+      stream: false,
+    },
   },
   output: {
     globalObject: 'self',
