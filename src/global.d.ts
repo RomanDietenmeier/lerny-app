@@ -1,4 +1,4 @@
-import { LearnProjects } from './redux/slices/learnProjectsSlice';
+import { LearnProjects } from 'redux/slices/learnProjectsSlice';
 
 declare global {
   interface Window {

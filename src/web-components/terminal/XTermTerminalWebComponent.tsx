@@ -1,13 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { ThemeProvider } from 'styled-components';
-import { selectCurrentTheme } from '../../redux/selectors/themeSelectors';
-import { store } from '../../redux/store';
-import { StyleSheetManager } from 'styled-components';
-import { XTermTerminal } from './XTermTerminal';
-
-export const XTermTerminalWebComponentHTMLTag = 'xterm-terminal';
+import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
+import { store } from 'redux/store';
+import { StyleSheetManager, ThemeProvider } from 'styled-components';
+import { XTermTerminal } from 'web-components/terminal/XTermTerminal';
+export const XTermTerminalWebComponentHtmlTag = 'xterm-terminal';
 
 export class XTermTerminalWebComponent extends HTMLElement {
   private consoleId: number;
@@ -76,6 +74,6 @@ export class XTermTerminalWebComponent extends HTMLElement {
 }
 
 window.customElements.define(
-  XTermTerminalWebComponentHTMLTag,
+  XTermTerminalWebComponentHtmlTag,
   XTermTerminalWebComponent
 );

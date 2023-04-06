@@ -1,3 +1,9 @@
+import { AppWrapper } from 'App.style';
+import { RouterRoutes } from 'constants/routerRoutes';
+import { CreateLearnPage } from 'pages/CreateLearnPage';
+import { EditSelectionPage } from 'pages/EditSelectionPage';
+import { LearnPage } from 'pages/LearnPage';
+import { StartPage } from 'pages/StartPage';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -7,15 +13,9 @@ import {
   useLocation,
   useNavigate,
 } from 'react-router-dom';
+import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
+import { themeChangeCurrentTheme } from 'redux/slices/themeSlice';
 import { ThemeProvider } from 'styled-components';
-import { AppWrapper } from './App.style';
-import { RouterRoutes } from './constants/routerRoutes';
-import { CreateLearnPage } from './pages/CreateLearnPage';
-import { EditSelectionPage } from './pages/EditSelectionPage';
-import { LearnPage } from './pages/LearnPage';
-import { StartPage } from './pages/StartPage';
-import { selectCurrentTheme } from './redux/selectors/themeSelectors';
-import { themeChangeCurrentTheme } from './redux/slices/themeSlice';
 
 export function App() {
   const navigate = useNavigate();

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { DefaultButton } from '../../styles/button.style';
+import { DefaultButton } from 'styles/button.style';
 
 export const CodeEditorButtonsWrapper = styled.div<{
   height: string;

@@ -4,14 +4,10 @@ import { Provider } from 'react-redux';
 import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
 import { store } from 'redux/store';
 import { StyleSheetManager, ThemeProvider } from 'styled-components';
-import {
-  CodeEditor,
-  CodeEditorTerminalProps,
-} from 'web-components/code-editor/CodeEditor';
 
-export const CodeEditorWebComponentHtmlTag = 'code-editor';
+export const ExecutableCodeEditorComponentHtmlTag = 'executable-code-editor';
 
-class CodeEditorWebComponent extends HTMLElement {
+class ExecutableCodeEditorComponent extends HTMLElement {
   private reactRenderNode: HTMLSpanElement | null = null;
 
   connectedCallback() {
@@ -37,30 +33,13 @@ class CodeEditorWebComponent extends HTMLElement {
     shadowRoot.append(styleSlot);
     styleSlot.append(this.reactRenderNode);
 
-    const terminal: CodeEditorTerminalProps = {
-      runCommand: this.getAttributeOrUndefined('runCommand'),
-      terminalHtmlId: this.getAttributeOrUndefined('terminalHtmlId'),
-      testCommand: this.getAttributeOrUndefined('testCommand'),
-    };
-
     ReactDOM.render(
       <Provider store={store}>
         <StyleSheetManager target={styleSlot}>
           <ThemeProvider
             theme={selectCurrentTheme(store.getState()).styledComponentsTheme}
           >
-            <CodeEditor
-              terminal={terminal}
-              filename={this.getAttributeOrUndefined('filename')}
-              folderStructure={this.getAttributeFolderStructure()}
-              initialCodeEditorValue={window.webComponent.getContentOfHTMLCommentString(
-                this.innerHTML
-              )}
-              learnProject={this.getAttributeOrUndefined('learnProject')}
-              monacoEditorProps={{
-                language: this.getAttributeOrUndefined('language'),
-              }}
-            />
+            test
           </ThemeProvider>
         </StyleSheetManager>
       </Provider>,
@@ -87,6 +66,6 @@ class CodeEditorWebComponent extends HTMLElement {
 }
 
 window.customElements.define(
-  CodeEditorWebComponentHtmlTag,
-  CodeEditorWebComponent
+  ExecutableCodeEditorComponentHtmlTag,
+  ExecutableCodeEditorComponent
 );

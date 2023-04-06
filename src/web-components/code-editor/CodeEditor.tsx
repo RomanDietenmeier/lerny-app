@@ -1,15 +1,18 @@
-import React, { useEffect, useState } from 'react';
 import MonacoEditor, { EditorProps } from '@monaco-editor/react';
-import { editor } from 'monaco-editor';
-import { DefaultSpinner } from '../../constants/Spinners';
-import { useSelector } from 'react-redux';
-import { selectCurrentTheme } from '../../redux/selectors/themeSelectors';
+import { DefaultSpinner } from 'constants/Spinners';
+import { Timeouts } from 'constants/timeouts';
 import _ from 'lodash';
-import { Timeouts } from '../../constants/timeouts';
+import { editor } from 'monaco-editor';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
+import 'styles/xtermOverride.css';
+import {
+  CodeEditorButton,
+  CodeEditorButtonsWrapper,
+} from 'web-components/code-editor/CodeEditor.style';
+import { XTermTerminalWebComponent } from 'web-components/terminal/XTermTerminalWebComponent';
 import 'xterm/css/xterm.css';
-import '../../styles/xtermOverride.css';
-import { CodeEditorButton, CodeEditorButtonsWrapper } from './CodeEditor.style';
-import { XTermTerminalWebComponent } from '../terminal/XTermTerminalWebComponent';
 
 type MonacoEditorType = typeof import('monaco-editor');
 
