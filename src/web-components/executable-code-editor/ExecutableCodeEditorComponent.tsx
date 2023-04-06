@@ -1,14 +1,28 @@
+import { size } from 'constants/metrics';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
 import { store } from 'redux/store';
 import { StyleSheetManager, ThemeProvider } from 'styled-components';
+import { CodeEditor } from 'web-components/code-editor/CodeEditor';
+import { XTermTerminal } from 'web-components/terminal/XTermTerminal';
 
 export const ExecutableCodeEditorComponentHtmlTag = 'executable-code-editor';
 
+const enum Attributes {
+  HeightCodeEditor = 'HeightCodeEditor',
+  HeightTerminal = 'HeightTerminal',
+}
+
 class ExecutableCodeEditorComponent extends HTMLElement {
+  private consoleId: number;
   private reactRenderNode: HTMLSpanElement | null = null;
+
+  constructor() {
+    super();
+    this.consoleId = window.electron.console.createConsole();
+  }
 
   connectedCallback() {
     if (!this.isConnected || this.reactRenderNode) {
@@ -24,9 +38,16 @@ class ExecutableCodeEditorComponent extends HTMLElement {
       shadowRoot.append(duplicateElement);
     }
 
+    const codeEditorHeight =
+      this.getAttribute(Attributes.HeightCodeEditor) ||
+      size.default.codeEditorHeight;
+    const terminalHeight =
+      this.getAttribute(Attributes.HeightTerminal) ||
+      size.default.terminalHeight;
+
     styleSlot.style.setProperty(
       'height',
-      this.getAttribute('height') ?? '4rem'
+      `calc(${codeEditorHeight} + ${terminalHeight})`
     );
     this.reactRenderNode.style.setProperty('height', '100%');
 
@@ -39,7 +60,15 @@ class ExecutableCodeEditorComponent extends HTMLElement {
           <ThemeProvider
             theme={selectCurrentTheme(store.getState()).styledComponentsTheme}
           >
-            test
+            <div style={{ height: codeEditorHeight }}>
+              <CodeEditor />
+            </div>
+            <div style={{ height: terminalHeight }}>
+              <XTermTerminal
+                consoleId={this.consoleId}
+                height={terminalHeight}
+              />
+            </div>
           </ThemeProvider>
         </StyleSheetManager>
       </Provider>,
