@@ -6,9 +6,9 @@ import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
 import { store } from 'redux/store';
 import { StyleSheetManager, ThemeProvider } from 'styled-components';
 import { CodeEditor } from 'web-components/code-editor/CodeEditor';
+import { ExecutableCodeEditorRunTestButton as Button } from 'web-components/executable-code-editor/ExecutableCodeEditor.style';
 import { XTermTerminal } from 'web-components/terminal/XTermTerminal';
 import { xml2js } from 'xml-js';
-import { ExecutableCodeEditorRunTestButton as Button } from './ExecutableCodeEditor.style';
 
 export const ExecutableCodeEditorComponentHtmlTag = 'executable-code-editor';
 
