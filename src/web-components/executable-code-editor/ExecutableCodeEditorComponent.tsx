@@ -6,9 +6,9 @@ import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
 import { store } from 'redux/store';
 import { StyleSheetManager, ThemeProvider } from 'styled-components';
 import { CodeEditor } from 'web-components/code-editor/CodeEditor';
-import { CodeEditorButton } from 'web-components/code-editor/CodeEditor.style';
 import { XTermTerminal } from 'web-components/terminal/XTermTerminal';
 import { xml2js } from 'xml-js';
+import { ExecutableCodeEditorRunTestButton as Button } from './ExecutableCodeEditor.style';
 
 export const ExecutableCodeEditorComponentHtmlTag = 'executable-code-editor';
 
@@ -92,7 +92,7 @@ class ExecutableCodeEditorComponent extends HTMLElement {
               {!buildCommand ? null : (
                 <>
                   {!runCommand ? null : (
-                    <CodeEditorButton
+                    <Button
                       onClick={() => {
                         window.electron.console.sendToTerminal(
                           this.consoleId,
@@ -105,10 +105,10 @@ class ExecutableCodeEditorComponent extends HTMLElement {
                       }}
                     >
                       RUN
-                    </CodeEditorButton>
+                    </Button>
                   )}
                   {!testCommand ? null : (
-                    <CodeEditorButton
+                    <Button
                       onClick={() => {
                         window.electron.console.sendToTerminal(
                           this.consoleId,
@@ -121,7 +121,7 @@ class ExecutableCodeEditorComponent extends HTMLElement {
                       }}
                     >
                       TEST
-                    </CodeEditorButton>
+                    </Button>
                   )}
                 </>
               )}
