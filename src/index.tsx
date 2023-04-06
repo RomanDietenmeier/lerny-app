@@ -1,12 +1,12 @@
+import { loader } from '@monaco-editor/react';
+import { App } from 'App';
+import * as monaco from 'monaco-editor';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import * as monaco from 'monaco-editor';
-import { loader } from '@monaco-editor/react';
-import './web-components/code-editor/CodeEditorWebComponent';
-import { store } from './redux/store';
 import { Provider } from 'react-redux';
-import { App } from './App';
 import { HashRouter } from 'react-router-dom';
+import { store } from 'redux/store';
+import 'web-components/code-editor/CodeEditorWebComponent';
 
 self.MonacoEnvironment = {
   getWorkerUrl: function (_moduleId: unknown, label: string) {

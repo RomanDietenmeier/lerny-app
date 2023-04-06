@@ -1,13 +1,20 @@
+import { size } from 'constants/metrics';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { ThemeProvider } from 'styled-components';
-import { selectCurrentTheme } from '../../redux/selectors/themeSelectors';
-import { store } from '../../redux/store';
-import { CodeEditor, CodeEditorTerminalProps } from './CodeEditor';
-import { StyleSheetManager } from 'styled-components';
+import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
+import { store } from 'redux/store';
+import { StyleSheetManager, ThemeProvider } from 'styled-components';
+import { CodeEditor } from 'web-components/code-editor/CodeEditor';
 
-export const CodeEditorWebComponentHTMLTag = 'code-editor';
+export const CodeEditorWebComponentHtmlTag = 'code-editor';
+
+const enum Attributes {
+  Filename = 'Filename',
+  FolderStructure = 'FolderStructure',
+  Height = 'Height',
+  Language = 'Language',
+}
 
 class CodeEditorWebComponent extends HTMLElement {
   private reactRenderNode: HTMLSpanElement | null = null;
@@ -28,18 +35,12 @@ class CodeEditorWebComponent extends HTMLElement {
 
     styleSlot.style.setProperty(
       'height',
-      this.getAttribute('height') ?? '4rem'
+      this.getAttribute(Attributes.Height) ?? size.default.codeEditorHeight
     );
     this.reactRenderNode.style.setProperty('height', '100%');
 
     shadowRoot.append(styleSlot);
     styleSlot.append(this.reactRenderNode);
-
-    const terminal: CodeEditorTerminalProps = {
-      runCommand: this.getAttributeOrUndefined('runCommand'),
-      terminalHtmlId: this.getAttributeOrUndefined('terminalHtmlId'),
-      testCommand: this.getAttributeOrUndefined('testCommand'),
-    };
 
     ReactDOM.render(
       <Provider store={store}>
@@ -48,15 +49,16 @@ class CodeEditorWebComponent extends HTMLElement {
             theme={selectCurrentTheme(store.getState()).styledComponentsTheme}
           >
             <CodeEditor
-              terminal={terminal}
-              filename={this.getAttributeOrUndefined('filename')}
+              filename={this.getAttributeOrUndefined(Attributes.Filename)}
               folderStructure={this.getAttributeFolderStructure()}
               initialCodeEditorValue={window.webComponent.getContentOfHTMLCommentString(
                 this.innerHTML
               )}
-              learnProject={this.getAttributeOrUndefined('learnProject')}
+              learnProject={
+                store.getState().activeLearnPage.learnProject || undefined
+              }
               monacoEditorProps={{
-                language: this.getAttributeOrUndefined('language'),
+                language: this.getAttributeOrUndefined(Attributes.Language),
               }}
             />
           </ThemeProvider>
@@ -66,25 +68,25 @@ class CodeEditorWebComponent extends HTMLElement {
     );
   }
 
+  disconnectedCallback() {
+    if (!this.reactRenderNode) return;
+    ReactDOM.unmountComponentAtNode(this.reactRenderNode);
+  }
+
   private getAttributeOrUndefined(attribute: string): string | undefined {
     return this.getAttribute(attribute) ?? undefined;
   }
 
   private getAttributeFolderStructure(): Array<string> | undefined {
-    const folderStructure = this.getAttribute('folderStructure');
+    const folderStructure = this.getAttribute(Attributes.FolderStructure);
     if (!folderStructure) {
       return undefined;
     }
     return folderStructure.split('/');
   }
-
-  disconnectedCallback() {
-    if (!this.reactRenderNode) return;
-    ReactDOM.unmountComponentAtNode(this.reactRenderNode);
-  }
 }
 
 window.customElements.define(
-  CodeEditorWebComponentHTMLTag,
+  CodeEditorWebComponentHtmlTag,
   CodeEditorWebComponent
 );

@@ -1,10 +1,10 @@
 import React from 'react';
 import MarkdownIt from 'markdown-it';
-import { markdownItExternalLinksPlugin } from '../markdown-it-extensions/markdownItExternalLinksPlugin';
-import { MarkdownViewerWrapper } from './MarkdownViewer.style';
+import { markdownItExternalLinksPlugin } from 'markdown-it-extensions/markdownItExternalLinksPlugin';
+import { MarkdownViewerWrapper } from 'components/MarkdownViewer.style';
 import * as base64 from 'base-64';
-import { base64Tag } from '../web-components/base64/base64ConverterWebComponent';
-import { webComponentTagsToWrap } from '../constants/webComponentTags';
+import { base64Tag } from 'web-components/base64/base64ConverterWebComponent';
+import { webComponentTagsToWrap } from 'constants/webComponentTags';
 
 const md = MarkdownIt('default', {
   html: true,

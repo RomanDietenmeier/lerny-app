@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { learnProjectsSlice } from './slices/learnProjectsSlice';
-import { themeSlice } from './slices/themeSlice';
+import { activeLearnPageSlice } from 'redux/slices/activeLearnPage';
+import { learnProjectsSlice } from 'redux/slices/learnProjectsSlice';
+import { themeSlice } from 'redux/slices/themeSlice';
 
 export const store = configureStore({
   reducer: {
+    activeLearnPage: activeLearnPageSlice.reducer,
     theme: themeSlice.reducer,
     learnProjects: learnProjectsSlice.reducer,
   },
