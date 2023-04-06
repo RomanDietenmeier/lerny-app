@@ -28,7 +28,9 @@ class ExecutableCodeEditorComponent extends HTMLElement {
   constructor() {
     super();
     this.consoleId = window.electron.console.createConsole(
-      this.getAttributeOrUndefined(Attributes.FolderStructure)
+      `${this.getAttribute(Attributes.LearnProject) || '.'}/${
+        this.getAttribute(Attributes.FolderStructure) || '.'
+      }`
     );
   }
 
@@ -55,18 +57,17 @@ class ExecutableCodeEditorComponent extends HTMLElement {
 
     styleSlot.style.setProperty(
       'height',
-      `calc(${codeEditorHeight} + ${terminalHeight})`
+      `calc(calc(${codeEditorHeight} + ${terminalHeight}) + 2rem)`
     );
     this.reactRenderNode.style.setProperty('height', '100%');
 
     shadowRoot.append(styleSlot);
     styleSlot.append(this.reactRenderNode);
 
-    const { runCommand, starterCode, testCommand } = retrieveXmlData(
-      window.webComponent.getContentOfHTMLCommentString(this.innerHTML)
-    );
-
-    console.log('runCommand', runCommand, '\ntestCommand', testCommand);
+    const { buildCommand, runCommand, starterCode, testCommand } =
+      retrieveXmlData(
+        window.webComponent.getContentOfHTMLCommentString(this.innerHTML)
+      );
 
     ReactDOM.render(
       <Provider store={store}>
@@ -87,30 +88,42 @@ class ExecutableCodeEditorComponent extends HTMLElement {
                 }}
               />
             </div>
-            <div>
-              {!runCommand ? null : (
-                <CodeEditorButton
-                  onClick={() => {
-                    window.electron.console.sendToTerminal(
-                      this.consoleId,
-                      runCommand
-                    );
-                  }}
-                >
-                  RUN
-                </CodeEditorButton>
-              )}
-              {!testCommand ? null : (
-                <CodeEditorButton
-                  onClick={() => {
-                    window.electron.console.sendToTerminal(
-                      this.consoleId,
-                      testCommand
-                    );
-                  }}
-                >
-                  TEST
-                </CodeEditorButton>
+            <div style={{ height: '2rem' }}>
+              {!buildCommand ? null : (
+                <>
+                  {!runCommand ? null : (
+                    <CodeEditorButton
+                      onClick={() => {
+                        window.electron.console.sendToTerminal(
+                          this.consoleId,
+                          buildCommand
+                        );
+                        window.electron.console.sendToTerminal(
+                          this.consoleId,
+                          runCommand
+                        );
+                      }}
+                    >
+                      RUN
+                    </CodeEditorButton>
+                  )}
+                  {!testCommand ? null : (
+                    <CodeEditorButton
+                      onClick={() => {
+                        window.electron.console.sendToTerminal(
+                          this.consoleId,
+                          buildCommand
+                        );
+                        window.electron.console.sendToTerminal(
+                          this.consoleId,
+                          testCommand
+                        );
+                      }}
+                    >
+                      TEST
+                    </CodeEditorButton>
+                  )}
+                </>
               )}
             </div>
             <div style={{ height: terminalHeight }}>
@@ -152,6 +165,7 @@ window.customElements.define(
 function retrieveXmlData(xmlString: string) {
   const xml = xml2js(xmlString, { compact: true }) as {
     xml?: {
+      'build-command'?: { _text: string };
       'run-command'?: { _text: string };
       'starter-code'?: { _text: string };
       'test-command'?: { _text: string };
@@ -160,6 +174,7 @@ function retrieveXmlData(xmlString: string) {
 
   if (!xml.xml) return {};
   return {
+    buildCommand: xml.xml['build-command']?._text,
     runCommand: xml.xml['run-command']?._text,
     starterCode: xml.xml['starter-code']?._text,
     testCommand: xml.xml['test-command']?._text,
