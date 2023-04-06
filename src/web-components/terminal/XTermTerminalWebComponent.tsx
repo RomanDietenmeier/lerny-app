@@ -5,7 +5,14 @@ import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
 import { store } from 'redux/store';
 import { StyleSheetManager, ThemeProvider } from 'styled-components';
 import { XTermTerminal } from 'web-components/terminal/XTermTerminal';
+
 export const XTermTerminalWebComponentHtmlTag = 'xterm-terminal';
+
+const enum Attributes {
+  DisableStdin = 'DisableStdin',
+  FolderPath = 'FolderPath',
+  Height = 'Height',
+}
 
 export class XTermTerminalWebComponent extends HTMLElement {
   private consoleId: number;
@@ -14,7 +21,7 @@ export class XTermTerminalWebComponent extends HTMLElement {
   constructor() {
     super();
     this.consoleId = window.electron.console.createConsole(
-      this.getAttributeOrUndefined('folderPath')
+      this.getAttributeOrUndefined(Attributes.FolderPath)
     );
   }
 
@@ -29,7 +36,7 @@ export class XTermTerminalWebComponent extends HTMLElement {
       shadowRoot.append(duplicateElement);
     }
 
-    styleSlot.style.setProperty('height', this.getAttribute('height'));
+    styleSlot.style.setProperty('height', this.getAttribute(Attributes.Height));
 
     shadowRoot.append(styleSlot);
     styleSlot.append(this.reactRenderNode);
@@ -43,7 +50,7 @@ export class XTermTerminalWebComponent extends HTMLElement {
             <XTermTerminal
               consoleId={this.consoleId}
               disableStdin={this.getDisableStdin()}
-              height={this.getAttributeOrUndefined('height')}
+              height={this.getAttributeOrUndefined(Attributes.Height)}
               initialInput={window.webComponent.getContentOfHTMLCommentString(
                 this.innerHTML
               )}
@@ -55,21 +62,17 @@ export class XTermTerminalWebComponent extends HTMLElement {
     );
   }
 
+  disconnectedCallback() {
+    if (!this.reactRenderNode) return;
+    ReactDOM.unmountComponentAtNode(this.reactRenderNode);
+  }
+
   private getDisableStdin() {
-    return this.getAttribute('disableStdin') !== null;
+    return this.getAttribute(Attributes.DisableStdin) !== null;
   }
 
   private getAttributeOrUndefined(attribute: string): string | undefined {
     return this.getAttribute(attribute) ?? undefined;
-  }
-
-  public sendInputToTerminal(input: string) {
-    window.electron.console.sendToTerminal(this.consoleId, input + '\r');
-  }
-
-  disconnectedCallback() {
-    if (!this.reactRenderNode) return;
-    ReactDOM.unmountComponentAtNode(this.reactRenderNode);
   }
 }
 
