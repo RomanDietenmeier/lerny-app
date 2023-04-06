@@ -1,7 +1,8 @@
+import { size } from 'constants/metrics';
+import * as _ from 'lodash';
 import React, { useEffect, useRef } from 'react';
 import { Terminal } from 'xterm';
 import { FitAddon, ITerminalDimensions } from 'xterm-addon-fit';
-import * as _ from 'lodash';
 
 export type XTermTerminalProps = {
   consoleId: number;
@@ -14,7 +15,7 @@ export type XTermTerminalProps = {
 export function XTermTerminal({
   consoleId,
   disableStdin,
-  height = '4rem',
+  height = size.default.terminalHeight,
   initialInput,
 }: XTermTerminalProps): JSX.Element {
   const terminalRef = useRef<HTMLDivElement>(null);
