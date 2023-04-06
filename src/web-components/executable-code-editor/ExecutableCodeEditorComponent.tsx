@@ -6,14 +6,19 @@ import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
 import { store } from 'redux/store';
 import { StyleSheetManager, ThemeProvider } from 'styled-components';
 import { CodeEditor } from 'web-components/code-editor/CodeEditor';
+import { CodeEditorButton } from 'web-components/code-editor/CodeEditor.style';
 import { XTermTerminal } from 'web-components/terminal/XTermTerminal';
 import { xml2js } from 'xml-js';
 
 export const ExecutableCodeEditorComponentHtmlTag = 'executable-code-editor';
 
 const enum Attributes {
+  FileName = 'FileName',
+  FolderStructure = 'FolderStructure',
+  LearnProject = 'LearnProject',
   HeightCodeEditor = 'HeightCodeEditor',
   HeightTerminal = 'HeightTerminal',
+  Language = 'Language',
 }
 
 class ExecutableCodeEditorComponent extends HTMLElement {
@@ -22,7 +27,9 @@ class ExecutableCodeEditorComponent extends HTMLElement {
 
   constructor() {
     super();
-    this.consoleId = window.electron.console.createConsole();
+    this.consoleId = window.electron.console.createConsole(
+      this.getAttributeOrUndefined(Attributes.FolderStructure)
+    );
   }
 
   connectedCallback() {
@@ -55,9 +62,11 @@ class ExecutableCodeEditorComponent extends HTMLElement {
     shadowRoot.append(styleSlot);
     styleSlot.append(this.reactRenderNode);
 
-    const { starterCode } = retrieveXmlData(
+    const { runCommand, starterCode, testCommand } = retrieveXmlData(
       window.webComponent.getContentOfHTMLCommentString(this.innerHTML)
     );
+
+    console.log('runCommand', runCommand, '\ntestCommand', testCommand);
 
     ReactDOM.render(
       <Provider store={store}>
@@ -66,7 +75,43 @@ class ExecutableCodeEditorComponent extends HTMLElement {
             theme={selectCurrentTheme(store.getState()).styledComponentsTheme}
           >
             <div style={{ height: codeEditorHeight }}>
-              <CodeEditor initialCodeEditorValue={starterCode} />
+              <CodeEditor
+                filename={this.getAttributeOrUndefined(Attributes.FileName)}
+                folderStructure={this.getAttributeFolderStructure()}
+                learnProject={this.getAttributeOrUndefined(
+                  Attributes.LearnProject
+                )}
+                initialCodeEditorValue={starterCode}
+                monacoEditorProps={{
+                  language: this.getAttributeOrUndefined(Attributes.Language),
+                }}
+              />
+            </div>
+            <div>
+              {!runCommand ? null : (
+                <CodeEditorButton
+                  onClick={() => {
+                    window.electron.console.sendToTerminal(
+                      this.consoleId,
+                      runCommand
+                    );
+                  }}
+                >
+                  RUN
+                </CodeEditorButton>
+              )}
+              {!testCommand ? null : (
+                <CodeEditorButton
+                  onClick={() => {
+                    window.electron.console.sendToTerminal(
+                      this.consoleId,
+                      testCommand
+                    );
+                  }}
+                >
+                  TEST
+                </CodeEditorButton>
+              )}
             </div>
             <div style={{ height: terminalHeight }}>
               <XTermTerminal
@@ -85,6 +130,18 @@ class ExecutableCodeEditorComponent extends HTMLElement {
     if (!this.reactRenderNode) return;
     ReactDOM.unmountComponentAtNode(this.reactRenderNode);
   }
+
+  private getAttributeOrUndefined(attribute: string): string | undefined {
+    return this.getAttribute(attribute) ?? undefined;
+  }
+
+  private getAttributeFolderStructure(): Array<string> | undefined {
+    const folderStructure = this.getAttribute(Attributes.FolderStructure);
+    if (!folderStructure) {
+      return undefined;
+    }
+    return folderStructure.split('/');
+  }
 }
 
 window.customElements.define(
@@ -94,7 +151,17 @@ window.customElements.define(
 
 function retrieveXmlData(xmlString: string) {
   const xml = xml2js(xmlString, { compact: true }) as {
-    'starter-code'?: { _text: string };
+    xml?: {
+      'run-command'?: { _text: string };
+      'starter-code'?: { _text: string };
+      'test-command'?: { _text: string };
+    };
   };
-  return { starterCode: xml['starter-code']?._text };
+
+  if (!xml.xml) return {};
+  return {
+    runCommand: xml.xml['run-command']?._text,
+    starterCode: xml.xml['starter-code']?._text,
+    testCommand: xml.xml['test-command']?._text,
+  };
 }
