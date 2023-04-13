@@ -174,7 +174,12 @@ contextBridge.exposeInMainWorld('electron', {
     },
   },
   learnProject: {
-    async exportProject(project, targetDirectory) {
+    async exportProject(project) {
+      const targetDirectory = await openFileDialog(
+        OpenFileDialogOption.selectFolder
+      );
+      if (!targetDirectory) return;
+
       try {
         await tar.c(
           {
@@ -188,28 +193,37 @@ contextBridge.exposeInMainWorld('electron', {
         console.error('export error', err, project);
       }
     },
-    async importProject(project, srcDirectory = '.') {
+    async importProject() {
+      const srcDirectory = await openFileDialog(
+        OpenFileDialogOption.selectFile
+      );
+      if (!srcDirectory) return;
       try {
         await tar.x({
           cwd: localPersistentProjectsPath,
-          file: `${srcDirectory}/${project}.tgz`,
+          file: srcDirectory,
         });
       } catch (err) {
-        console.error('import error', err, project);
+        console.error('import error', err);
       }
     },
   },
   openExternalLink(link) {
     ipcRenderer.send('openExternalLink', link);
   },
-  async openFileDialog() {
-    const id = getUniqueId();
-    const promise = new Promise((resolve) => {
-      ipcRenderer.once(`selectFolder${id}`, (evt, path) => {
-        resolve(path);
-      });
-    });
-    ipcRenderer.send('selectFolder', id);
-    return await promise;
-  },
 });
+
+const OpenFileDialogOption = {
+  selectFolder: 'fileDialog.selectFolder',
+  selectFile: 'fileDialog.selectFile',
+};
+async function openFileDialog(option) {
+  const id = getUniqueId();
+  const promise = new Promise((resolve) => {
+    ipcRenderer.once(`${option}${id}`, (evt, path) => {
+      resolve(path);
+    });
+  });
+  ipcRenderer.send(option, id);
+  return await promise;
+}

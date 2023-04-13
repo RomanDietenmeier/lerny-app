@@ -88,12 +88,24 @@ electron.ipcMain.on('openExternalLink', (evt, link) => {
   electron.shell.openExternal(link);
 });
 
-electron.ipcMain.on('selectFolder', async (evt, id) => {
+electron.ipcMain.on('fileDialog.selectFolder', async (evt, id) => {
   mainWindow.webContents.send(
-    `selectFolder${id}`,
+    `fileDialog.selectFolder${id}`,
     (
       await electron.dialog.showOpenDialog({
         properties: ['openDirectory'],
+      })
+    ).filePaths[0]
+  );
+});
+
+electron.ipcMain.on('fileDialog.selectFile', async (evt, id) => {
+  mainWindow.webContents.send(
+    `fileDialog.selectFile${id}`,
+    (
+      await electron.dialog.showOpenDialog({
+        filters: [{ name: 'Learn Projects', extensions: ['tgz'] }],
+        properties: ['openFile'],
       })
     ).filePaths[0]
   );

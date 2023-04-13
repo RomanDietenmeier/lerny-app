@@ -41,17 +41,10 @@ declare global {
         ) => Promise<[string, string]>;
       };
       learnProject: {
-        exportProject: (
-          project: string,
-          targetDirectory: string
-        ) => Promise<void>;
-        importProject: (
-          project: string,
-          srcDirectory?: string
-        ) => Promise<void>;
+        exportProject: (project: string) => Promise<void>;
+        importProject: () => Promise<void>;
       };
       openExternalLink: (link: string) => void;
-      openFileDialog: () => Promise<string | undefined>;
     };
     handleMarkdownAnchorClick: (href: string) => void;
     webComponent: {

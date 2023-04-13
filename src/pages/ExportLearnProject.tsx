@@ -30,12 +30,7 @@ export function ExportLearnProject(): JSX.Element {
             <Button
               key={index}
               onClick={async () => {
-                const targetDirectory = await window.electron.openFileDialog();
-                if (!targetDirectory) return;
-                await window.electron.learnProject.exportProject(
-                  project,
-                  targetDirectory
-                );
+                await window.electron.learnProject.exportProject(project);
               }}
             >
               {project}

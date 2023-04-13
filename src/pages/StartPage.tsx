@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { store } from 'redux/store';
 import useAsyncEffect from 'use-async-effect';
 import { ShowLearnProjects } from '../components/ShowLearnProjects';
 import { RouterRoutes } from '../constants/routerRoutes';
@@ -12,17 +12,20 @@ import {
   StartPageWrapper,
 } from './StartPage.style';
 
+async function updateLearnProjects() {
+  const learnProjects =
+    await window.electron.getLocalLearnProjectAndLearnPages();
+
+  store.dispatch(setLearnProjects(learnProjects));
+}
+
 export function StartPage() {
-  const dispatch = useDispatch();
   const [onClickOnLearnPage] = useNavigateOnSelectedLearnPage(
     RouterRoutes.LearnPage
   );
 
   useAsyncEffect(async () => {
-    const learnProjects =
-      await window.electron.getLocalLearnProjectAndLearnPages();
-
-    dispatch(setLearnProjects(learnProjects));
+    await updateLearnProjects();
   }, []);
 
   return (
@@ -34,9 +37,16 @@ export function StartPage() {
         <StartPageNavLink to={RouterRoutes.SelectLearnPageToEdit}>
           <StartPageButton>edit</StartPageButton>
         </StartPageNavLink>
-        <StartPageNavLink to="/import">
-          <StartPageButton>import</StartPageButton>
-        </StartPageNavLink>
+        <div style={{ width: 'inherit' }}>
+          <StartPageButton
+            onClick={async () => {
+              await window.electron.learnProject.importProject();
+              await updateLearnProjects();
+            }}
+          >
+            import
+          </StartPageButton>
+        </div>
         <StartPageNavLink to={RouterRoutes.ExportLearnProject}>
           <StartPageButton>export</StartPageButton>
         </StartPageNavLink>
