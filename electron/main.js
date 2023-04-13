@@ -88,6 +88,17 @@ electron.ipcMain.on('openExternalLink', (evt, link) => {
   electron.shell.openExternal(link);
 });
 
+electron.ipcMain.on('selectFolder', async (evt, id) => {
+  mainWindow.webContents.send(
+    `selectFolder${id}`,
+    (
+      await electron.dialog.showOpenDialog({
+        properties: ['openDirectory'],
+      })
+    ).filePaths[0]
+  );
+});
+
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 

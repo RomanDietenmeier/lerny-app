@@ -1,4 +1,5 @@
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer, dialog } = require('electron');
+const tar = require('tar');
 
 const fs = require('fs');
 
@@ -172,7 +173,43 @@ contextBridge.exposeInMainWorld('electron', {
       return [learnPage, learnProject];
     },
   },
+  learnProject: {
+    async exportProject(project, targetDirectory) {
+      try {
+        await tar.c(
+          {
+            cwd: localPersistentProjectsPath,
+            gzip: true,
+            file: `${targetDirectory}/${project}.tgz`,
+          },
+          [project]
+        );
+      } catch (err) {
+        console.error('export error', err, project);
+      }
+    },
+    async importProject(project, srcDirectory = '.') {
+      try {
+        await tar.x({
+          cwd: localPersistentProjectsPath,
+          file: `${srcDirectory}/${project}.tgz`,
+        });
+      } catch (err) {
+        console.error('import error', err, project);
+      }
+    },
+  },
   openExternalLink(link) {
     ipcRenderer.send('openExternalLink', link);
+  },
+  async openFileDialog() {
+    const id = getUniqueId();
+    const promise = new Promise((resolve) => {
+      ipcRenderer.once(`selectFolder${id}`, (evt, path) => {
+        resolve(path);
+      });
+    });
+    ipcRenderer.send('selectFolder', id);
+    return await promise;
   },
 });

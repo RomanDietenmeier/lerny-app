@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { useSelector } from 'react-redux';
+import { selectLearnProjects } from 'redux/selectors/learnProjectsSelectors';
 import { LearnProjects } from '../redux/slices/learnProjectsSlice';
 import {
   ShowLearnProjectsLearnPageButton,
@@ -9,7 +11,7 @@ import {
 } from './ShowLearnProjects.style';
 
 type ShowLearnProjectsProps = {
-  learnProjects: LearnProjects;
+  learnProjects?: LearnProjects;
   onClickOnLearnPage?: (project: string, page: string) => void;
 };
 
@@ -17,6 +19,7 @@ export function ShowLearnProjects({
   learnProjects,
   onClickOnLearnPage,
 }: ShowLearnProjectsProps): JSX.Element {
+  learnProjects = learnProjects ?? useSelector(selectLearnProjects);
   return (
     <ShowLearnProjectsWrapper>
       {Object.entries(learnProjects).map(([project, pages], index) => {
