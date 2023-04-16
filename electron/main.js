@@ -3,7 +3,11 @@ const path = require('path');
 const fs = require('fs');
 const node_pty = require('node-pty');
 const validator = require('validator');
-const { localDumpDataPath, runningOnWindows } = require('./electronConstants');
+const {
+  localDumpDataPath,
+  runningOnWindows,
+  ipc,
+} = require('./electronConstants');
 
 const inDevelopment = process.env.NODE_ENV === 'development';
 
@@ -30,7 +34,7 @@ const shell = runningOnWindows ? 'powershell.exe' : 'bash';
 
 const terminals = {};
 
-electron.ipcMain.on('console.createConsole', (evt, id, folderPath) => {
+electron.ipcMain.on(ipc.console.create, (evt, id, folderPath) => {
   const fullFolderPath = `${localDumpDataPath}/${folderPath || ''}`;
 
   let ptyProcess = node_pty.spawn(shell, [], {
@@ -46,14 +50,14 @@ electron.ipcMain.on('console.createConsole', (evt, id, folderPath) => {
       dispose.dispose();
       return;
     }
-    mainWindow.webContents.send(`console.incomingData.${id}`, data);
+    mainWindow.webContents.send(`${ipc.console.incomingData}${id}`, data);
   });
 
-  electron.ipcMain.on(`console.toTerminal.${id}`, (evt, data) => {
+  electron.ipcMain.on(`${ipc.console.sendData}${id}`, (evt, data) => {
     ptyProcess.write(data);
   });
 
-  electron.ipcMain.on(`console.resize.${id}`, (evt, colsAndRows) => {
+  electron.ipcMain.on(`${ipc.console.resize}${id}`, (evt, colsAndRows) => {
     if (!colsAndRows || !colsAndRows.cols || !colsAndRows.rows) return;
     const { cols, rows } = colsAndRows;
     ptyProcess.resize(cols, rows);
@@ -62,8 +66,8 @@ electron.ipcMain.on('console.createConsole', (evt, id, folderPath) => {
 
 function killConsole(id) {
   if (!terminals[id]) return;
-  electron.ipcMain.removeAllListeners(`console.toTerminal.${id}`);
-  electron.ipcMain.removeAllListeners(`console.resize.${id}`);
+  electron.ipcMain.removeAllListeners(`${ipc.console.sendData}${id}`);
+  electron.ipcMain.removeAllListeners(`${ipc.console.resize}${id}`);
   terminals[id].kill();
   delete terminals[id];
 }
@@ -74,23 +78,23 @@ function killAllConsoles() {
   }
 }
 
-electron.ipcMain.on('console.killAllConsoles', (evt, data) => {
+electron.ipcMain.on(ipc.console.killAllConsoles, (evt, data) => {
   killAllConsoles();
 });
 
-electron.ipcMain.on('console.killConsole', (evt, id) => {
+electron.ipcMain.on(ipc.console.killConsole, (evt, id) => {
   killConsole(id);
 });
 
-electron.ipcMain.on('openExternalLink', (evt, link) => {
+electron.ipcMain.on(ipc.openExternalLink, (evt, link) => {
   if (!validator.isURL(link, { require_protocol: true, validate_length: true }))
     return;
   electron.shell.openExternal(link);
 });
 
-electron.ipcMain.on('fileDialog.selectFolder', async (evt, id) => {
+electron.ipcMain.on(ipc.openFileDialogOptions.selectFolder, async (evt, id) => {
   mainWindow.webContents.send(
-    `fileDialog.selectFolder${id}`,
+    `${ipc.openFileDialogOptions.selectFolder}${id}`,
     (
       await electron.dialog.showOpenDialog({
         properties: ['openDirectory'],
@@ -99,9 +103,9 @@ electron.ipcMain.on('fileDialog.selectFolder', async (evt, id) => {
   );
 });
 
-electron.ipcMain.on('fileDialog.selectFile', async (evt, id) => {
+electron.ipcMain.on(ipc.openFileDialogOptions.selectFile, async (evt, id) => {
   mainWindow.webContents.send(
-    `fileDialog.selectFile${id}`,
+    `${ipc.openFileDialogOptions.selectFile}${id}`,
     (
       await electron.dialog.showOpenDialog({
         filters: [{ name: 'Learn Projects', extensions: ['tgz'] }],

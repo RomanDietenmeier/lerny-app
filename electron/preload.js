@@ -10,6 +10,7 @@ const {
   localPersistentDataPath,
   localPersistentProjectsPath,
   textFileEncoding,
+  ipc,
 } = require('./electronConstants');
 
 let uniqueId = new Date().getTime();
@@ -35,23 +36,23 @@ contextBridge.exposeInMainWorld('electron', {
   console: {
     createConsole(folderPath) {
       const id = getUniqueId();
-      ipcRenderer.send('console.createConsole', id, folderPath);
+      ipcRenderer.send(ipc.console.create, id, folderPath);
       return id;
     },
     onIncomingData(id, listener) {
-      ipcRenderer.on(`console.incomingData.${id}`, listener);
+      ipcRenderer.on(`${ipc.console.incomingData}${id}`, listener);
     },
     sendToTerminal(id, data) {
-      ipcRenderer.send(`console.toTerminal.${id}`, data);
+      ipcRenderer.send(`${ipc.console.sendData}${id}`, data);
     },
     resizeTerminal(id, data) {
-      ipcRenderer.send(`console.resize.${id}`, data);
+      ipcRenderer.send(`${ipc.console.resize}${id}`, data);
     },
     killAllConsoles() {
-      ipcRenderer.send('console.killAllConsoles');
+      ipcRenderer.send(ipc.console.killAllConsoles);
     },
     killConsole(id) {
-      ipcRenderer.send('console.killConsole', id);
+      ipcRenderer.send(ipc.console.killConsole, id);
     },
   },
   async getLocalLearnProjectAndLearnPages() {
@@ -214,8 +215,8 @@ contextBridge.exposeInMainWorld('electron', {
 });
 
 const OpenFileDialogOption = {
-  selectFolder: 'fileDialog.selectFolder',
-  selectFile: 'fileDialog.selectFile',
+  selectFolder: ipc.openFileDialogOptions.selectFolder,
+  selectFile: ipc.openFileDialogOptions.selectFile,
 };
 async function openFileDialog(option) {
   const id = getUniqueId();

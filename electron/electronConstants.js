@@ -18,6 +18,22 @@ const localDumpDataPath = `${dumpLocalDataRootPath}/lerny-app`;
 const learnPageExtension = '.lap';
 const textFileEncoding = 'utf-8';
 
+const ipc = {
+  console: {
+    create: 'console.createConsole',
+    incomingData: 'console.incomingData.',
+    sendData: 'console.toTerminal.',
+    resize: 'console.resize.',
+    killAllConsoles: 'console.killAllConsoles',
+    killConsole: 'console.killConsole',
+  },
+  openExternalLink: 'openExternalLink',
+  openFileDialogOptions: {
+    selectFile: 'fileDialog.selectFile',
+    selectFolder: 'fileDialog.selectFolder',
+  },
+};
+
 module.exports = {
   dumpLocalDataRootPath,
   learnPageExtension,
@@ -27,4 +43,5 @@ module.exports = {
   persistentLocalDataRootPath,
   runningOnWindows,
   textFileEncoding,
+  ipc,
 };
