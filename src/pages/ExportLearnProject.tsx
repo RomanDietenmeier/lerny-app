@@ -1,8 +1,6 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { selectLearnProjects } from 'redux/selectors/learnProjectsSelectors';
-import { setLearnProjects } from 'redux/slices/learnProjectsSlice';
-import useAsyncEffect from 'use-async-effect';
 import {
   ExportLearnProjectButton as Button,
   ExportLearnProjectButtonGrid as ButtonGrid,
@@ -11,14 +9,6 @@ import {
 } from './ExportLearnProject.styles';
 
 export function ExportLearnProject(): JSX.Element {
-  const dispatch = useDispatch();
-  useAsyncEffect(async () => {
-    const learnProjects =
-      await window.electron.getLocalLearnProjectAndLearnPages();
-
-    dispatch(setLearnProjects(learnProjects));
-  }, []); // temp here and above
-
   const learnProject = useSelector(selectLearnProjects);
 
   return (
