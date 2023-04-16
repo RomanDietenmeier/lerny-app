@@ -163,20 +163,24 @@ window.customElements.define(
 );
 
 function retrieveXmlData(xmlString: string) {
-  const xml = xml2js(xmlString, { compact: true }) as {
-    xml?: {
-      'build-command'?: { _text: string };
-      'run-command'?: { _text: string };
-      'starter-code'?: { _text: string };
-      'test-command'?: { _text: string };
+  try {
+    const xml = xml2js(xmlString, { compact: true }) as {
+      xml?: {
+        'build-command'?: { _text: string };
+        'run-command'?: { _text: string };
+        'starter-code'?: { _text: string };
+        'test-command'?: { _text: string };
+      };
     };
-  };
-
-  if (!xml.xml) return {};
-  return {
-    buildCommand: xml.xml['build-command']?._text,
-    runCommand: xml.xml['run-command']?._text,
-    starterCode: xml.xml['starter-code']?._text,
-    testCommand: xml.xml['test-command']?._text,
-  };
+    if (!xml.xml) return {};
+    return {
+      buildCommand: xml.xml['build-command']?._text,
+      runCommand: xml.xml['run-command']?._text,
+      starterCode: xml.xml['starter-code']?._text,
+      testCommand: xml.xml['test-command']?._text,
+    };
+  } catch (err) {
+    console.error('XML Parse Error: ', err);
+    return {};
+  }
 }

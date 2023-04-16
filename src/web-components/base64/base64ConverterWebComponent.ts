@@ -1,10 +1,11 @@
-import { decode } from 'base-64';
+import { stringFromBinary } from 'utilities/helper';
 import { webComponentTagsToWrap } from '../../constants/webComponentTags';
 
 class base64ConverterWebComponent extends HTMLElement {
   constructor() {
     super();
-    let decodedContent = decode(this.innerHTML);
+
+    let decodedContent = stringFromBinary(atob(this.innerHTML));
 
     for (const componentTag of webComponentTagsToWrap) {
       const endComponentTag = `</${componentTag}>`;

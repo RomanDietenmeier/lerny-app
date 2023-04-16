@@ -1,9 +1,9 @@
-import * as base64 from 'base-64';
 import { MarkdownViewerWrapper as Wrapper } from 'components/MarkdownViewer.style';
 import { webComponentTagsToWrap } from 'constants/webComponentTags';
 import MarkdownIt from 'markdown-it';
 import { markdownItExternalLinksPlugin } from 'markdown-it-extensions/markdownItExternalLinksPlugin';
 import React from 'react';
+import { stringToBinary } from 'utilities/helper';
 import { base64Tag } from 'web-components/base64/base64ConverterWebComponent';
 
 const md = MarkdownIt('default', {
@@ -40,7 +40,7 @@ function renderMarkdownToJSX(markdown: string) {
         );
         markdown = markdown.replace(
           componentSubstring,
-          `${base64Tag.open}${base64.encode(componentSubstring)}${
+          `${base64Tag.open}${btoa(stringToBinary(componentSubstring))}${
             base64Tag.end
           }`
         );
