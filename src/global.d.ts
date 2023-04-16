@@ -40,6 +40,10 @@ declare global {
           learnProject?: string
         ) => Promise<[string, string]>;
       };
+      learnProject: {
+        exportProject: (project: string) => Promise<void>;
+        importProject: () => Promise<void>;
+      };
       openExternalLink: (link: string) => void;
     };
     handleMarkdownAnchorClick: (href: string) => void;

@@ -1,8 +1,9 @@
-import { AppWrapper } from 'App.style';
+import { AppWrapper as Wrapper } from 'App.style';
 import { RouterRoutes } from 'constants/routerRoutes';
 import { useSearchParamsOnSelectedLearnPage } from 'hooks/LearnPageHooks';
 import { CreateLearnPage } from 'pages/CreateLearnPage';
 import { EditSelectionPage } from 'pages/EditSelectionPage';
+import { ExportLearnProject } from 'pages/ExportLearnProject';
 import { LearnPage } from 'pages/LearnPage';
 import { StartPage } from 'pages/StartPage';
 import React, { useEffect } from 'react';
@@ -38,9 +39,22 @@ export function App() {
     dispatch(setActiveLearnPage(activeLearnPage));
   }, [activeLearnPage]);
 
+  useEffect(() => {
+    document.body.style.setProperty(
+      'background-color',
+      currentTheme.styledComponentsTheme.backgroundColor
+    );
+    document
+      .getElementById('BackgroundBanner')
+      ?.style.setProperty(
+        '-webkit-text-stroke-color',
+        currentTheme.styledComponentsTheme.color
+      );
+  }, [currentTheme]);
+
   return (
     <ThemeProvider theme={currentTheme.styledComponentsTheme}>
-      <AppWrapper>
+      <Wrapper>
         <button onClick={swapTheme}>SWAP THEME</button>
         <button
           onClick={() => {
@@ -55,6 +69,10 @@ export function App() {
           <Route
             path={RouterRoutes.CreateLearnPage}
             element={<CreateLearnPage />}
+          />
+          <Route
+            path={RouterRoutes.ExportLearnProject}
+            element={<ExportLearnProject />}
           />
           <Route path={RouterRoutes.LearnPage} element={<LearnPage />} />
           <Route
@@ -71,7 +89,7 @@ export function App() {
             }
           />
         </Routes>
-      </AppWrapper>
+      </Wrapper>
     </ThemeProvider>
   );
 }

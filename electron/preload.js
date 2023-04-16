@@ -1,4 +1,5 @@
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer, dialog } = require('electron');
+const tar = require('tar');
 
 const fs = require('fs');
 
@@ -9,6 +10,7 @@ const {
   localPersistentDataPath,
   localPersistentProjectsPath,
   textFileEncoding,
+  ipc,
 } = require('./electronConstants');
 
 let uniqueId = new Date().getTime();
@@ -34,23 +36,23 @@ contextBridge.exposeInMainWorld('electron', {
   console: {
     createConsole(folderPath) {
       const id = getUniqueId();
-      ipcRenderer.send('console.createConsole', id, folderPath);
+      ipcRenderer.send(ipc.console.create, id, folderPath);
       return id;
     },
     onIncomingData(id, listener) {
-      ipcRenderer.on(`console.incomingData.${id}`, listener);
+      ipcRenderer.on(`${ipc.console.incomingData}${id}`, listener);
     },
     sendToTerminal(id, data) {
-      ipcRenderer.send(`console.toTerminal.${id}`, data);
+      ipcRenderer.send(`${ipc.console.sendData}${id}`, data);
     },
     resizeTerminal(id, data) {
-      ipcRenderer.send(`console.resize.${id}`, data);
+      ipcRenderer.send(`${ipc.console.resize}${id}`, data);
     },
     killAllConsoles() {
-      ipcRenderer.send('console.killAllConsoles');
+      ipcRenderer.send(ipc.console.killAllConsoles);
     },
     killConsole(id) {
-      ipcRenderer.send('console.killConsole', id);
+      ipcRenderer.send(ipc.console.killConsole, id);
     },
   },
   async getLocalLearnProjectAndLearnPages() {
@@ -172,7 +174,57 @@ contextBridge.exposeInMainWorld('electron', {
       return [learnPage, learnProject];
     },
   },
+  learnProject: {
+    async exportProject(project) {
+      const targetDirectory = await openFileDialog(
+        OpenFileDialogOption.selectFolder
+      );
+      if (!targetDirectory) return;
+
+      try {
+        await tar.c(
+          {
+            cwd: localPersistentProjectsPath,
+            gzip: true,
+            file: `${targetDirectory}/${project}.tgz`,
+          },
+          [project]
+        );
+      } catch (err) {
+        console.error('export error', err, project);
+      }
+    },
+    async importProject() {
+      const srcDirectory = await openFileDialog(
+        OpenFileDialogOption.selectFile
+      );
+      if (!srcDirectory) return;
+      try {
+        await tar.x({
+          cwd: localPersistentProjectsPath,
+          file: srcDirectory,
+        });
+      } catch (err) {
+        console.error('import error', err);
+      }
+    },
+  },
   openExternalLink(link) {
     ipcRenderer.send('openExternalLink', link);
   },
 });
+
+const OpenFileDialogOption = {
+  selectFolder: ipc.openFileDialogOptions.selectFolder,
+  selectFile: ipc.openFileDialogOptions.selectFile,
+};
+async function openFileDialog(option) {
+  const id = getUniqueId();
+  const promise = new Promise((resolve) => {
+    ipcRenderer.once(`${option}${id}`, (evt, path) => {
+      resolve(path);
+    });
+  });
+  ipcRenderer.send(option, id);
+  return await promise;
+}

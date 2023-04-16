@@ -13,3 +13,29 @@ export function sliceObjectInTwo<T>(obj: object): [T, T] {
     }, {} as Record<string, unknown>) as T,
   ];
 }
+
+export function stringToBinary(s: string): string {
+  const codeUnits = Uint16Array.from({ length: s.length }, (element, index) =>
+    s.charCodeAt(index)
+  );
+  const charCodes = new Uint8Array(codeUnits.buffer);
+
+  let result = '';
+  charCodes.forEach((char) => {
+    result += String.fromCharCode(char);
+  });
+  return result;
+}
+
+export function stringFromBinary(binary: string): string {
+  const bytes = Uint8Array.from({ length: binary.length }, (element, index) =>
+    binary.charCodeAt(index)
+  );
+  const charCodes = new Uint16Array(bytes.buffer);
+
+  let result = '';
+  charCodes.forEach((char) => {
+    result += String.fromCharCode(char);
+  });
+  return result;
+}

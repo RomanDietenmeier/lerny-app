@@ -1,10 +1,10 @@
-import React from 'react';
+import { MarkdownViewerWrapper as Wrapper } from 'components/MarkdownViewer.style';
+import { webComponentTagsToWrap } from 'constants/webComponentTags';
 import MarkdownIt from 'markdown-it';
 import { markdownItExternalLinksPlugin } from 'markdown-it-extensions/markdownItExternalLinksPlugin';
-import { MarkdownViewerWrapper } from 'components/MarkdownViewer.style';
-import * as base64 from 'base-64';
+import React from 'react';
+import { stringToBinary } from 'utilities/helper';
 import { base64Tag } from 'web-components/base64/base64ConverterWebComponent';
-import { webComponentTagsToWrap } from 'constants/webComponentTags';
 
 const md = MarkdownIt('default', {
   html: true,
@@ -40,7 +40,7 @@ function renderMarkdownToJSX(markdown: string) {
         );
         markdown = markdown.replace(
           componentSubstring,
-          `${base64Tag.open}${base64.encode(componentSubstring)}${
+          `${base64Tag.open}${btoa(stringToBinary(componentSubstring))}${
             base64Tag.end
           }`
         );
@@ -60,10 +60,10 @@ type MarkdownViewerProps = {
 
 export function MarkdownViewer({ content }: MarkdownViewerProps) {
   return (
-    <MarkdownViewerWrapper>
+    <Wrapper>
       <span
         dangerouslySetInnerHTML={{ __html: renderMarkdownToJSX(content) }}
       />
-    </MarkdownViewerWrapper>
+    </Wrapper>
   );
 }

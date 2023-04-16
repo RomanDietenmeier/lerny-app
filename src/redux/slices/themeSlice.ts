@@ -1,11 +1,13 @@
-import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { DefaultTheme } from 'styled-components';
 import { defaultTheme, whiteTheme } from '../../styles/defaultTheme';
 
+const MonacoEditorDefaultTheme = 'vs-dark';
+
 type Theme = {
   styledComponentsTheme: DefaultTheme;
-  monacoEditorTheme?: string;
+  monacoEditorTheme: string;
 };
 
 export type ThemeState = {
@@ -15,7 +17,10 @@ export type ThemeState = {
 
 const initialState: ThemeState = {
   themes: {
-    dark: { styledComponentsTheme: defaultTheme, monacoEditorTheme: 'vs-dark' },
+    dark: {
+      styledComponentsTheme: defaultTheme,
+      monacoEditorTheme: MonacoEditorDefaultTheme,
+    },
     white: { styledComponentsTheme: whiteTheme, monacoEditorTheme: 'vs-light' },
   },
   currentTheme: 'dark',
@@ -30,9 +35,17 @@ export const themeSlice = createSlice({
     },
     themeAddTheme: (
       state,
-      action: PayloadAction<{ theme: DefaultTheme; name: string }>
+      action: PayloadAction<{
+        theme?: DefaultTheme;
+        monacoEditorTheme?: string;
+        name: string;
+      }>
     ) => {
-      state.themes[action.payload.name] = action.payload.theme;
+      state.themes[action.payload.name] = {
+        styledComponentsTheme: action.payload.theme ?? defaultTheme,
+        monacoEditorTheme:
+          action.payload.monacoEditorTheme ?? MonacoEditorDefaultTheme,
+      };
     },
   },
 });
