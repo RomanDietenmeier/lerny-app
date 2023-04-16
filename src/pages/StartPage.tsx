@@ -6,10 +6,10 @@ import { RouterRoutes } from '../constants/routerRoutes';
 import { useNavigateOnSelectedLearnPage } from '../hooks/LearnPageHooks';
 import { setLearnProjects } from '../redux/slices/learnProjectsSlice';
 import {
-  StartPageButton,
-  StartPageButtonWrapper,
-  StartPageNavLink,
-  StartPageWrapper,
+  StartPageButton as Button,
+  StartPageButtonWrapper as ButtonWrapper,
+  StartPageNavLink as NavLink,
+  StartPageWrapper as Wrapper,
 } from './StartPage.style';
 
 async function updateLearnProjects() {
@@ -29,31 +29,31 @@ export function StartPage() {
   }, []);
 
   return (
-    <StartPageWrapper>
-      <StartPageButtonWrapper>
-        <StartPageNavLink to={RouterRoutes.CreateLearnPage}>
-          <StartPageButton>create</StartPageButton>
-        </StartPageNavLink>
-        <StartPageNavLink to={RouterRoutes.SelectLearnPageToEdit}>
-          <StartPageButton>edit</StartPageButton>
-        </StartPageNavLink>
+    <Wrapper>
+      <ButtonWrapper>
+        <NavLink to={RouterRoutes.CreateLearnPage}>
+          <Button>create</Button>
+        </NavLink>
+        <NavLink to={RouterRoutes.SelectLearnPageToEdit}>
+          <Button>edit</Button>
+        </NavLink>
         <div style={{ width: 'inherit' }}>
-          <StartPageButton
+          <Button
             onClick={async () => {
               await window.electron.learnProject.importProject();
               await updateLearnProjects();
             }}
           >
             import
-          </StartPageButton>
+          </Button>
         </div>
-        <StartPageNavLink to={RouterRoutes.ExportLearnProject}>
-          <StartPageButton>export</StartPageButton>
-        </StartPageNavLink>
-      </StartPageButtonWrapper>
+        <NavLink to={RouterRoutes.ExportLearnProject}>
+          <Button>export</Button>
+        </NavLink>
+      </ButtonWrapper>
       <div style={{ width: '50%', overflow: 'auto' }}>
         <ShowLearnProjects onClickOnLearnPage={onClickOnLearnPage} />
       </div>
-    </StartPageWrapper>
+    </Wrapper>
   );
 }

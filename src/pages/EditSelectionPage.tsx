@@ -6,7 +6,7 @@ import { useNavigateOnSelectedLearnPage } from '../hooks/LearnPageHooks';
 import { selectLearnProjects } from '../redux/selectors/learnProjectsSelectors';
 import { LearnProjects } from '../redux/slices/learnProjectsSlice';
 import { sliceObjectInTwo } from '../utilities/helper';
-import { EditSelectionPageWrapper } from './EditSelectionPage.style';
+import { EditSelectionPageWrapper as Wrapper } from './EditSelectionPage.style';
 
 export function EditSelectionPage(): JSX.Element {
   const [onClickOnLearnPage] = useNavigateOnSelectedLearnPage(
@@ -16,7 +16,7 @@ export function EditSelectionPage(): JSX.Element {
     sliceObjectInTwo<LearnProjects>(useSelector(selectLearnProjects));
 
   return (
-    <EditSelectionPageWrapper>
+    <Wrapper>
       <ShowLearnProjects
         learnProjects={learnProjectsFirstHalf}
         onClickOnLearnPage={onClickOnLearnPage}
@@ -25,6 +25,6 @@ export function EditSelectionPage(): JSX.Element {
         learnProjects={learnProjectsSecondHalf}
         onClickOnLearnPage={onClickOnLearnPage}
       />
-    </EditSelectionPageWrapper>
+    </Wrapper>
   );
 }

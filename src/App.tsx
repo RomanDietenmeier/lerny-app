@@ -1,4 +1,4 @@
-import { AppWrapper } from 'App.style';
+import { AppWrapper as Wrapper } from 'App.style';
 import { RouterRoutes } from 'constants/routerRoutes';
 import { useSearchParamsOnSelectedLearnPage } from 'hooks/LearnPageHooks';
 import { CreateLearnPage } from 'pages/CreateLearnPage';
@@ -54,7 +54,7 @@ export function App() {
 
   return (
     <ThemeProvider theme={currentTheme.styledComponentsTheme}>
-      <AppWrapper>
+      <Wrapper>
         <button onClick={swapTheme}>SWAP THEME</button>
         <button
           onClick={() => {
@@ -89,7 +89,7 @@ export function App() {
             }
           />
         </Routes>
-      </AppWrapper>
+      </Wrapper>
     </ThemeProvider>
   );
 }

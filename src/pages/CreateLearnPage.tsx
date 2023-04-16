@@ -1,18 +1,18 @@
+import _ from 'lodash';
 import { editor } from 'monaco-editor';
 import React, { useRef, useState } from 'react';
 import useAsyncEffect from 'use-async-effect';
+import { MarkdownViewer } from '../components/MarkdownViewer';
+import { Timeouts } from '../constants/timeouts';
+import { useSearchParamsOnSelectedLearnPage } from '../hooks/LearnPageHooks';
 import {
   CodeEditor,
   defaultMonacoWrapperStyle,
 } from '../web-components/code-editor/CodeEditor';
-import { MarkdownViewer } from '../components/MarkdownViewer';
 import {
   CreateLearnPageTitleInput,
-  CreateLearnPageWrapper,
+  CreateLearnPageWrapper as Wrapper,
 } from './CreateLearnPage.style';
-import _ from 'lodash';
-import { Timeouts } from '../constants/timeouts';
-import { useSearchParamsOnSelectedLearnPage } from '../hooks/LearnPageHooks';
 
 const learnPageExtension = '.lap';
 
@@ -86,7 +86,7 @@ export function CreateLearnPage() {
   }
 
   return (
-    <CreateLearnPageWrapper>
+    <Wrapper>
       <div>CREATE LEARN PAGE</div>
       <CreateLearnPageTitleInput
         type="text"
@@ -106,6 +106,6 @@ export function CreateLearnPage() {
         setEditor={setEditor}
       />
       <MarkdownViewer content={markDownContent} />
-    </CreateLearnPageWrapper>
+    </Wrapper>
   );
 }

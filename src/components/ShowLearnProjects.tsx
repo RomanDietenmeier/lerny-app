@@ -4,10 +4,10 @@ import { useSelector } from 'react-redux';
 import { selectLearnProjects } from 'redux/selectors/learnProjectsSelectors';
 import { LearnProjects } from '../redux/slices/learnProjectsSlice';
 import {
-  ShowLearnProjectsLearnPageButton,
-  ShowLearnProjectsListItem,
-  ShowLearnProjectsUnorderedList,
-  ShowLearnProjectsWrapper,
+  ShowLearnProjectsLearnPageButton as LearnPageButton,
+  ShowLearnProjectsListItem as ListItem,
+  ShowLearnProjectsUnorderedList as UnorderedList,
+  ShowLearnProjectsWrapper as Wrapper,
 } from './ShowLearnProjects.style';
 
 type ShowLearnProjectsProps = {
@@ -21,30 +21,30 @@ export function ShowLearnProjects({
 }: ShowLearnProjectsProps): JSX.Element {
   learnProjects = learnProjects ?? useSelector(selectLearnProjects);
   return (
-    <ShowLearnProjectsWrapper>
+    <Wrapper>
       {Object.entries(learnProjects).map(([project, pages], index) => {
         return (
           <div key={index}>
             <h2>{project}</h2>
-            <ShowLearnProjectsUnorderedList>
+            <UnorderedList>
               {pages.map((page, index) => {
                 return (
-                  <ShowLearnProjectsListItem key={index}>
-                    <ShowLearnProjectsLearnPageButton
+                  <ListItem key={index}>
+                    <LearnPageButton
                       onClick={() => {
                         if (!onClickOnLearnPage) return;
                         onClickOnLearnPage(project, page);
                       }}
                     >
                       {page}
-                    </ShowLearnProjectsLearnPageButton>
-                  </ShowLearnProjectsListItem>
+                    </LearnPageButton>
+                  </ListItem>
                 );
               })}
-            </ShowLearnProjectsUnorderedList>
+            </UnorderedList>
           </div>
         );
       })}
-    </ShowLearnProjectsWrapper>
+    </Wrapper>
   );
 }
