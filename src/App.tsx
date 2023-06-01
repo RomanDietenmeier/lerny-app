@@ -1,4 +1,5 @@
 import { AppWrapper as Wrapper } from 'App.style';
+import { Titlebar } from 'components/Titlebar';
 import { RouterRoutes } from 'constants/routerRoutes';
 import { useSearchParamsOnSelectedLearnPage } from 'hooks/LearnPageHooks';
 import { CreateLearnPage } from 'pages/CreateLearnPage';
@@ -8,32 +9,16 @@ import { LearnPage } from 'pages/LearnPage';
 import { StartPage } from 'pages/StartPage';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  NavLink,
-  Route,
-  Routes,
-  useLocation,
-  useNavigate,
-} from 'react-router-dom';
+import { NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
 import { setActiveLearnPage } from 'redux/slices/activeLearnPage';
-import { themeChangeCurrentTheme } from 'redux/slices/themeSlice';
 import { ThemeProvider } from 'styled-components';
 
 export function App() {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { pathname: pagePathName } = useLocation();
   const activeLearnPage = useSearchParamsOnSelectedLearnPage();
   const currentTheme = useSelector(selectCurrentTheme);
-
-  function swapTheme() {
-    if (currentTheme.monacoEditorTheme == 'vs-dark') {
-      dispatch(themeChangeCurrentTheme('white'));
-    } else {
-      dispatch(themeChangeCurrentTheme('dark'));
-    }
-  }
 
   useEffect(() => {
     dispatch(setActiveLearnPage(activeLearnPage));
@@ -55,14 +40,7 @@ export function App() {
   return (
     <ThemeProvider theme={currentTheme.styledComponentsTheme}>
       <Wrapper>
-        <button onClick={swapTheme}>SWAP THEME</button>
-        <button
-          onClick={() => {
-            navigate(-1);
-          }}
-        >
-          GO BACK
-        </button>
+        <Titlebar />
         <Routes>
           <Route path={RouterRoutes.Root} element={<StartPage />} />
 
