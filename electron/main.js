@@ -115,6 +115,17 @@ electron.ipcMain.on(ipc.openFileDialogOptions.selectFile, async (evt, id) => {
   );
 });
 
+electron.ipcMain.on(ipc.titlebar.close, ()=>{
+  mainWindow.close();
+});
+electron.ipcMain.on(ipc.titlebar.maximizeRestore, ()=>{
+  if(mainWindow.isMaximized())  mainWindow.unmaximize();
+  else  mainWindow.maximize();
+})
+electron.ipcMain.on(ipc.titlebar.minimize, ()=>{
+  mainWindow.minimize();
+})
+
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 
@@ -124,6 +135,7 @@ app.whenReady().then(async () => {
   mainWindow = new BrowserWindow({
     autoHideMenuBar: true,
     show: false,
+    frame: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       worldSafeExecuteJavaScript: true,

@@ -55,6 +55,17 @@ contextBridge.exposeInMainWorld('electron', {
       ipcRenderer.send(ipc.console.killConsole, id);
     },
   },
+  titlebar: {
+    closeApp() {
+      ipcRenderer.send(ipc.titlebar.close);
+    },
+    maximizeRestoreApp() {
+      ipcRenderer.send(ipc.titlebar.maximizeRestore);
+    },
+    minimizeApp() {
+      ipcRenderer.send(ipc.titlebar.minimize);
+    },
+  },
   async getLocalLearnProjectAndLearnPages() {
     const ret = {};
     const projects = [];

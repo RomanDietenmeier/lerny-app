@@ -1,4 +1,4 @@
-import { size } from 'constants/metrics';
+import { sizeRem } from 'constants/metrics';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
@@ -50,10 +50,10 @@ class ExecutableCodeEditorComponent extends HTMLElement {
 
     const codeEditorHeight =
       this.getAttribute(Attributes.HeightCodeEditor) ||
-      size.default.codeEditorHeight;
+      sizeRem.default.codeEditorHeight;
     const terminalHeight =
       this.getAttribute(Attributes.HeightTerminal) ||
-      size.default.terminalHeight;
+      sizeRem.default.terminalHeight;
 
     styleSlot.style.setProperty(
       'height',

@@ -1,4 +1,4 @@
-import { size } from 'constants/metrics';
+import { sizeRem } from 'constants/metrics';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
@@ -35,7 +35,7 @@ class CodeEditorWebComponent extends HTMLElement {
 
     styleSlot.style.setProperty(
       'height',
-      this.getAttribute(Attributes.Height) ?? size.default.codeEditorHeight
+      this.getAttribute(Attributes.Height) ?? sizeRem.default.codeEditorHeight
     );
     this.reactRenderNode.style.setProperty('height', '100%');
 

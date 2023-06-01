@@ -7,6 +7,11 @@ export const defaultTheme: DefaultTheme = {
   backgroundColorHoverButton: '#2C2C2D',
   color: '#fff',
   colorButton: '#ccc',
+  backgroundMain: '#1a1a1a',
+  backgroundSecondary: '#252525',
+  titlebar: '#404040',
+  titlebarHover: '#505050',
+  primary: '#cccccc',
 };
 
 export const whiteTheme: DefaultTheme = {
@@ -16,4 +21,9 @@ export const whiteTheme: DefaultTheme = {
   backgroundColorHoverButton: '#2C2C2D',
   color: '#000',
   colorButton: '#ccc',
+  backgroundMain: '#1a1a1a',
+  backgroundSecondary: '#252525',
+  titlebar: '#404040',
+  titlebarHover: '#505050',
+  primary: '#cccccc',
 };

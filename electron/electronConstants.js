@@ -32,6 +32,11 @@ const ipc = {
     selectFile: 'fileDialog.selectFile',
     selectFolder: 'fileDialog.selectFolder',
   },
+  titlebar: {
+    close: 'closeApp',
+    maximizeRestore: 'maximizeRestoreApp',
+    minimize: 'minimizeApp',
+  },
 };
 
 module.exports = {

@@ -8,5 +8,10 @@ declare module 'styled-components' {
     backgroundColorHoverButton: string;
     color: string;
     colorButton: string;
+    backgroundMain: string;
+    backgroundSecondary: string;
+    titlebar: string;
+    titlebarHover: string;
+    primary: string;
   }
 }

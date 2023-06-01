@@ -1,3 +1,4 @@
+import { font } from 'constants/font';
 import styled from 'styled-components';
 
 export const AppWrapper = styled.div`
@@ -7,4 +8,7 @@ export const AppWrapper = styled.div`
   flex-direction: column;
   color: ${(p) => p.theme.color};
   overflow: hidden;
+
+  font-family: ${font.family};
+  font-size: ${font.sizeNormal};
 `;
