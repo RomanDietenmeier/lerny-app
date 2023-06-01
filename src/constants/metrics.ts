@@ -3,10 +3,22 @@ export const size = {
     codeEditorHeight: 4,
     terminalHeight: 4,
     space: 1,
+    spaceBig: 2,
+    borderRadius: 0.5,
   },
   titlebar: {
     height: 2.5,
     controlButtonWidth: 3,
+  },
+  projectCard: {
+    height: 8,
+    width: 15,
+    offset: 1,
+    padding: 1,
+  },
+  startPage: {
+    paddingTB: 2,
+    paddingLR: 4,
   },
 };
 export const sizeRem = {
@@ -14,9 +26,19 @@ export const sizeRem = {
     codeEditorHeight: `${size.default.codeEditorHeight}rem`,
     terminalHeight: `${size.default.terminalHeight}rem`,
     space: `${size.default.space}rem`,
+    spaceBig: `${size.default.spaceBig}rem`,
+    borderRadius: `${size.default.borderRadius}rem`,
   },
   titlebar: {
     height: `${size.titlebar.height}rem`,
     controlButtonWidth: `${size.titlebar.controlButtonWidth}rem`,
+  },
+  projectCard: {
+    height: `${size.projectCard.height}rem`,
+    width: `${size.projectCard.width}rem`,
+  },
+  startPage: {
+    paddingTB: `${size.startPage.paddingTB}rem`,
+    paddingLR: `${size.startPage.paddingLR}rem`,
   },
 };

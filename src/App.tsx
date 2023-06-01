@@ -3,8 +3,6 @@ import { Titlebar } from 'components/Titlebar';
 import { RouterRoutes } from 'constants/routerRoutes';
 import { useSearchParamsOnSelectedLearnPage } from 'hooks/LearnPageHooks';
 import { CreateLearnPage } from 'pages/CreateLearnPage';
-import { EditSelectionPage } from 'pages/EditSelectionPage';
-import { ExportLearnProject } from 'pages/ExportLearnProject';
 import { LearnPage } from 'pages/LearnPage';
 import { StartPage } from 'pages/StartPage';
 import React, { useEffect } from 'react';
@@ -48,15 +46,7 @@ export function App() {
             path={RouterRoutes.CreateLearnPage}
             element={<CreateLearnPage />}
           />
-          <Route
-            path={RouterRoutes.ExportLearnProject}
-            element={<ExportLearnProject />}
-          />
           <Route path={RouterRoutes.LearnPage} element={<LearnPage />} />
-          <Route
-            path={RouterRoutes.SelectLearnPageToEdit}
-            element={<EditSelectionPage />}
-          />
           <Route
             path="*"
             element={

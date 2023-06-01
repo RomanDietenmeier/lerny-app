@@ -6,7 +6,8 @@ export const AppWrapper = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  color: ${(p) => p.theme.color};
+  color: ${(p) => p.theme.primary};
+  background-color: ${(p) => p.theme.backgroundMain};
   overflow: hidden;
 
   font-family: ${font.family};

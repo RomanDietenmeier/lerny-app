@@ -5,6 +5,7 @@ export const font = {
   sizeNormal: '1.25rem',
   sizeBigger: '1.5rem',
   sizeBig: '2rem',
+  sizeBiggest: '3rem',
 
   bold: 500,
 };

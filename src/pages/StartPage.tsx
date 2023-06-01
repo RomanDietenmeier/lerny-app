@@ -1,18 +1,17 @@
 import React from 'react';
 import { store } from 'redux/store';
 import useAsyncEffect from 'use-async-effect';
-import { ShowLearnProjects } from '../components/ShowLearnProjects';
-import { RouterRoutes } from '../constants/routerRoutes';
-import { useNavigateOnSelectedLearnPage } from '../hooks/LearnPageHooks';
 import { setLearnProjects } from '../redux/slices/learnProjectsSlice';
 import {
-  StartPageButton as Button,
-  StartPageButtonWrapper as ButtonWrapper,
-  StartPageNavLink as NavLink,
+  ProjectsWrapper,
   StartPageWrapper as Wrapper,
 } from './StartPage.style';
+import { useSelector } from 'react-redux';
+import { selectLearnProjects } from 'redux/selectors/learnProjectsSelectors';
+import { ProjectCard } from 'components/ProjectCard';
+import { ProjectAddCard } from 'components/ProjectAddCard';
 
-async function updateLearnProjects() {
+export async function updateLearnProjects() {
   const learnProjects =
     await window.electron.getLocalLearnProjectAndLearnPages();
 
@@ -20,9 +19,10 @@ async function updateLearnProjects() {
 }
 
 export function StartPage() {
-  const [onClickOnLearnPage] = useNavigateOnSelectedLearnPage(
+  /* const [handleClickOnProject] = useNavigateOnSelectedLearnPage(
     RouterRoutes.LearnPage
-  );
+  ); */
+  const learnProjects = useSelector(selectLearnProjects);
 
   useAsyncEffect(async () => {
     await updateLearnProjects();
@@ -30,30 +30,18 @@ export function StartPage() {
 
   return (
     <Wrapper>
-      <ButtonWrapper>
-        <NavLink to={RouterRoutes.CreateLearnPage}>
-          <Button>create</Button>
-        </NavLink>
-        <NavLink to={RouterRoutes.SelectLearnPageToEdit}>
-          <Button>edit</Button>
-        </NavLink>
-        <div style={{ width: 'inherit' }}>
-          <Button
-            onClick={async () => {
-              await window.electron.learnProject.importProject();
-              await updateLearnProjects();
-            }}
-          >
-            import
-          </Button>
-        </div>
-        <NavLink to={RouterRoutes.ExportLearnProject}>
-          <Button>export</Button>
-        </NavLink>
-      </ButtonWrapper>
-      <div style={{ width: '50%', overflow: 'auto' }}>
-        <ShowLearnProjects onClickOnLearnPage={onClickOnLearnPage} />
-      </div>
+      <div>PROJECTS</div>
+      <ProjectsWrapper>
+        <ProjectAddCard />
+        {Object.entries(learnProjects).map(([project, _], index) => {
+          return (
+            <ProjectCard
+              key={index}
+              project={project} /* onClickOnProject={handleClickOnProject} */
+            />
+          );
+        })}
+      </ProjectsWrapper>
     </Wrapper>
   );
 }
