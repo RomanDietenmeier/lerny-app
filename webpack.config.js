@@ -54,6 +54,13 @@ module.exports = {
         test: /\.ttf$/,
         type: 'asset/resource',
       },
+      {
+        test: /\.svg$/,
+        type: 'asset/resource',
+        generator: {
+          filename: '[name][ext][query]',
+        },
+      },
     ],
   },
   plugins: [
