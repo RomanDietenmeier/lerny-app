@@ -18,6 +18,8 @@ export const TitlebarWrapper = styled.div`
 
   font-size: ${font.sizeNormal};
 
+  border-bottom: 1px solid ${(p) => p.theme.separatorColor};
+
   -webkit-user-select: none;
 
   img {

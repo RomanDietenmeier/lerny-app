@@ -12,6 +12,7 @@ export const defaultTheme: DefaultTheme = {
   titlebar: '#404040',
   titlebarHover: '#505050',
   primary: '#cccccc',
+  separatorColor: 'rgba(204, 204, 204, 0.5)',
 };
 
 export const whiteTheme: DefaultTheme = {
@@ -26,4 +27,5 @@ export const whiteTheme: DefaultTheme = {
   titlebar: '#404040',
   titlebarHover: '#505050',
   primary: '#cccccc',
+  separatorColor: 'rgba(204, 204, 204, 0.5)',
 };

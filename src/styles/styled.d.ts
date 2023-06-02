@@ -13,5 +13,6 @@ declare module 'styled-components' {
     titlebar: string;
     titlebarHover: string;
     primary: string;
+    separatorColor: string;
   }
 }
