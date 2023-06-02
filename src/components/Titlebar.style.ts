@@ -6,6 +6,7 @@ import styled from 'styled-components';
 export const TitlebarWrapper = styled.div`
   display: flex;
   position: relative;
+  flex-shrink: 0;
 
   height: ${sizeRem.titlebar.height};
   width: 100%;
