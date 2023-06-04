@@ -1,6 +1,4 @@
-import { useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { selectLearnProjects } from 'redux/selectors/learnProjectsSelectors';
 
 export const enum LearnPageSearchParameters {
   project = 'project',
@@ -9,12 +7,7 @@ export const enum LearnPageSearchParameters {
 
 export function useNavigateOnSelectedLearnPage(targetRoute: string) {
   const navigate = useNavigate();
-  const learnProjects = useSelector(selectLearnProjects);
-  function onClickOnLearnPage(project: string, page?: string) {
-    if (!page) {
-      page = learnProjects[project][0];
-    }
-
+  function onClickOnLearnPage(project: string, page: string) {
     navigate(
       `${targetRoute}?${LearnPageSearchParameters.project}=${project}&${LearnPageSearchParameters.page}=${page}`
     );
