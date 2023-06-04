@@ -10,26 +10,30 @@ import {
 } from './ProjectCard.style';
 import React from 'react';
 import EllipsisIcon from '../icons/ellipsis.svg';
+import { RouterRoutes } from 'constants/routerRoutes';
+import { useNavigateOnSelectedLearnProject } from 'hooks/LearnProjectHooks';
 
 type ProjectCardProps = {
   project: string;
-  onClickOnProject?: (project: string) => void;
 };
-export function ProjectCard({
-  project,
-  onClickOnProject,
-}: ProjectCardProps): JSX.Element {
+export function ProjectCard({ project }: ProjectCardProps): JSX.Element {
   const { show } = useContextMenu({ id: project });
+  const [onClickOnLearnProject] = useNavigateOnSelectedLearnProject(
+    RouterRoutes.ProjectPage
+  );
+  const [onClickOnEditLearnProject] = useNavigateOnSelectedLearnProject(
+    RouterRoutes.CreateLearnPage
+  );
 
   return (
     <ProjectCardWrapper
       onClick={() => {
-        if (!onClickOnProject) return;
-        onClickOnProject(project);
+        if (!onClickOnLearnProject) return;
+        onClickOnLearnProject(project);
       }}
     >
       <StyledProjectMenu id={project} style={{ fontSize: font.sizeNormal }}>
-        <Item>edit...</Item>
+        <Item onClick={() => onClickOnEditLearnProject(project)}>edit...</Item>
         <Separator />
         <Item
           onClick={async () => {
@@ -44,7 +48,10 @@ export function ProjectCard({
       <ProjectCardTopLayer>
         <img
           src={EllipsisIcon}
-          onClick={(event) => show({ id: project, event })}
+          onClick={(event) => {
+            event.stopPropagation();
+            show({ id: project, event });
+          }}
         />
         {project}
       </ProjectCardTopLayer>

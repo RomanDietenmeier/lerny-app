@@ -3,7 +3,7 @@ import { Titlebar } from 'components/Titlebar';
 import { RouterRoutes } from 'constants/routerRoutes';
 import { useSearchParamsOnSelectedLearnPage } from 'hooks/LearnPageHooks';
 import { CreateLearnPage } from 'pages/CreateLearnPage';
-import { LearnPage } from 'pages/LearnPage';
+import { ProjectPage } from 'pages/ProjectPage';
 import { StartPage } from 'pages/StartPage';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -42,11 +42,12 @@ export function App() {
         <Routes>
           <Route path={RouterRoutes.Root} element={<StartPage />} />
 
+          <Route path={RouterRoutes.ProjectPage} element={<ProjectPage />} />
+
           <Route
             path={RouterRoutes.CreateLearnPage}
             element={<CreateLearnPage />}
           />
-          <Route path={RouterRoutes.LearnPage} element={<LearnPage />} />
           <Route
             path="*"
             element={

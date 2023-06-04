@@ -19,9 +19,6 @@ export async function updateLearnProjects() {
 }
 
 export function StartPage() {
-  /* const [handleClickOnProject] = useNavigateOnSelectedLearnPage(
-    RouterRoutes.LearnPage
-  ); */
   const learnProjects = useSelector(selectLearnProjects);
 
   useAsyncEffect(async () => {
@@ -34,12 +31,7 @@ export function StartPage() {
       <ProjectsWrapper>
         <ProjectAddCard />
         {Object.entries(learnProjects).map(([project, _], index) => {
-          return (
-            <ProjectCard
-              key={index}
-              project={project} /* onClickOnProject={handleClickOnProject} */
-            />
-          );
+          return <ProjectCard key={index} project={project} />;
         })}
       </ProjectsWrapper>
     </Wrapper>

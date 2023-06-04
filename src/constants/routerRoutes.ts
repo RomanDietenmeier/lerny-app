@@ -1,5 +1,5 @@
 export const enum RouterRoutes {
   Root = '/',
   CreateLearnPage = '/createLearnPage',
-  LearnPage = '/learnPage',
+  ProjectPage = '/projectPage',
 }

@@ -8,6 +8,8 @@ export const ProjectCardWrapper = styled.div`
   height: ${sizeRem.projectCard.height};
   margin: ${sizeRem.default.spaceBig};
 
+  cursor: pointer;
+
   img {
     position: absolute;
     transform: translate(
@@ -17,7 +19,6 @@ export const ProjectCardWrapper = styled.div`
       ${-(size.projectCard.height - size.projectCard.offset) / 2 +
       size.projectCard.padding}rem
     );
-    cursor: pointer;
   }
 `;
 
