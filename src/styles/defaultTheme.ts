@@ -10,10 +10,10 @@ export const defaultTheme: DefaultTheme = {
 };
 
 export const whiteTheme: DefaultTheme = {
-  backgroundMain: '#1a1a1a',
-  backgroundSecondary: '#252525',
+  backgroundMain: '#fff',
+  backgroundSecondary: '#ccc',
   titlebar: '#404040',
   titlebarHover: '#505050',
-  primary: '#cccccc',
-  separatorColor: 'rgba(204, 204, 204, 0.33)',
+  primary: '#1a1a1a',
+  separatorColor: 'rgba(0, 0, 0, 0.33)',
 };
