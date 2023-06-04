@@ -22,46 +22,42 @@ import { StyledProjectMenu } from 'components/ProjectCard.style';
 import { Item, Separator, useContextMenu } from 'react-contexify';
 import { font } from 'constants/font';
 import { RouterRoutes } from 'constants/routerRoutes';
+import { useNavigateOnSelectedLearnPage } from 'hooks/LearnPageHooks';
 
 export function ProjectPage() {
   const navigate = useNavigate();
 
-  const { learnProject } = useSearchParamsOnSelectedLearnProject();
+  const { learnProject, learnPage } = useSearchParamsOnSelectedLearnProject();
   const pages = useSelector(selectLearnProjects)[learnProject];
-  const [selectedLearnPage, setSelectedLearnPage] = useState<string>();
   const [learnPageContent, setLearnPageContent] = useState('');
 
   const { show } = useContextMenu({ id: learnProject });
 
+  const [onClickOnLearnPage] = useNavigateOnSelectedLearnPage(
+    RouterRoutes.ProjectPage
+  );
   const [onClickOnEditLearnProject] = useNavigateOnSelectedLearnProject(
     RouterRoutes.CreateLearnPage
   );
 
   useEffect(() => {
     if (!pages) {
-      navigate(-1);
-    } else {
-      setSelectedLearnPage(pages[0]);
+      navigate(RouterRoutes.Root);
     }
   }, [pages]);
 
   useAsyncEffect(
     async (isMounted) => {
-      if (selectedLearnPage) {
-        const loadedLearnPageContent =
-          await window.electron.learnPage.loadLearnPage(
-            learnProject,
-            selectedLearnPage
-          );
-        if (!isMounted()) return;
-        setLearnPageContent(loadedLearnPageContent);
-      }
+      const loadedLearnPageContent =
+        await window.electron.learnPage.loadLearnPage(learnProject, learnPage);
+      if (!isMounted()) return;
+      setLearnPageContent(loadedLearnPageContent);
     },
-    [selectedLearnPage]
+    [learnPage]
   );
 
   function handleOnClickLearnPage(page: string) {
-    setSelectedLearnPage(page);
+    onClickOnLearnPage(learnProject, page);
   }
 
   return (
@@ -72,7 +68,7 @@ export function ProjectPage() {
             src={BackIcon}
             style={{ scale: '0.75' }}
             onClick={() => {
-              navigate(-1);
+              navigate(RouterRoutes.Root);
             }}
           />
           <img
@@ -85,8 +81,7 @@ export function ProjectPage() {
           >
             <Item
               onClick={() => {
-                if (!selectedLearnPage) return;
-                onClickOnEditLearnProject(learnProject, selectedLearnPage);
+                onClickOnEditLearnProject(learnProject, learnPage);
               }}
             >
               edit...
@@ -109,7 +104,7 @@ export function ProjectPage() {
           {pages?.map((page, index) => (
             <ProjectPagePaneFile
               key={index}
-              active={selectedLearnPage === page}
+              active={learnPage === page}
               onClick={() => handleOnClickLearnPage(page)}
             >
               {page}
