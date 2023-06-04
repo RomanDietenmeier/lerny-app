@@ -164,7 +164,9 @@ export function Titlebar(): JSX.Element {
                 </Item>
               ))}
             </Submenu>
-            <Item>create Project</Item>
+            <Item onClick={() => navigate(RouterRoutes.EditProjectPage)}>
+              create Project
+            </Item>
           </StyledMenu>
         </TitlebarMenu>
         <TitlebarMenu onClick={(event) => show({ id: THEME_MENU, event })}>
