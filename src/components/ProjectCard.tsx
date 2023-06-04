@@ -28,7 +28,6 @@ export function ProjectCard({ project }: ProjectCardProps): JSX.Element {
   return (
     <ProjectCardWrapper
       onClick={() => {
-        if (!onClickOnLearnProject) return;
         onClickOnLearnProject(project);
       }}
     >
