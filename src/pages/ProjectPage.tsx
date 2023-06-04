@@ -37,7 +37,7 @@ export function ProjectPage() {
     RouterRoutes.ProjectPage
   );
   const [onClickOnEditLearnProject] = useNavigateOnSelectedLearnProject(
-    RouterRoutes.CreateLearnPage
+    RouterRoutes.EditProjectPage
   );
 
   useEffect(() => {

@@ -45,7 +45,7 @@ export function App() {
           <Route path={RouterRoutes.ProjectPage} element={<ProjectPage />} />
 
           <Route
-            path={RouterRoutes.CreateLearnPage}
+            path={RouterRoutes.EditProjectPage}
             element={<CreateLearnPage />}
           />
           <Route

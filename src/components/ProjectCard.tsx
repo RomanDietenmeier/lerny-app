@@ -22,7 +22,7 @@ export function ProjectCard({ project }: ProjectCardProps): JSX.Element {
     RouterRoutes.ProjectPage
   );
   const [onClickOnEditLearnProject] = useNavigateOnSelectedLearnProject(
-    RouterRoutes.CreateLearnPage
+    RouterRoutes.EditProjectPage
   );
 
   return (

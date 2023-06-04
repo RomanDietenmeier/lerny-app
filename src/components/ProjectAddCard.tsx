@@ -24,7 +24,7 @@ export function ProjectAddCard(): JSX.Element {
   }
   function handleOnCreateProject(event: React.FormEvent<HTMLDivElement>) {
     event.stopPropagation();
-    navigate(RouterRoutes.CreateLearnPage);
+    navigate(RouterRoutes.EditProjectPage);
   }
   async function handleOnImportProject(event: React.FormEvent<HTMLDivElement>) {
     event.stopPropagation();
