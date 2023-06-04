@@ -23,6 +23,7 @@ import { Item, Separator, useContextMenu } from 'react-contexify';
 import { font } from 'constants/font';
 import { RouterRoutes } from 'constants/routerRoutes';
 import { useNavigateOnSelectedLearnPage } from 'hooks/LearnPageHooks';
+import { updateLearnProjects } from './StartPage';
 
 export function ProjectPage() {
   const navigate = useNavigate();
@@ -40,11 +41,9 @@ export function ProjectPage() {
     RouterRoutes.EditProjectPage
   );
 
-  useEffect(() => {
-    if (!pages) {
-      navigate(RouterRoutes.Root);
-    }
-  }, [pages]);
+  useAsyncEffect(async () => {
+    await updateLearnProjects();
+  }, []);
 
   useAsyncEffect(
     async (isMounted) => {
