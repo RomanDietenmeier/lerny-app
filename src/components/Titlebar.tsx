@@ -18,6 +18,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
 import { useLocation, useNavigate } from 'react-router';
 import { RouterRoutes } from 'constants/routerRoutes';
+import { selectLearnProjects } from 'redux/selectors/learnProjectsSelectors';
+import { updateLearnProjects } from 'pages/StartPage';
+import useAsyncEffect from 'use-async-effect';
+import { useNavigateOnSelectedLearnProject } from 'hooks/LearnProjectHooks';
 
 const FILE_MENU = 'file-id';
 const PROJECT_MENU = 'project-id';
@@ -55,6 +59,15 @@ export function Titlebar(): JSX.Element {
   const navigate = useNavigate();
   const currentTheme = useSelector(selectCurrentTheme);
   const currentPage = useLocation().pathname;
+  const learnProjects = useSelector(selectLearnProjects);
+
+  const [onClickOnLearnProject] = useNavigateOnSelectedLearnProject(
+    RouterRoutes.ProjectPage
+  );
+
+  useAsyncEffect(async () => {
+    await updateLearnProjects();
+  }, []);
 
   function swapTheme() {
     if (currentTheme.monacoEditorTheme == 'vs-dark') {
@@ -140,8 +153,16 @@ export function Titlebar(): JSX.Element {
               Projectlist
             </Item>
             <Submenu label="Project...">
-              <Item>Dummyproject1</Item>
-              <Item>Dummyproject2</Item>
+              {Object.entries(learnProjects).map((project, index) => (
+                <Item
+                  key={index}
+                  onClick={() => {
+                    onClickOnLearnProject(project[0]);
+                  }}
+                >
+                  {project[0]}
+                </Item>
+              ))}
             </Submenu>
             <Item>create Project</Item>
           </StyledMenu>
