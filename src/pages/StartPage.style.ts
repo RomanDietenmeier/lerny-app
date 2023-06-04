@@ -1,6 +1,4 @@
-import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
-import { DefaultButton } from '../styles/button.style';
 import { sizeRem } from 'constants/metrics';
 import { font } from 'constants/font';
 
@@ -27,15 +25,6 @@ export const StartPageButtonWrapper = styled.div`
   justify-content: space-evenly;
   align-items: center;
   padding-right: 1rem;
-`;
-
-export const StartPageNavLink = styled(NavLink)`
-  width: inherit;
-`;
-
-export const StartPageButton = styled(DefaultButton)`
-  font-size: 3rem;
-  width: 100%;
 `;
 
 export const ProjectsWrapper = styled.div`
