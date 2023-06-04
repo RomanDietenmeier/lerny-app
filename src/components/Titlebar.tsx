@@ -16,7 +16,7 @@ import 'react-contexify/dist/ReactContexify.css';
 import { themeChangeCurrentTheme } from 'redux/slices/themeSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { RouterRoutes } from 'constants/routerRoutes';
 
 const FILE_MENU = 'file-id';
@@ -54,6 +54,7 @@ export function Titlebar(): JSX.Element {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const currentTheme = useSelector(selectCurrentTheme);
+  const currentPage = useLocation().pathname;
 
   function swapTheme() {
     if (currentTheme.monacoEditorTheme == 'vs-dark') {
@@ -70,14 +71,27 @@ export function Titlebar(): JSX.Element {
         <TitlebarMenu onClick={(event) => show({ id: FILE_MENU, event })}>
           File
           <StyledMenu id={FILE_MENU}>
-            <Item>new File</Item>
-            <Item>export File</Item>
-            <Item>edit File</Item>
+            <Item disabled={currentPage !== RouterRoutes.EditProjectPage}>
+              new File
+            </Item>
+            <Item disabled={currentPage === RouterRoutes.Root}>
+              export File
+            </Item>
+            <Item disabled={currentPage !== RouterRoutes.EditProjectPage}>
+              import File
+            </Item>
+            <Item disabled={currentPage !== RouterRoutes.ProjectPage}>
+              edit File
+            </Item>
             <Separator />
-            <Item>save File</Item>
-            <Item>save File as...</Item>
+            <Item disabled={currentPage === RouterRoutes.Root}>save File</Item>
+            <Item disabled={currentPage !== RouterRoutes.EditProjectPage}>
+              save File as...
+            </Item>
             <Separator />
-            <Item>delete File</Item>
+            <Item disabled={currentPage !== RouterRoutes.EditProjectPage}>
+              delete File
+            </Item>
           </StyledMenu>
         </TitlebarMenu>
 
@@ -85,14 +99,26 @@ export function Titlebar(): JSX.Element {
           Project
           <StyledMenu id={PROJECT_MENU}>
             <Item>new Project</Item>
-            <Item>export Project</Item>
-            <Item>import Project</Item>
-            <Item>edit Project</Item>
+            <Item disabled={currentPage === RouterRoutes.Root}>
+              export Project
+            </Item>
+            <Item disabled={currentPage !== RouterRoutes.Root}>
+              import Project
+            </Item>
+            <Item disabled={currentPage !== RouterRoutes.ProjectPage}>
+              edit Project
+            </Item>
             <Separator />
-            <Item>save Project</Item>
-            <Item>save Project as...</Item>
+            <Item disabled={currentPage === RouterRoutes.Root}>
+              save Project
+            </Item>
+            <Item disabled={currentPage === RouterRoutes.Root}>
+              save Project as...
+            </Item>
             <Separator />
-            <Item>delete Project</Item>
+            <Item disabled={currentPage === RouterRoutes.Root}>
+              delete Project
+            </Item>
           </StyledMenu>
         </TitlebarMenu>
         <TitlebarMenu onClick={(event) => show({ id: NAVIGATE_MENU, event })}>
