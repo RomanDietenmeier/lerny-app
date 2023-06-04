@@ -17,6 +17,7 @@ import { themeChangeCurrentTheme } from 'redux/slices/themeSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
 import { useNavigate } from 'react-router';
+import { RouterRoutes } from 'constants/routerRoutes';
 
 const FILE_MENU = 'file-id';
 const PROJECT_MENU = 'project-id';
@@ -105,6 +106,13 @@ export function Titlebar(): JSX.Element {
               Go back
             </Item>
             <Separator />
+            <Item
+              onClick={() => {
+                navigate(RouterRoutes.Root);
+              }}
+            >
+              Projectlist
+            </Item>
             <Submenu label="Project...">
               <Item>Dummyproject1</Item>
               <Item>Dummyproject2</Item>
