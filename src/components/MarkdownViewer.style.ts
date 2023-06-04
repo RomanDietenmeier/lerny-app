@@ -4,13 +4,13 @@ export const MarkdownViewerWrapper = styled.div`
   height: 100%;
   width: 100%;
 
-  background-color: ${(p) => p.theme.backgroundColor};
+  background-color: ${(p) => p.theme.backgroundMain};
 
   overflow-y: scroll;
   overflow-x: auto;
 
   ::-webkit-scrollbar {
-    background-color: ${(p) => p.theme.backgroundColor};
+    background-color: ${(p) => p.theme.backgroundMain};
     width: 5px;
   }
 

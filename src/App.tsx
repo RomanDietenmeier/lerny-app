@@ -25,13 +25,13 @@ export function App() {
   useEffect(() => {
     document.body.style.setProperty(
       'background-color',
-      currentTheme.styledComponentsTheme.backgroundColor
+      currentTheme.styledComponentsTheme.backgroundMain
     );
     document
       .getElementById('BackgroundBanner')
       ?.style.setProperty(
         '-webkit-text-stroke-color',
-        currentTheme.styledComponentsTheme.color
+        currentTheme.styledComponentsTheme.primary
       );
   }, [currentTheme]);
 
