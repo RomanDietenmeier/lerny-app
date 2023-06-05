@@ -8,6 +8,8 @@ import { useSelector } from 'react-redux';
 import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
 import 'styles/xtermOverride.css';
 import 'xterm/css/xterm.css';
+import { CodeEditorWrapper } from './CodeEditor.style';
+import { font } from 'constants/font';
 
 type MonacoEditorType = typeof import('monaco-editor');
 
@@ -21,6 +23,8 @@ export const defaultMonacoWrapperStyle = {
 
 const monacoEditorOptions: editor.IStandaloneEditorConstructionOptions = {
   minimap: { enabled: false },
+  fontSize: font.px.sizeSmall,
+  scrollBeyondLastLine: false,
 };
 
 export type CodeEditorTerminalProps = {
@@ -36,6 +40,7 @@ export type CodeEditorProps = {
   learnProject?: string;
   monacoEditorProps?: EditorProps;
   setEditor?: (editor: editor.IStandaloneCodeEditor) => void;
+  onHeightChanged?: (height: string) => void;
 };
 
 export function CodeEditor({
@@ -45,13 +50,26 @@ export function CodeEditor({
   learnProject,
   monacoEditorProps,
   setEditor,
+  onHeightChanged,
 }: CodeEditorProps): JSX.Element {
   const currentTheme = useSelector(selectCurrentTheme);
   const [codeEditor, setCodeEditor] =
     useState<editor.IStandaloneCodeEditor | null>(null);
+  const [editorHeight, setEditorHeight] = useState('0px');
+
+  useEffect(() => {
+    if (onHeightChanged) onHeightChanged(editorHeight);
+  }, [editorHeight]);
 
   useEffect(() => {
     if (!codeEditor) return;
+
+    codeEditor.onDidChangeModelContent(() => {
+      const model = codeEditor.getModel();
+      if (!model) return;
+      const lineCount = model.getLineCount();
+      setEditorHeight(`${codeEditor.getBottomForLineNumber(lineCount)}px`);
+    });
 
     function saveFile() {
       if (!learnProject || !filename || !codeEditor) return;
@@ -98,7 +116,7 @@ export function CodeEditor({
   }
 
   return (
-    <>
+    <CodeEditorWrapper height={editorHeight}>
       <MonacoEditor
         {...monacoEditorProps}
         onMount={handleEditorDidMount}
@@ -114,6 +132,6 @@ export function CodeEditor({
         options={{ ...monacoEditorOptions, ...monacoEditorProps?.options }}
         loading={monacoEditorProps?.loading ?? <DefaultSpinner />}
       />
-    </>
+    </CodeEditorWrapper>
   );
 }

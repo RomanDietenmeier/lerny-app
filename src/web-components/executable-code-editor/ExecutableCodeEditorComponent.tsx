@@ -15,7 +15,6 @@ export const ExecutableCodeEditorComponentHtmlTag = 'executable-code-editor';
 const enum Attributes {
   FileName = 'FileName',
   FolderStructure = 'FolderStructure',
-  HeightCodeEditor = 'HeightCodeEditor',
   HeightTerminal = 'HeightTerminal',
   Language = 'Language',
 }
@@ -48,17 +47,10 @@ class ExecutableCodeEditorComponent extends HTMLElement {
       shadowRoot.append(duplicateElement);
     }
 
-    const codeEditorHeight =
-      this.getAttribute(Attributes.HeightCodeEditor) ||
-      sizeRem.default.codeEditorHeight;
     const terminalHeight =
       this.getAttribute(Attributes.HeightTerminal) ||
       sizeRem.default.terminalHeight;
 
-    styleSlot.style.setProperty(
-      'height',
-      `calc(calc(${codeEditorHeight} + ${terminalHeight}) + 2rem)`
-    );
     this.reactRenderNode.style.setProperty('height', '100%');
 
     shadowRoot.append(styleSlot);
@@ -75,19 +67,17 @@ class ExecutableCodeEditorComponent extends HTMLElement {
           <ThemeProvider
             theme={selectCurrentTheme(store.getState()).styledComponentsTheme}
           >
-            <div style={{ height: codeEditorHeight }}>
-              <CodeEditor
-                filename={this.getAttributeOrUndefined(Attributes.FileName)}
-                folderStructure={this.getAttributeFolderStructure()}
-                learnProject={
-                  store.getState().activeLearnPage.learnProject || undefined
-                }
-                initialCodeEditorValue={starterCode}
-                monacoEditorProps={{
-                  language: this.getAttributeOrUndefined(Attributes.Language),
-                }}
-              />
-            </div>
+            <CodeEditor
+              filename={this.getAttributeOrUndefined(Attributes.FileName)}
+              folderStructure={this.getAttributeFolderStructure()}
+              learnProject={
+                store.getState().activeLearnPage.learnProject || undefined
+              }
+              initialCodeEditorValue={starterCode}
+              monacoEditorProps={{
+                language: this.getAttributeOrUndefined(Attributes.Language),
+              }}
+            />
             <div style={{ height: '2rem' }}>
               {!buildCommand ? null : (
                 <>
