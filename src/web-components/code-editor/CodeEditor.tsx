@@ -8,8 +8,14 @@ import { useSelector } from 'react-redux';
 import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
 import 'styles/xtermOverride.css';
 import 'xterm/css/xterm.css';
-import { CodeEditorWrapper } from './CodeEditor.style';
+import {
+  CodeEditorButtonWrapper,
+  CodeEditorButtonsWrapper,
+  CodeEditorWrapper,
+} from './CodeEditor.style';
 import { font } from 'constants/font';
+import RunIcon from '../../icons/play.svg';
+import TestIcon from '../../icons/test.svg';
 
 type MonacoEditorType = typeof import('monaco-editor');
 
@@ -28,7 +34,7 @@ const monacoEditorOptions: editor.IStandaloneEditorConstructionOptions = {
   scrollbar: {
     alwaysConsumeMouseWheel: false,
   },
-  lineNumbersMinChars: 0,
+  lineNumbersMinChars: 3,
 };
 
 export type CodeEditorTerminalProps = {
@@ -45,6 +51,8 @@ export type CodeEditorProps = {
   monacoEditorProps?: EditorProps;
   setEditor?: (editor: editor.IStandaloneCodeEditor) => void;
   onHeightChanged?: (height: string) => void;
+  onClickRun?: () => void;
+  onClickTest?: () => void;
 };
 
 export function CodeEditor({
@@ -55,6 +63,8 @@ export function CodeEditor({
   monacoEditorProps,
   setEditor,
   onHeightChanged,
+  onClickRun: handleOnClickRun,
+  onClickTest: handleOnClickTest,
 }: CodeEditorProps): JSX.Element {
   const currentTheme = useSelector(selectCurrentTheme);
   const [codeEditor, setCodeEditor] =
@@ -130,22 +140,32 @@ export function CodeEditor({
   }
 
   return (
-    <CodeEditorWrapper height={editorHeight}>
-      <MonacoEditor
-        {...monacoEditorProps}
-        onMount={handleEditorDidMount}
-        theme={
-          monacoEditorProps?.theme ||
-          currentTheme.monacoEditorTheme ||
-          'vs-dark'
-        }
-        wrapperProps={{
-          style: defaultMonacoWrapperStyle,
-          ...monacoEditorProps?.wrapperProps,
-        }}
-        options={{ ...monacoEditorOptions, ...monacoEditorProps?.options }}
-        loading={monacoEditorProps?.loading ?? <DefaultSpinner />}
-      />
-    </CodeEditorWrapper>
+    <>
+      <CodeEditorButtonsWrapper>
+        <CodeEditorButtonWrapper onClick={handleOnClickRun}>
+          <img src={RunIcon} />
+        </CodeEditorButtonWrapper>
+        <CodeEditorButtonWrapper onClick={handleOnClickTest}>
+          <img src={TestIcon} />
+        </CodeEditorButtonWrapper>
+      </CodeEditorButtonsWrapper>
+      <CodeEditorWrapper height={editorHeight}>
+        <MonacoEditor
+          {...monacoEditorProps}
+          onMount={handleEditorDidMount}
+          theme={
+            monacoEditorProps?.theme ||
+            currentTheme.monacoEditorTheme ||
+            'vs-dark'
+          }
+          wrapperProps={{
+            style: defaultMonacoWrapperStyle,
+            ...monacoEditorProps?.wrapperProps,
+          }}
+          options={{ ...monacoEditorOptions, ...monacoEditorProps?.options }}
+          loading={monacoEditorProps?.loading ?? <DefaultSpinner />}
+        />
+      </CodeEditorWrapper>
+    </>
   );
 }

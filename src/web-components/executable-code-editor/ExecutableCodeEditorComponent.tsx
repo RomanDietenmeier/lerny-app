@@ -6,7 +6,6 @@ import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
 import { store } from 'redux/store';
 import { StyleSheetManager, ThemeProvider } from 'styled-components';
 import { CodeEditor } from 'web-components/code-editor/CodeEditor';
-import { ExecutableCodeEditorRunTestButton as Button } from 'web-components/executable-code-editor/ExecutableCodeEditor.style';
 import { XTermTerminal } from 'web-components/terminal/XTermTerminal';
 import { xml2js } from 'xml-js';
 
@@ -61,6 +60,19 @@ class ExecutableCodeEditorComponent extends HTMLElement {
         window.webComponent.getContentOfHTMLCommentString(this.innerHTML)
       );
 
+    const handleOnClickRun = () => {
+      if (buildCommand && runCommand) {
+        window.electron.console.sendToTerminal(this.consoleId, buildCommand);
+        window.electron.console.sendToTerminal(this.consoleId, runCommand);
+      }
+    };
+    const handleOnClickTest = () => {
+      if (buildCommand && testCommand) {
+        window.electron.console.sendToTerminal(this.consoleId, buildCommand);
+        window.electron.console.sendToTerminal(this.consoleId, testCommand);
+      }
+    };
+
     ReactDOM.render(
       <Provider store={store}>
         <StyleSheetManager target={styleSlot}>
@@ -77,45 +89,9 @@ class ExecutableCodeEditorComponent extends HTMLElement {
               monacoEditorProps={{
                 language: this.getAttributeOrUndefined(Attributes.Language),
               }}
+              onClickRun={handleOnClickRun}
+              onClickTest={handleOnClickTest}
             />
-            <div style={{ height: '2rem' }}>
-              {!buildCommand ? null : (
-                <>
-                  {!runCommand ? null : (
-                    <Button
-                      onClick={() => {
-                        window.electron.console.sendToTerminal(
-                          this.consoleId,
-                          buildCommand
-                        );
-                        window.electron.console.sendToTerminal(
-                          this.consoleId,
-                          runCommand
-                        );
-                      }}
-                    >
-                      RUN
-                    </Button>
-                  )}
-                  {!testCommand ? null : (
-                    <Button
-                      onClick={() => {
-                        window.electron.console.sendToTerminal(
-                          this.consoleId,
-                          buildCommand
-                        );
-                        window.electron.console.sendToTerminal(
-                          this.consoleId,
-                          testCommand
-                        );
-                      }}
-                    >
-                      TEST
-                    </Button>
-                  )}
-                </>
-              )}
-            </div>
             <div style={{ height: terminalHeight }}>
               <XTermTerminal
                 consoleId={this.consoleId}
