@@ -68,11 +68,21 @@ export function CodeEditor({
     if (!codeEditor) return;
 
     codeEditor.onDidChangeModelContent(() => {
+      resizeEditor();
+    });
+    codeEditor.onDidChangeHiddenAreas(() => {
+      resizeEditor();
+    });
+
+    function resizeEditor() {
+      if (!codeEditor) return;
+
+      codeEditor.setScrollTop(0);
       const model = codeEditor.getModel();
       if (!model) return;
       const lineCount = model.getLineCount();
       setEditorHeight(`${codeEditor.getBottomForLineNumber(lineCount)}px`);
-    });
+    }
 
     function saveFile() {
       if (!learnProject || !filename || !codeEditor) return;
