@@ -2,6 +2,7 @@ import { font } from 'constants/font';
 import { size, sizeRem } from 'constants/metrics';
 import styled from 'styled-components';
 import { StyledMenu } from './Titlebar.style';
+import { EllipsisWrapper } from './IconWrapper.style';
 
 export const ProjectCardWrapper = styled.div`
   width: ${sizeRem.projectCard.width};
@@ -10,7 +11,7 @@ export const ProjectCardWrapper = styled.div`
 
   cursor: pointer;
 
-  img {
+  ${EllipsisWrapper} {
     position: absolute;
     transform: translate(
       ${(size.projectCard.width - size.projectCard.offset) / 2 -

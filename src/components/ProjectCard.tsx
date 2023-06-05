@@ -12,6 +12,7 @@ import React from 'react';
 import EllipsisIcon from '../icons/ellipsis.svg';
 import { RouterRoutes } from 'constants/routerRoutes';
 import { useNavigateOnSelectedLearnProject } from 'hooks/LearnProjectHooks';
+import { EllipsisWrapper } from './IconWrapper.style';
 
 type ProjectCardProps = {
   project: string;
@@ -45,13 +46,15 @@ export function ProjectCard({ project }: ProjectCardProps): JSX.Element {
         <Item>delete...</Item>
       </StyledProjectMenu>
       <ProjectCardTopLayer>
-        <img
-          src={EllipsisIcon}
+        <EllipsisWrapper
           onClick={(event) => {
             event.stopPropagation();
             show({ id: project, event });
           }}
-        />
+          hoverColor="rgba(0,0,0,0.33)"
+        >
+          <img src={EllipsisIcon} />
+        </EllipsisWrapper>
         {project}
       </ProjectCardTopLayer>
       <ProjectCardMiddleLayer />
