@@ -25,6 +25,9 @@ const monacoEditorOptions: editor.IStandaloneEditorConstructionOptions = {
   minimap: { enabled: false },
   fontSize: font.px.sizeSmall,
   scrollBeyondLastLine: false,
+  scrollbar: {
+    alwaysConsumeMouseWheel: false,
+  },
 };
 
 export type CodeEditorTerminalProps = {
