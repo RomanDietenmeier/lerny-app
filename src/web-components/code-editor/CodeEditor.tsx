@@ -28,6 +28,7 @@ const monacoEditorOptions: editor.IStandaloneEditorConstructionOptions = {
   scrollbar: {
     alwaysConsumeMouseWheel: false,
   },
+  lineNumbersMinChars: 0,
 };
 
 export type CodeEditorTerminalProps = {
