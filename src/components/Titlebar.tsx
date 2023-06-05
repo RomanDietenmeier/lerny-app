@@ -70,7 +70,7 @@ export function Titlebar(): JSX.Element {
   }, []);
 
   function swapTheme() {
-    if (currentTheme.monacoEditorTheme == 'vs-dark') {
+    if (currentTheme.monacoEditorTheme == 'lerny-dark') {
       dispatch(themeChangeCurrentTheme('white'));
     } else {
       dispatch(themeChangeCurrentTheme('dark'));
