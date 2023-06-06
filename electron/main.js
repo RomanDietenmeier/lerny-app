@@ -150,7 +150,6 @@ app.whenReady().then(async () => {
   mainWindow.webContents.openDevTools();
   mainWindow.webContents.on('did-start-loading', (evt, data) => {
     installDevToolExtensions();
-    killAllConsoles();
   });
 });
 
