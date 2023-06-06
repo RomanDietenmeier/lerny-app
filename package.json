@@ -7,6 +7,7 @@
     "start": "concurrently --kill-others \"npm run webpack\" \"npm run electron\"",
     "build": "npm run webpack-build && electron-packager . --out out --overwrite --ignore=\".\\b(gitignore)|\\b(src)|.\\b(nvmrc)|.\\b(vscode)|\\b(ReadMe.md).eslintrc.js|\\b(webpack.config.js)|\\b(notes.md)|.\\b(eslintrc.js)|.\\b(gitattributes)|.\\b(prettierrc)|.\\b(github)|\\b(tsconfig.json)\"",
     "lint": "eslint src/**/*.tsx src/**/*.ts",
+    "lint-fix": "eslint src/**/*.tsx src/**/*.ts --fix",
     "electron": "cross-env NODE_ENV=development electron electron/main.js",
     "webpack": "webpack --mode=development --watch",
     "webpack-build": "webpack --mode=production --progress"
