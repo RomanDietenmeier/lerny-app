@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 export const ProjectPageWrapper = styled.div`
   display: flex;
-  height: 100%;
+  height: calc(100vh - ${sizeRem.titlebar.height} - 1px);
 
   color: ${(p) => p.theme.primary};
   background-color: ${(p) => p.theme.backgroundMain};
