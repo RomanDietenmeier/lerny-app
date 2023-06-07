@@ -12,4 +12,13 @@ export const AppWrapper = styled.div`
 
   font-family: ${font.family};
   font-size: ${font.sizeNormal};
+
+  *::-webkit-scrollbar {
+    background-color: ${(p) => p.theme.backgroundMain};
+    width: 5px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: #4f4f4f;
+  }
 `;

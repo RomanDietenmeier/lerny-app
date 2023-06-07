@@ -19,15 +19,6 @@ export const MarkdownViewerContentWrapper = styled.div`
 
   overflow-y: scroll;
   overflow-x: auto;
-
-  ::-webkit-scrollbar {
-    background-color: ${(p) => p.theme.backgroundMain};
-    width: 5px;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background-color: #4f4f4f;
-  }
 `;
 
 export const MarkdownViewerTerminalWrapper = styled.div`
