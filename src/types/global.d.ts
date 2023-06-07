@@ -48,6 +48,8 @@ declare global {
       learnProject: {
         exportProject: (project: string) => Promise<void>;
         importProject: () => Promise<void>;
+        readDirectory: (folderPath: string) => Array<string>;
+        onDirectoryChanged: (folderPath: string, listener: () => void) => void;
       };
       openExternalLink: (link: string) => void;
     };

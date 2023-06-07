@@ -18,6 +18,8 @@ export const ProjectPagePane = styled.div`
   width: ${sizeRem.pane.width};
   height: 100%;
 
+  justify-content: space-between;
+
   border-right: 1px solid ${(p) => p.theme.separatorColor};
 
   background-color: ${(p) => p.theme.backgroundSecondary};
@@ -39,6 +41,8 @@ export const ProjectPagePaneExplorer = styled.div`
   display: flex;
   flex-direction: column;
 
+  flex-grow: 0;
+
   padding: ${sizeRem.pane.padding};
   padding-top: 0;
 
@@ -46,11 +50,11 @@ export const ProjectPagePaneExplorer = styled.div`
   font-weight: ${font.bold};
 
   border-top: 1px solid ${(p) => p.theme.primary};
-
-  > *:not(:last-child) {
-    margin-bottom: ${sizeRem.default.space};
-  }
 `;
+export const ProjectPagePaneDirectory = styled(ProjectPagePaneExplorer)`
+  height: ${size.terminal.height + size.default.space}rem;
+`;
+
 export const ProjectPagePaneSectionName = styled.div`
   width: fit-content;
   padding: 0 ${sizeRem.default.space};
@@ -61,6 +65,17 @@ export const ProjectPagePaneSectionName = styled.div`
   font-size: ${font.sizeSmaller};
 
   transform: translateY(-0.8rem);
+`;
+
+export const ProjectPagePaneFileWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  overflow: overlay;
+
+  > *:not(:last-child) {
+    margin-bottom: ${sizeRem.default.space};
+  }
 `;
 
 type ProjectPagePaneFileProps = {
@@ -79,4 +94,8 @@ export const ProjectPagePaneFile = styled.div<ProjectPagePaneFileProps>`
   border-radius: ${sizeRem.default.borderRadius};
 
   cursor: pointer;
+`;
+
+export const ProjectPagePaneProject = styled.div`
+  margin-bottom: ${sizeRem.default.space};
 `;

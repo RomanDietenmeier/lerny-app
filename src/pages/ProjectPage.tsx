@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   useNavigateOnSelectedLearnProject,
   useSearchParamsOnSelectedLearnProject,
@@ -8,8 +8,11 @@ import { useSelector } from 'react-redux';
 import {
   ProjectPagePane,
   ProjectPagePaneBar,
+  ProjectPagePaneDirectory,
   ProjectPagePaneExplorer,
   ProjectPagePaneFile,
+  ProjectPagePaneFileWrapper,
+  ProjectPagePaneProject,
   ProjectPagePaneSectionName,
   ProjectPageWrapper,
 } from './ProjectPage.style';
@@ -32,6 +35,10 @@ export function ProjectPage() {
   const pages = useSelector(selectLearnProjects)[learnProject];
   const [learnPageContent, setLearnPageContent] = useState('');
 
+  const [workingDirectory, setWorkingDirectory] = useState(
+    window.electron.learnProject.readDirectory(learnProject)
+  );
+
   const { show } = useContextMenu({ id: learnProject });
 
   const [onClickOnLearnPage] = useNavigateOnSelectedLearnPage(
@@ -40,6 +47,14 @@ export function ProjectPage() {
   const [onClickOnEditLearnProject] = useNavigateOnSelectedLearnProject(
     RouterRoutes.EditProjectPage
   );
+
+  useEffect(() => {
+    window.electron.learnProject.onDirectoryChanged(learnProject, () => {
+      setWorkingDirectory(
+        window.electron.learnProject.readDirectory(learnProject)
+      );
+    });
+  }, []);
 
   useAsyncEffect(async () => {
     await updateLearnProjects();
@@ -62,54 +77,76 @@ export function ProjectPage() {
   return (
     <ProjectPageWrapper>
       <ProjectPagePane>
-        <ProjectPagePaneBar>
-          <img
-            src={BackIcon}
-            style={{ scale: '0.75' }}
-            onClick={() => {
-              navigate(RouterRoutes.Root);
-            }}
-          />
-          <img
-            src={EllipsisIcon}
-            onClick={(event) => show({ id: learnProject, event })}
-          />
-          <StyledProjectMenu
-            id={learnProject}
-            style={{ fontSize: font.sizeNormal }}
-          >
-            <Item
+        <div>
+          <ProjectPagePaneBar>
+            <img
+              src={BackIcon}
+              style={{ scale: '0.75' }}
               onClick={() => {
-                onClickOnEditLearnProject(learnProject, learnPage);
+                navigate(RouterRoutes.Root);
               }}
+            />
+            <img
+              src={EllipsisIcon}
+              onClick={(event) => show({ id: learnProject, event })}
+            />
+            <StyledProjectMenu
+              id={learnProject}
+              style={{ fontSize: font.sizeNormal }}
             >
-              edit...
-            </Item>
-            <Separator />
-            <Item
-              onClick={async () => {
-                await window.electron.learnProject.exportProject(learnProject);
-              }}
-            >
-              export...
-            </Item>
-            <Separator />
-            <Item>delete...</Item>
-          </StyledProjectMenu>
-        </ProjectPagePaneBar>
-        <ProjectPagePaneExplorer>
-          <ProjectPagePaneSectionName>EXPLORER</ProjectPagePaneSectionName>
-          <div>{learnProject}</div>
-          {pages?.map((page, index) => (
-            <ProjectPagePaneFile
-              key={index}
-              active={learnPage === page}
-              onClick={() => handleOnClickLearnPage(page)}
-            >
-              {page}
-            </ProjectPagePaneFile>
-          ))}
-        </ProjectPagePaneExplorer>
+              <Item
+                onClick={() => {
+                  onClickOnEditLearnProject(learnProject, learnPage);
+                }}
+              >
+                edit...
+              </Item>
+              <Separator />
+              <Item
+                onClick={async () => {
+                  await window.electron.learnProject.exportProject(
+                    learnProject
+                  );
+                }}
+              >
+                export...
+              </Item>
+              <Separator />
+              <Item>delete...</Item>
+            </StyledProjectMenu>
+          </ProjectPagePaneBar>
+          <ProjectPagePaneExplorer>
+            <ProjectPagePaneSectionName>EXPLORER</ProjectPagePaneSectionName>
+            <ProjectPagePaneProject>{learnProject}</ProjectPagePaneProject>
+            <ProjectPagePaneFileWrapper>
+              {pages?.map((page, index) => (
+                <ProjectPagePaneFile
+                  key={index}
+                  active={learnPage === page}
+                  onClick={() => handleOnClickLearnPage(page)}
+                >
+                  {page}
+                </ProjectPagePaneFile>
+              ))}
+            </ProjectPagePaneFileWrapper>
+          </ProjectPagePaneExplorer>
+        </div>
+        <ProjectPagePaneDirectory>
+          <ProjectPagePaneSectionName>
+            WORKING DIRECTORY
+          </ProjectPagePaneSectionName>
+          <ProjectPagePaneFileWrapper>
+            {workingDirectory.map((directory, index) => (
+              <ProjectPagePaneFile
+                key={index}
+                active={false}
+                style={{ cursor: 'unset' }}
+              >
+                {directory}
+              </ProjectPagePaneFile>
+            ))}
+          </ProjectPagePaneFileWrapper>
+        </ProjectPagePaneDirectory>
       </ProjectPagePane>
       <MarkdownViewer content={learnPageContent} />
     </ProjectPageWrapper>

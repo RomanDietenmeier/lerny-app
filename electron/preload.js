@@ -219,6 +219,18 @@ contextBridge.exposeInMainWorld('electron', {
         console.error('import error', err);
       }
     },
+    readDirectory(folderPath) {
+      const fullFolderPath = `${localDumpDataPath}/${folderPath || ''}`;
+
+      const files = fs.readdirSync(fullFolderPath)
+      return files;
+    },
+    onDirectoryChanged(folderPath, listener) {
+      const fullFolderPath = `${localDumpDataPath}/${folderPath || ''}`;
+       fs.watch(fullFolderPath, () => {
+        listener();
+      })
+    },
   },
   openExternalLink(link) {
     ipcRenderer.send('openExternalLink', link);
