@@ -26,6 +26,9 @@ export const size = {
     padding: 1,
     barHeight: 4,
   },
+  terminal: {
+    height: 15,
+  },
 };
 export const sizeRem = {
   default: {
@@ -52,5 +55,8 @@ export const sizeRem = {
     width: `${size.pane.width}rem`,
     padding: `${size.pane.padding}rem`,
     barHeight: `${size.pane.barHeight}rem`,
+  },
+  terminal: {
+    height: `${size.terminal.height}rem`,
   },
 };

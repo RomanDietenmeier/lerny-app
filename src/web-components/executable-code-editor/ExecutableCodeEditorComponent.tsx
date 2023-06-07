@@ -1,4 +1,3 @@
-import { sizeRem } from 'constants/metrics';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
@@ -6,7 +5,6 @@ import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
 import { store } from 'redux/store';
 import { StyleSheetManager, ThemeProvider } from 'styled-components';
 import { CodeEditor } from 'web-components/code-editor/CodeEditor';
-import { XTermTerminal } from 'web-components/terminal/XTermTerminal';
 import { xml2js } from 'xml-js';
 
 export const ExecutableCodeEditorComponentHtmlTag = 'executable-code-editor';
@@ -14,22 +12,15 @@ export const ExecutableCodeEditorComponentHtmlTag = 'executable-code-editor';
 const enum Attributes {
   FileName = 'FileName',
   FolderStructure = 'FolderStructure',
-  HeightTerminal = 'HeightTerminal',
   Language = 'Language',
 }
 
 class ExecutableCodeEditorComponent extends HTMLElement {
-  private consoleId: number;
+  private consoleId: number | null = null;
   private reactRenderNode: HTMLSpanElement | null = null;
 
   constructor() {
     super();
-
-    this.consoleId = window.electron.console.createConsole(
-      `${store.getState().activeLearnPage.learnProject || '.'}/${
-        this.getAttribute(Attributes.FolderStructure) || '.'
-      }`
-    );
   }
 
   connectedCallback() {
@@ -41,14 +32,12 @@ class ExecutableCodeEditorComponent extends HTMLElement {
     this.reactRenderNode = document.createElement('span');
     const styleElements = document.head.querySelectorAll('style');
 
+    this.consoleId = store.getState().mainTerminal.id;
+
     for (const element of styleElements) {
       const duplicateElement = element.cloneNode(true);
       shadowRoot.append(duplicateElement);
     }
-
-    const terminalHeight =
-      this.getAttribute(Attributes.HeightTerminal) ||
-      sizeRem.default.terminalHeight;
 
     this.reactRenderNode.style.setProperty('height', '100%');
 
@@ -61,13 +50,13 @@ class ExecutableCodeEditorComponent extends HTMLElement {
       );
 
     const handleOnClickRun = () => {
-      if (buildCommand && runCommand) {
+      if (buildCommand && runCommand && this.consoleId) {
         window.electron.console.sendToTerminal(this.consoleId, buildCommand);
         window.electron.console.sendToTerminal(this.consoleId, runCommand);
       }
     };
     const handleOnClickTest = () => {
-      if (buildCommand && testCommand) {
+      if (buildCommand && testCommand && this.consoleId) {
         window.electron.console.sendToTerminal(this.consoleId, buildCommand);
         window.electron.console.sendToTerminal(this.consoleId, testCommand);
       }
@@ -92,12 +81,6 @@ class ExecutableCodeEditorComponent extends HTMLElement {
               onClickRun={handleOnClickRun}
               onClickTest={handleOnClickTest}
             />
-            <div style={{ height: terminalHeight }}>
-              <XTermTerminal
-                consoleId={this.consoleId}
-                height={terminalHeight}
-              />
-            </div>
           </ThemeProvider>
         </StyleSheetManager>
       </Provider>,
