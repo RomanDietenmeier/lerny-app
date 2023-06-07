@@ -13,7 +13,8 @@ export const MarkdownViewerWrapper = styled.div`
 
 export const MarkdownViewerContentWrapper = styled.div`
   height: 100%;
-  width: 100%;
+
+  padding: 0 ${sizeRem.default.space};
 
   background-color: ${(p) => p.theme.backgroundMain};
 
