@@ -6,6 +6,12 @@ import { store } from 'redux/store';
 import { StyleSheetManager, ThemeProvider } from 'styled-components';
 import { CodeEditor } from 'web-components/code-editor/CodeEditor';
 import { xml2js } from 'xml-js';
+import RunIcon from '../../icons/play.svg';
+import TestIcon from '../../icons/test.svg';
+import {
+  CodeEditorButtonsWrapper,
+  CodeEditorButtonWrapper,
+} from './ExecutableCodeEditor.style';
 
 export const ExecutableCodeEditorComponentHtmlTag = 'executable-code-editor';
 
@@ -68,6 +74,14 @@ class ExecutableCodeEditorComponent extends HTMLElement {
           <ThemeProvider
             theme={selectCurrentTheme(store.getState()).styledComponentsTheme}
           >
+            <CodeEditorButtonsWrapper>
+              <CodeEditorButtonWrapper onClick={handleOnClickRun}>
+                <img src={RunIcon} />
+              </CodeEditorButtonWrapper>
+              <CodeEditorButtonWrapper onClick={handleOnClickTest}>
+                <img src={TestIcon} />
+              </CodeEditorButtonWrapper>
+            </CodeEditorButtonsWrapper>
             <CodeEditor
               filename={this.getAttributeOrUndefined(Attributes.FileName)}
               folderStructure={this.getAttributeFolderStructure()}
@@ -78,8 +92,6 @@ class ExecutableCodeEditorComponent extends HTMLElement {
               monacoEditorProps={{
                 language: this.getAttributeOrUndefined(Attributes.Language),
               }}
-              onClickRun={handleOnClickRun}
-              onClickTest={handleOnClickTest}
             />
           </ThemeProvider>
         </StyleSheetManager>
