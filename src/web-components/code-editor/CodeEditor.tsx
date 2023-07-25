@@ -44,7 +44,6 @@ export type CodeEditorProps = {
   learnProject?: string;
   monacoEditorProps?: EditorProps;
   setEditor?: (editor: editor.IStandaloneCodeEditor) => void;
-  onHeightChanged?: (height: string) => void;
 };
 
 export function CodeEditor({
@@ -54,16 +53,11 @@ export function CodeEditor({
   learnProject,
   monacoEditorProps,
   setEditor,
-  onHeightChanged,
 }: CodeEditorProps): JSX.Element {
   const currentTheme = useSelector(selectCurrentTheme);
   const [codeEditor, setCodeEditor] =
     useState<editor.IStandaloneCodeEditor | null>(null);
   const [editorHeight, setEditorHeight] = useState('0px');
-
-  useEffect(() => {
-    if (onHeightChanged) onHeightChanged(editorHeight);
-  }, [editorHeight]);
 
   useEffect(() => {
     if (!codeEditor) return;
