@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ProjectPageWrapper } from './ProjectPage.style';
 import { MarkdownViewer } from 'components/MarkdownViewer';
-import ProjectPane from 'components/ProjectPane';
+import ProjectPane from 'components/ProjectPagePane';
 
 export function ProjectPage() {
   const [learnPageContent, setLearnPageContent] = useState('');
