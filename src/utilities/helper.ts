@@ -52,7 +52,7 @@ export type ContentChunk = {
 };
 export function transformContentToChunks(content: string): Array<ContentChunk> {
   const componentPattern =
-    /(<executable-code-editor[\S\s]*<\/executable-code-editor>)|(<code-editor[\S\s]*<\/code-editor>)/gm;
+    /(<executable-code-editor\b[^>]*>[\S\s]*?<\/executable-code-editor>)|(<code-editor\b[^>]*>[\S\s]*?<\/code-editor>)/gm;
 
   const splits = content.split(componentPattern);
 
@@ -69,7 +69,6 @@ export function transformContentToChunks(content: string): Array<ContentChunk> {
       content: chunk,
     });
   }
-
   return result;
 }
 
