@@ -2,7 +2,7 @@ import { AppWrapper as Wrapper } from 'App.style';
 import { Titlebar } from 'components/Titlebar';
 import { RouterRoutes } from 'constants/routerRoutes';
 import { useSearchParamsOnSelectedLearnPage } from 'hooks/LearnPageHooks';
-import { CreateLearnPage } from 'pages/CreateLearnPage';
+import { EditProjectPage } from 'pages/EditProjectPage';
 import { ProjectPage } from 'pages/ProjectPage';
 import { StartPage } from 'pages/StartPage';
 import React, { useEffect } from 'react';
@@ -46,7 +46,7 @@ export function App() {
 
           <Route
             path={RouterRoutes.EditProjectPage}
-            element={<CreateLearnPage />}
+            element={<EditProjectPage />}
           />
           <Route
             path="*"
