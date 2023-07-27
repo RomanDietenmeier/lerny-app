@@ -20,7 +20,6 @@ import {
 } from './EditProjectPage.style';
 import EditProjectPagePane from 'components/EditProjectPagePane';
 import {
-  ContentChunk,
   getContentFromEditors,
   transformContentToChunks,
 } from 'utilities/helper';
@@ -37,49 +36,23 @@ export function EditProjectPage() {
     useSearchParamsOnSelectedLearnPage();
   const [learnProject, setLearnProject] = useState(searchParameterLearnProject);
   const [fileContent, setFileContent] = useState('');
-  const [chunkedContent, setChunkedContent] = useState<Array<ContentChunk>>([]);
   const [editors, setEditors] = useState<
     Array<editor.IStandaloneCodeEditor | undefined>
   >([]);
   const titleInputRef = useRef<HTMLInputElement>(null);
   const [selectedMode, setSelectedMode] = useState(EditMode.Edit);
 
-  useAsyncEffect(
-    async (isMounted) => {
+  //on first render
+  useEffect(() => {
+    loadLearnPage();
+  }, []);
+
+  useEffect(
+    () => {
       if (!titleInputRef.current) return;
-
-      if (learnProject && learnPage) {
-        setLearnProject(learnProject);
-
-        if (
-          //Wenn learnPage vom Typ LEARN_PAGE_EXTENSION ist, setze Titel-Input auf Learnpage-Name
-          learnPage.substring(
-            learnPage.length - LEARN_PAGE_EXTENSION.length
-          ) === LEARN_PAGE_EXTENSION
-        ) {
-          titleInputRef.current.value = learnPage.substring(
-            0,
-            learnPage.length - LEARN_PAGE_EXTENSION.length
-          );
-        } else {
-          //Sonst setze Titel auf Filename
-          titleInputRef.current.value = learnPage;
-        }
-
-        //Lade content der LearnPage
-        const loadedLearnPageContent =
-          await window.electron.learnPage.loadLearnPage(
-            learnProject,
-            learnPage
-          );
-        if (!isMounted()) return;
-
-        //initialize empty editors
-        const chunks = transformContentToChunks(loadedLearnPageContent);
-        setEditors(chunks.map(() => undefined));
-      }
+      setTitle();
     },
-    [titleInputRef.current] //Wenn der Titel verändert wird
+    [titleInputRef.current] //Wenn die Titelkomponente verändert wird
   );
 
   useAsyncEffect(
@@ -107,16 +80,28 @@ export function EditProjectPage() {
     [editors] //Wenn die Editorinstanzen verändert werden
   );
 
-  useEffect(() => {
-    setChunkedContent(transformContentToChunks(fileContent));
-  }, [fileContent]);
-
+  //Wenn alle editors gemounted sind, setze deren Content
   useEffect(() => {
     editors.map((editor, index) => {
       if (!editor) return;
-      editor.setValue(chunkedContent[index].content);
+      editor.setValue(transformContentToChunks(fileContent)[index].content);
     });
   }, [editors]);
+
+  async function loadLearnPage() {
+    if (learnProject && learnPage) {
+      setLearnProject(learnProject);
+
+      //Lade content der LearnPage
+      const loadedLearnPageContent =
+        await window.electron.learnPage.loadLearnPage(learnProject, learnPage);
+      setFileContent(loadedLearnPageContent);
+
+      //initialize empty editors
+      const chunks = transformContentToChunks(loadedLearnPageContent);
+      setEditors(chunks.map(() => undefined));
+    }
+  }
 
   async function saveLearnPage() {
     if (
@@ -137,8 +122,29 @@ export function EditProjectPage() {
     setLearnProject(learnProjectName);
   }
 
-  function handleChangeFileContent(content: string) {
-    setFileContent(content);
+  function setTitle() {
+    if (!titleInputRef.current) return;
+    if (
+      //Wenn learnPage vom Typ LEARN_PAGE_EXTENSION ist, setze Titel-Input auf Learnpage-Name
+      learnPage.substring(learnPage.length - LEARN_PAGE_EXTENSION.length) ===
+      LEARN_PAGE_EXTENSION
+    ) {
+      titleInputRef.current.value = learnPage.substring(
+        0,
+        learnPage.length - LEARN_PAGE_EXTENSION.length
+      );
+    } else {
+      //Sonst setze Titel auf Filename
+      titleInputRef.current.value = learnPage;
+    }
+  }
+
+  function handleChangeFileContent() {
+    setSelectedMode(EditMode.Edit);
+    setEditors([]); //remove all editors to prevent update bug
+
+    setTitle();
+    loadLearnPage();
   }
 
   return (

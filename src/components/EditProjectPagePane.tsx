@@ -27,7 +27,7 @@ import BackIcon from '../icons/chevron.svg';
 import EllipsisIcon from '../icons/ellipsisPrimary.svg';
 
 type ProjectPaneProps = {
-  onChangePreviewContent: (content: string) => void;
+  onChangePreviewContent: () => void;
 };
 export default function ProjectPane({
   onChangePreviewContent: handleChangePreviewContent,
@@ -62,15 +62,9 @@ export default function ProjectPane({
     await updateLearnProjects();
   }, []);
 
-  useAsyncEffect(
-    async (isMounted) => {
-      const loadedLearnPageContent =
-        await window.electron.learnPage.loadLearnPage(learnProject, learnPage);
-      if (!isMounted()) return;
-      handleChangePreviewContent(loadedLearnPageContent);
-    },
-    [learnPage]
-  );
+  useEffect(() => {
+    handleChangePreviewContent();
+  }, [learnPage]);
 
   function handleOnClickLearnPage(page: string) {
     onClickOnLearnPage(learnProject, page);
