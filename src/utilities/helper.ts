@@ -57,8 +57,9 @@ export function transformContentToChunks(content: string): Array<ContentChunk> {
   const splits = content.split(componentPattern);
 
   const chunks = splits
-    .filter((split) => split !== undefined)
-    .map((split) => split.trim());
+    .filter((split) => split !== undefined) //filter undefined matches
+    .map((split) => split.trim()) //trim whitespaces and linebreaks
+    .filter((split) => split !== ''); //filter empty splits
 
   const result: Array<ContentChunk> = [];
   for (const chunk of chunks) {
@@ -69,6 +70,7 @@ export function transformContentToChunks(content: string): Array<ContentChunk> {
       content: chunk,
     });
   }
+
   return result;
 }
 
