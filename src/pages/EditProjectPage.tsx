@@ -76,7 +76,6 @@ export function EditProjectPage() {
 
         //initialize empty editors
         const chunks = transformContentToChunks(loadedLearnPageContent);
-        console.log(loadedLearnPageContent);
         setEditors(chunks.map(() => undefined));
       }
     },
