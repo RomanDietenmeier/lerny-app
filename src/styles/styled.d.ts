@@ -7,6 +7,7 @@ declare module 'styled-components' {
     titlebar: string;
     titlebarHover: string;
     primary: string;
+    primaryDisabled: string;
     separatorColor: string;
   }
 }

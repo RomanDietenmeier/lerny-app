@@ -6,6 +6,7 @@ export const defaultTheme: DefaultTheme = {
   titlebar: '#404040',
   titlebarHover: '#505050',
   primary: '#cccccc',
+  primaryDisabled: '#727272',
   separatorColor: 'rgba(204, 204, 204, 0.33)',
 };
 
@@ -15,5 +16,6 @@ export const whiteTheme: DefaultTheme = {
   titlebar: '#404040',
   titlebarHover: '#505050',
   primary: '#1a1a1a',
+  primaryDisabled: '#1a1a1a',
   separatorColor: 'rgba(0, 0, 0, 0.33)',
 };
