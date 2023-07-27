@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
 import { store } from 'redux/store';
 import { StyleSheetManager, ThemeProvider } from 'styled-components';
-import { CodeEditor } from 'web-components/code-editor/CodeEditor';
+import { CodeEditor, EditorType } from 'web-components/code-editor/CodeEditor';
 import { xml2js } from 'xml-js';
 import RunIcon from '../../icons/play.svg';
 import TestIcon from '../../icons/test.svg';
@@ -92,6 +92,7 @@ class ExecutableCodeEditorComponent extends HTMLElement {
               monacoEditorProps={{
                 language: this.getAttributeOrUndefined(Attributes.Language),
               }}
+              editorType={EditorType.Code}
             />
           </ThemeProvider>
         </StyleSheetManager>

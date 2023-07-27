@@ -10,6 +10,7 @@ import 'styles/xtermOverride.css';
 import 'xterm/css/xterm.css';
 import { CodeEditorWrapper } from './CodeEditor.style';
 import { font } from 'constants/font';
+import { size } from 'constants/metrics';
 
 type MonacoEditorType = typeof import('monaco-editor');
 
@@ -21,14 +22,45 @@ export const defaultMonacoWrapperStyle = {
   height: '100%',
 };
 
-const monacoEditorOptions: editor.IStandaloneEditorConstructionOptions = {
+export const enum EditorType {
+  Code,
+  Text,
+}
+
+const monacoEditorCodeOptions: editor.IStandaloneEditorConstructionOptions = {
   minimap: { enabled: false },
   fontSize: font.px.sizeSmall,
   scrollBeyondLastLine: false,
   scrollbar: {
     alwaysConsumeMouseWheel: false,
+    vertical: 'hidden',
+    verticalScrollbarSize: 0,
+    horizontalScrollbarSize: 0,
+    horizontalSliderSize: 20,
   },
   lineNumbersMinChars: 3,
+  padding: {
+    bottom: size.default.spaceHalf * font.px.sizeSmall,
+    top: size.default.spaceHalf * font.px.sizeSmall,
+  },
+};
+const monacoEditorTextOptions: editor.IStandaloneEditorConstructionOptions = {
+  minimap: { enabled: false },
+  fontSize: font.px.sizeSmall,
+  scrollBeyondLastLine: false,
+  scrollbar: {
+    alwaysConsumeMouseWheel: false,
+    vertical: 'hidden',
+    verticalScrollbarSize: 0,
+  },
+  padding: {
+    bottom: size.default.spaceHalf * font.px.sizeSmall,
+    top: size.default.spaceHalf * font.px.sizeSmall,
+  },
+  lineNumbers: 'off',
+  folding: false,
+  wordWrap: 'on',
+  wrappingIndent: 'same',
 };
 
 export type CodeEditorTerminalProps = {
@@ -43,7 +75,8 @@ export type CodeEditorProps = {
   initialCodeEditorValue?: string;
   learnProject?: string;
   monacoEditorProps?: EditorProps;
-  setEditor?: (editor: editor.IStandaloneCodeEditor) => void;
+  editorType?: EditorType;
+  onMount?: (editor: editor.IStandaloneCodeEditor) => void;
 };
 
 export function CodeEditor({
@@ -52,7 +85,8 @@ export function CodeEditor({
   initialCodeEditorValue,
   learnProject,
   monacoEditorProps,
-  setEditor,
+  editorType,
+  onMount: handleOnMount,
 }: CodeEditorProps): JSX.Element {
   const currentTheme = useSelector(selectCurrentTheme);
   const [codeEditor, setCodeEditor] =
@@ -69,16 +103,7 @@ export function CodeEditor({
       resizeEditor();
     });
 
-    function resizeEditor() {
-      if (!codeEditor) return;
-
-      codeEditor.setScrollTop(0);
-      const model = codeEditor.getModel();
-      if (!model) return;
-      const lineCount = model.getLineCount();
-      setEditorHeight(`${codeEditor.getBottomForLineNumber(lineCount)}px`);
-    }
-
+    //File wird automatisch gesaved, wenn learnproject und filename mitgegeben wurden
     function saveFile() {
       if (!learnProject || !filename || !codeEditor) return;
 
@@ -103,6 +128,22 @@ export function CodeEditor({
     };
   }, [learnProject, folderStructure, filename, codeEditor]);
 
+  useEffect(() => {
+    //onMount resize
+    if (!codeEditor) return;
+    resizeEditor();
+  }, [codeEditor]);
+
+  function resizeEditor() {
+    if (!codeEditor) return;
+
+    codeEditor.setScrollTop(0);
+    setEditorHeight(`${codeEditor.getContentHeight()}px`);
+  }
+
+  //Wenn learnProject und learnpage mitgegeben, lade content aus file
+  //Sonst wenn initialCodeEditorValue mitgegeben, lade diesen als Content
+  //Sonst lade leeren Editor
   async function handleEditorDidMount(
     editor: editor.IStandaloneCodeEditor,
     _monaco: MonacoEditorType
@@ -118,9 +159,10 @@ export function CodeEditor({
           );
 
     editor.setValue(loadedSourceFile || initialCodeEditorValue || '');
+    resizeEditor();
 
-    if (!setEditor) return;
-    setEditor(editor);
+    if (!handleOnMount) return;
+    handleOnMount(editor);
   }
 
   return (
@@ -138,7 +180,12 @@ export function CodeEditor({
             style: defaultMonacoWrapperStyle,
             ...monacoEditorProps?.wrapperProps,
           }}
-          options={{ ...monacoEditorOptions, ...monacoEditorProps?.options }}
+          options={{
+            ...(editorType === EditorType.Code
+              ? monacoEditorCodeOptions
+              : monacoEditorTextOptions),
+            ...monacoEditorProps?.options,
+          }}
           loading={monacoEditorProps?.loading ?? <DefaultSpinner />}
         />
       </CodeEditorWrapper>
