@@ -29,6 +29,11 @@ export const size = {
   terminal: {
     height: 15,
   },
+  projectPage: {
+    buttonHeight: 2.5,
+    buttonWidth: 8,
+    inputWidth: 15,
+  },
 };
 export const sizeRem = {
   default: {
@@ -58,5 +63,10 @@ export const sizeRem = {
   },
   terminal: {
     height: `${size.terminal.height}rem`,
+  },
+  projectPage: {
+    buttonHeight: `${size.projectPage.buttonHeight}rem`,
+    buttonWidth: `${size.projectPage.buttonWidth}rem`,
+    inputWidth: `${size.projectPage.inputWidth}rem`,
   },
 };
