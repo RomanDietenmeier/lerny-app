@@ -137,15 +137,13 @@ export function EditProjectPage() {
     setLearnProject(learnProjectName);
   }
 
-  function handleChangePreviewContent(content: string) {
+  function handleChangeFileContent(content: string) {
     setFileContent(content);
   }
 
   return (
     <Wrapper>
-      <EditProjectPagePane
-        onChangePreviewContent={handleChangePreviewContent}
-      />
+      <EditProjectPagePane onChangePreviewContent={handleChangeFileContent} />
       <ContentWrapper>
         <EditProjectPageButtonWrapper>
           <EditProjectPageButton
