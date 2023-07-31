@@ -57,7 +57,13 @@ export function EditProjectPage() {
 
   useAsyncEffect(
     async (isMounted) => {
+      //Wenn alle editors gemounted sind, setze deren Content. Wenn nicht, return
       if (editors.includes(undefined)) return;
+      editors.map((editor, index) => {
+        if (!editor) return;
+        const content = transformContentToChunks(fileContent)[index].content;
+        editor.setValue(content);
+      });
 
       const updateFileDebounced = _.debounce(async () => {
         setFileContent(getContentFromEditors(editors));
@@ -79,14 +85,6 @@ export function EditProjectPage() {
     },
     [editors] //Wenn die Editorinstanzen verändert werden
   );
-
-  //Wenn alle editors gemounted sind, setze deren Content
-  useEffect(() => {
-    editors.map((editor, index) => {
-      if (!editor) return;
-      editor.setValue(transformContentToChunks(fileContent)[index].content);
-    });
-  }, [editors]);
 
   async function loadLearnPage() {
     if (learnProject && learnPage) {
@@ -180,6 +178,7 @@ export function EditProjectPage() {
             </EditProjectPageTitleWrapper>
             {editors.map((_, index) => {
               function initializeEditor(editor: editor.IStandaloneCodeEditor) {
+                //Editorinstanzen von mit Instanzen aus CodeEditor instanziieren
                 const tempEditors = editors;
                 tempEditors[index] = editor;
                 setEditors([...tempEditors]);
