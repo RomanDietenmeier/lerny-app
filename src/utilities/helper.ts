@@ -1,5 +1,3 @@
-import { editor } from 'monaco-editor';
-
 export function sliceObjectInTwo<T>(obj: object): [T, T] {
   const entries = Object.entries(obj);
   const halfMark = Math.ceil(entries.length / 2);
@@ -63,6 +61,7 @@ export function transformContentToChunks(content: string): Array<ContentChunk> {
 
   const result: Array<ContentChunk> = [];
   for (const chunk of chunks) {
+    if (chunk === undefined) continue;
     result.push({
       type: chunk.match(componentPattern)
         ? ChunkType.WebComponent
@@ -74,11 +73,7 @@ export function transformContentToChunks(content: string): Array<ContentChunk> {
   return result;
 }
 
-export function getContentFromEditors(
-  editors: Array<editor.IStandaloneCodeEditor | undefined>
-): string {
-  const contentArray = editors.map((editor) =>
-    !editor ? '' : editor.getValue()
-  );
+export function transformChunksToContent(chunks: Array<ContentChunk>): string {
+  const contentArray = chunks.map((chunk) => chunk.content);
   return contentArray.join('\r\n\r\n');
 }

@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import { editor } from 'monaco-editor';
 import React, { useEffect, useRef, useState } from 'react';
 import useAsyncEffect from 'use-async-effect';
 import { MarkdownViewer } from '../components/MarkdownViewer';
@@ -7,6 +6,7 @@ import { Timeouts } from '../constants/timeouts';
 import { useSearchParamsOnSelectedLearnPage } from '../hooks/LearnPageHooks';
 import {
   CodeEditor,
+  EditorType,
   defaultMonacoWrapperStyle,
 } from '../web-components/code-editor/CodeEditor';
 import {
@@ -20,7 +20,7 @@ import {
 } from './EditProjectPage.style';
 import EditProjectPagePane from 'components/EditProjectPagePane';
 import {
-  getContentFromEditors,
+  transformChunksToContent,
   transformContentToChunks,
 } from 'utilities/helper';
 
@@ -36,9 +36,6 @@ export function EditProjectPage() {
     useSearchParamsOnSelectedLearnPage();
   const [learnProject, setLearnProject] = useState(searchParameterLearnProject);
   const [fileContent, setFileContent] = useState('');
-  const [editors, setEditors] = useState<
-    Array<editor.IStandaloneCodeEditor | undefined>
-  >([]);
   const titleInputRef = useRef<HTMLInputElement>(null);
   const [selectedMode, setSelectedMode] = useState(EditMode.Edit);
 
@@ -52,38 +49,19 @@ export function EditProjectPage() {
       if (!titleInputRef.current) return;
       setTitle();
     },
-    [titleInputRef.current] //Wenn die Titelkomponente verändert wird
+    [titleInputRef.current] //Wenn die Titelkomponente verändert wird: 'on new render'
   );
 
   useAsyncEffect(
     async (isMounted) => {
-      //Wenn alle editors gemounted sind, setze deren Content. Wenn nicht, return
-      if (editors.includes(undefined)) return;
-      editors.map((editor, index) => {
-        if (!editor) return;
-        const content = transformContentToChunks(fileContent)[index].content;
-        editor.setValue(content);
-      });
-
       const updateFileDebounced = _.debounce(async () => {
-        setFileContent(getContentFromEditors(editors));
         await saveLearnPage();
       }, Timeouts.DebounceSaveTimeout);
       if (!isMounted()) return;
 
-      const disposeModelListeners = editors.map((editor) =>
-        editor?.onDidChangeModelContent((_evt) => {
-          updateFileDebounced();
-        })
-      );
       updateFileDebounced();
-      return () => {
-        disposeModelListeners.map((disposeModelListener) =>
-          disposeModelListener?.dispose()
-        );
-      };
     },
-    [editors] //Wenn die Editorinstanzen verändert werden
+    [fileContent] //Wenn die Editorinstanzen verändert werden
   );
 
   async function loadLearnPage() {
@@ -94,25 +72,17 @@ export function EditProjectPage() {
       const loadedLearnPageContent =
         await window.electron.learnPage.loadLearnPage(learnProject, learnPage);
       setFileContent(loadedLearnPageContent);
-
-      //initialize empty editors
-      const chunks = transformContentToChunks(loadedLearnPageContent);
-      setEditors(chunks.map(() => undefined));
     }
   }
 
   async function saveLearnPage() {
-    if (
-      !titleInputRef.current ||
-      !titleInputRef.current.value ||
-      editors.includes(undefined)
-    ) {
+    if (!titleInputRef.current || !titleInputRef.current.value) {
       return;
     }
 
     const [learnPageName, learnProjectName] =
       await window.electron.learnPage.saveLearnPage(
-        getContentFromEditors(editors),
+        fileContent,
         titleInputRef.current.value,
         learnProject.length > 0 ? learnProject : titleInputRef.current.value
       );
@@ -139,10 +109,16 @@ export function EditProjectPage() {
 
   function handleChangeFileContent() {
     setSelectedMode(EditMode.Edit);
-    setEditors([]); //remove all editors to prevent update bug
+    setFileContent(''); //remove all editors to prevent update bug
 
     setTitle();
     loadLearnPage();
+  }
+
+  function handleValueChanged(value: string, index: number) {
+    const chunkedContent = transformContentToChunks(fileContent);
+    chunkedContent[index].content = value;
+    setFileContent(transformChunksToContent(chunkedContent));
   }
 
   return (
@@ -176,28 +152,29 @@ export function EditProjectPage() {
                 ref={titleInputRef}
               />
             </EditProjectPageTitleWrapper>
-            {editors.map((_, index) => {
-              function initializeEditor(editor: editor.IStandaloneCodeEditor) {
-                //Editorinstanzen von mit Instanzen aus CodeEditor instanziieren
-                const tempEditors = editors;
-                tempEditors[index] = editor;
-                setEditors([...tempEditors]);
-              }
-              return (
-                <CodeEditor
-                  key={index}
-                  monacoEditorProps={{
-                    language: 'markdown',
-                    wrapperProps: {
-                      style: {
-                        ...defaultMonacoWrapperStyle,
+            {transformContentToChunks(fileContent).map(
+              (contentChunk, index) => {
+                function handleOnValueChanged(value: string) {
+                  handleValueChanged(value, index);
+                }
+                return (
+                  <CodeEditor
+                    key={index}
+                    monacoEditorProps={{
+                      language: 'markdown',
+                      wrapperProps: {
+                        style: {
+                          ...defaultMonacoWrapperStyle,
+                        },
                       },
-                    },
-                  }}
-                  onMount={initializeEditor}
-                />
-              );
-            })}
+                    }}
+                    editorType={EditorType.Text}
+                    initialCodeEditorValue={contentChunk.content}
+                    onValueChanged={handleOnValueChanged}
+                  />
+                );
+              }
+            )}
           </EditProjectPageEditorWrapper>
         ) : (
           <MarkdownViewer content={fileContent} />

@@ -76,7 +76,7 @@ export type CodeEditorProps = {
   learnProject?: string;
   monacoEditorProps?: EditorProps;
   editorType?: EditorType;
-  onMount?: (editor: editor.IStandaloneCodeEditor) => void;
+  onValueChanged?: (value: string) => void;
 };
 
 export function CodeEditor({
@@ -86,7 +86,7 @@ export function CodeEditor({
   learnProject,
   monacoEditorProps,
   editorType,
-  onMount: handleOnMount,
+  onValueChanged: handleValueChanged,
 }: CodeEditorProps): JSX.Element {
   const currentTheme = useSelector(selectCurrentTheme);
   const [codeEditor, setCodeEditor] =
@@ -98,9 +98,11 @@ export function CodeEditor({
 
     codeEditor.onDidChangeModelContent(() => {
       resizeEditor();
+      if (handleValueChanged) handleValueChanged(codeEditor.getValue());
     });
     codeEditor.onDidChangeHiddenAreas(() => {
       resizeEditor();
+      if (handleValueChanged) handleValueChanged(codeEditor.getValue());
     });
 
     //File wird automatisch gesaved, wenn learnproject und filename mitgegeben wurden
@@ -160,9 +162,6 @@ export function CodeEditor({
 
     editor.setValue(loadedSourceFile || initialCodeEditorValue || '');
     resizeEditor();
-
-    if (!handleOnMount) return;
-    handleOnMount(editor);
   }
 
   return (
