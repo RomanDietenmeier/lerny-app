@@ -143,8 +143,7 @@ export function CodeEditor({
     setEditorHeight(`${codeEditor.getContentHeight()}px`);
   }
 
-  //Wenn learnProject und learnpage mitgegeben, lade content aus file
-  //Sonst wenn initialCodeEditorValue mitgegeben, lade diesen als Content
+  //Wenn sourcefile angegeben und existent, lade diese, ansonsten lade starter code
   //Sonst lade leeren Editor
   async function handleEditorDidMount(
     editor: editor.IStandaloneCodeEditor,
