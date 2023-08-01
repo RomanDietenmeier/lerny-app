@@ -29,7 +29,7 @@ function attributesToContent(
 
   const xmlContentArray = [
     '<xml>',
-    `<starter-code>\r\n${transformedCode}\r\n</starter-code>`,
+    `<starter-code>${transformedCode}</starter-code>`,
   ];
   if (buildCommand !== undefined) {
     xmlContentArray.push(
