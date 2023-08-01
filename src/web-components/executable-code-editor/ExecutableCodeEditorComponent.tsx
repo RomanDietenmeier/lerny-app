@@ -75,12 +75,16 @@ class ExecutableCodeEditorComponent extends HTMLElement {
             theme={selectCurrentTheme(store.getState()).styledComponentsTheme}
           >
             <CodeEditorButtonsWrapper>
-              <CodeEditorButtonWrapper onClick={handleOnClickRun}>
-                <img src={RunIcon} />
-              </CodeEditorButtonWrapper>
-              <CodeEditorButtonWrapper onClick={handleOnClickTest}>
-                <img src={TestIcon} />
-              </CodeEditorButtonWrapper>
+              {buildCommand && runCommand ? (
+                <CodeEditorButtonWrapper onClick={handleOnClickRun}>
+                  <img src={RunIcon} />
+                </CodeEditorButtonWrapper>
+              ) : null}
+              {buildCommand && testCommand ? (
+                <CodeEditorButtonWrapper onClick={handleOnClickTest}>
+                  <img src={TestIcon} />
+                </CodeEditorButtonWrapper>
+              ) : null}
             </CodeEditorButtonsWrapper>
             <CodeEditor
               filename={this.getAttributeOrUndefined(Attributes.FileName)}
