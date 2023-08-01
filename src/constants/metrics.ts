@@ -32,7 +32,7 @@ export const size = {
   projectPage: {
     buttonHeight: 2.5,
     buttonWidth: 8,
-    inputWidth: 15,
+    inputWidth: 12,
   },
 };
 export const sizeRem = {
