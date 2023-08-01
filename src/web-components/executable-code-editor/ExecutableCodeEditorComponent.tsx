@@ -5,13 +5,13 @@ import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
 import { store } from 'redux/store';
 import { StyleSheetManager, ThemeProvider } from 'styled-components';
 import { CodeEditor, EditorType } from 'web-components/code-editor/CodeEditor';
-import { xml2js } from 'xml-js';
 import RunIcon from '../../icons/play.svg';
 import TestIcon from '../../icons/test.svg';
 import {
   CodeEditorButtonsWrapper,
   CodeEditorButtonWrapper,
 } from './ExecutableCodeEditor.style';
+import { retrieveXmlData } from 'utilities/xml';
 
 export const ExecutableCodeEditorComponentHtmlTag = 'executable-code-editor';
 
@@ -127,26 +127,3 @@ window.customElements.define(
   ExecutableCodeEditorComponentHtmlTag,
   ExecutableCodeEditorComponent
 );
-
-function retrieveXmlData(xmlString: string) {
-  try {
-    const xml = xml2js(xmlString, { compact: true }) as {
-      xml?: {
-        'build-command'?: { _text: string };
-        'run-command'?: { _text: string };
-        'starter-code'?: { _text: string };
-        'test-command'?: { _text: string };
-      };
-    };
-    if (!xml.xml) return {};
-    return {
-      buildCommand: xml.xml['build-command']?._text,
-      runCommand: xml.xml['run-command']?._text,
-      starterCode: xml.xml['starter-code']?._text,
-      testCommand: xml.xml['test-command']?._text,
-    };
-  } catch (err) {
-    console.error('XML Parse Error: ', err);
-    return {};
-  }
-}

@@ -20,9 +20,11 @@ import {
 } from './EditProjectPage.style';
 import EditProjectPagePane from 'components/EditProjectPagePane';
 import {
+  ChunkType,
   transformChunksToContent,
   transformContentToChunks,
 } from 'utilities/helper';
+import { CodeBlock } from 'components/CodeBlock';
 
 const LEARN_PAGE_EXTENSION = '.lap';
 
@@ -157,7 +159,7 @@ export function EditProjectPage() {
                 function handleOnValueChanged(value: string) {
                   handleValueChanged(value, index);
                 }
-                return (
+                return contentChunk.type === ChunkType.Markdown ? (
                   <CodeEditor
                     key={index}
                     monacoEditorProps={{
@@ -170,6 +172,12 @@ export function EditProjectPage() {
                     }}
                     editorType={EditorType.Text}
                     initialCodeEditorValue={contentChunk.content}
+                    onValueChanged={handleOnValueChanged}
+                  />
+                ) : (
+                  <CodeBlock
+                    key={index}
+                    content={contentChunk.content}
                     onValueChanged={handleOnValueChanged}
                   />
                 );
