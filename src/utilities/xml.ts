@@ -44,13 +44,13 @@ export function retrieveExecutableCodeEditorData(xmlString: string) {
       executableCodeEditorAttributes:
         xml['executable-code-editor']?._attributes,
       executableCodeEditorBuild:
-        xml['executable-code-editor']?.xml?.['build-command']?._text.trim(),
+        xml['executable-code-editor']?.xml?.['build-command']?._text?.trim(),
       executableCodeEditorRun:
-        xml['executable-code-editor']?.xml?.['run-command']?._text.trim(),
+        xml['executable-code-editor']?.xml?.['run-command']?._text?.trim(),
       executableCodeEditorTest:
-        xml['executable-code-editor']?.xml?.['test-command']?._text.trim(),
+        xml['executable-code-editor']?.xml?.['test-command']?._text?.trim(),
       executableCodeEditorCode:
-        xml['executable-code-editor']?.xml?.['starter-code']?._text.trim(),
+        xml['executable-code-editor']?.xml?.['starter-code']?._text?.trim(),
     };
   } catch (err) {
     console.error('XML Parse Error: ', err);
