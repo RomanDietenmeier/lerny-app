@@ -101,10 +101,11 @@ export function CodeEditor({
 
     codeEditor.onDidChangeModelContent(() => {
       resizeEditor();
-      if (handleValueChanged) handleValueChanged(codeEditor.getValue());
     });
     codeEditor.onDidChangeHiddenAreas(() => {
       resizeEditor();
+    });
+    codeEditor.onDidBlurEditorText(() => {
       if (handleValueChanged) handleValueChanged(codeEditor.getValue());
     });
 
