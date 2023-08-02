@@ -17,6 +17,9 @@ import {
   EditProjectPageButtonWrapper,
   EditProjectPageTitleWrapper,
   EditProjectPageEditorWrapper,
+  EditProjectPageSeperatorButtonWrapper,
+  EditProjectPageSeperatorButton,
+  EditProjectPageBlocksWrapper,
 } from './EditProjectPage.style';
 import EditProjectPagePane from 'components/EditProjectPagePane';
 import {
@@ -123,6 +126,22 @@ export function EditProjectPage() {
     setFileContent(transformChunksToContent(chunkedContent));
   }
 
+  function isNeighbourToText(index: number): boolean {
+    const chunkedContent = transformContentToChunks(fileContent);
+
+    const preNeighbour = chunkedContent[index];
+    if (preNeighbour.type === ChunkType.Markdown) return true;
+
+    const postNeighbour = chunkedContent[index + 1];
+    if (
+      postNeighbour !== undefined &&
+      postNeighbour.type === ChunkType.Markdown
+    )
+      return true;
+
+    return false;
+  }
+
   return (
     <Wrapper>
       <EditProjectPagePane onChangePreviewContent={handleChangeFileContent} />
@@ -159,27 +178,39 @@ export function EditProjectPage() {
                 function handleOnValueChanged(value: string) {
                   handleValueChanged(value, index);
                 }
-                return contentChunk.type === ChunkType.Markdown ? (
-                  <CodeEditor
-                    key={index}
-                    monacoEditorProps={{
-                      language: 'markdown',
-                      wrapperProps: {
-                        style: {
-                          ...defaultMonacoWrapperStyle,
-                        },
-                      },
-                    }}
-                    editorType={EditorType.Text}
-                    initialCodeEditorValue={contentChunk.content}
-                    onValueChanged={handleOnValueChanged}
-                  />
-                ) : (
-                  <CodeBlock
-                    key={index}
-                    content={contentChunk.content}
-                    onValueChanged={handleOnValueChanged}
-                  />
+                return (
+                  <EditProjectPageBlocksWrapper key={index}>
+                    {contentChunk.type === ChunkType.Markdown ? (
+                      <CodeEditor
+                        monacoEditorProps={{
+                          language: 'markdown',
+                          wrapperProps: {
+                            style: {
+                              ...defaultMonacoWrapperStyle,
+                            },
+                          },
+                        }}
+                        editorType={EditorType.Text}
+                        initialCodeEditorValue={contentChunk.content}
+                        onValueChanged={handleOnValueChanged}
+                      />
+                    ) : (
+                      <CodeBlock
+                        content={contentChunk.content}
+                        onValueChanged={handleOnValueChanged}
+                      />
+                    )}
+                    <EditProjectPageSeperatorButtonWrapper>
+                      <EditProjectPageSeperatorButton>
+                        +Code
+                      </EditProjectPageSeperatorButton>
+                      {isNeighbourToText(index) ? null : (
+                        <EditProjectPageSeperatorButton>
+                          +Text
+                        </EditProjectPageSeperatorButton>
+                      )}
+                    </EditProjectPageSeperatorButtonWrapper>
+                  </EditProjectPageBlocksWrapper>
                 );
               }
             )}

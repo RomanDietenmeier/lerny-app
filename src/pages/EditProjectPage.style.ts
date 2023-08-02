@@ -76,3 +76,52 @@ export const EditProjectPageTitleInput = styled.input`
   font-size: ${font.sizeBigger};
   outline: none;
 `;
+
+export const EditProjectPageBlocksWrapper = styled.div`
+  > *:not(:last-child) {
+    margin-bottom: ${sizeRem.default.spaceHalf};
+  }
+`;
+
+export const EditProjectPageSeperatorButtonWrapper = styled.div`
+  display: flex;
+  height: 0.25rem;
+
+  background-color: ${(p) => p.theme.backgroundSecondary};
+
+  overflow: hidden;
+
+  border: none;
+  border-radius: ${sizeRem.default.borderRadius};
+  font-size: ${font.sizeNormal};
+
+  transition: height 0.5s;
+  transition-delay: 0.25s;
+
+  &:hover {
+    height: 2rem;
+    background-color: ${(p) => p.theme.titlebar};
+  }
+`;
+
+export const EditProjectPageSeperatorButton = styled.div`
+  display: flex;
+
+  width: 100%;
+  height: 100%;
+
+  justify-content: center;
+
+  background-color: transparent;
+  color: ${(p) => p.theme.primary};
+
+  font-size: ${font.sizeNormal};
+
+  border: none;
+
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${(p) => p.theme.titlebarHover};
+  }
+`;
