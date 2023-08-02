@@ -11,6 +11,8 @@ import 'xterm/css/xterm.css';
 import { CodeEditorWrapper } from './CodeEditor.style';
 import { font } from 'constants/font';
 import { size } from 'constants/metrics';
+import { selectActiveRoute } from 'redux/selectors/activeRouteSelector';
+import { RouterRoutes } from 'constants/routerRoutes';
 
 type MonacoEditorType = typeof import('monaco-editor');
 
@@ -89,6 +91,7 @@ export function CodeEditor({
   onValueChanged: handleValueChanged,
 }: CodeEditorProps): JSX.Element {
   const currentTheme = useSelector(selectCurrentTheme);
+  const activeRoute = useSelector(selectActiveRoute);
   const [codeEditor, setCodeEditor] =
     useState<editor.IStandaloneCodeEditor | null>(null);
   const [editorHeight, setEditorHeight] = useState('0px');
@@ -143,7 +146,8 @@ export function CodeEditor({
     setEditorHeight(`${codeEditor.getContentHeight()}px`);
   }
 
-  //Wenn sourcefile angegeben und existent, lade diese, ansonsten lade starter code
+  //Nicht im Edit-Mode: Wenn sourcefile angegeben und existent, lade diese, ansonsten lade starter code
+  //Im Edit-Mode: Wenn starter code, lade diesen. Ansonsten, wenn sourcefile angegeben und existent, lade diese
   //Sonst lade leeren Editor
   async function handleEditorDidMount(
     editor: editor.IStandaloneCodeEditor,
@@ -159,7 +163,9 @@ export function CodeEditor({
             folderStructure
           );
 
-    editor.setValue(loadedSourceFile || initialCodeEditorValue || '');
+    if (activeRoute.route === RouterRoutes.EditProjectPage)
+      editor.setValue(initialCodeEditorValue || loadedSourceFile || '');
+    else editor.setValue(loadedSourceFile || initialCodeEditorValue || '');
     resizeEditor();
   }
 

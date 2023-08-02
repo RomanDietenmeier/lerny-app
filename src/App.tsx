@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
 import { setActiveLearnPage } from 'redux/slices/activeLearnPage';
+import { setActiveRoute } from 'redux/slices/activeRoute';
 import { ThemeProvider } from 'styled-components';
 
 export function App() {
@@ -17,6 +18,11 @@ export function App() {
   const { pathname: pagePathName } = useLocation();
   const activeLearnPage = useSearchParamsOnSelectedLearnPage();
   const currentTheme = useSelector(selectCurrentTheme);
+  const activeRoute = useLocation().pathname;
+
+  useEffect(() => {
+    dispatch(setActiveRoute({ route: activeRoute as RouterRoutes }));
+  }, [activeRoute]);
 
   useEffect(() => {
     dispatch(setActiveLearnPage(activeLearnPage));

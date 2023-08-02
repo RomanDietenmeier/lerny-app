@@ -3,6 +3,7 @@ import { activeLearnPageSlice } from 'redux/slices/activeLearnPage';
 import { learnProjectsSlice } from 'redux/slices/learnProjectsSlice';
 import { themeSlice } from 'redux/slices/themeSlice';
 import { mainTerminalSlice } from './slices/mainTerminalSlice';
+import { activeRouteSlice } from './slices/activeRoute';
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     theme: themeSlice.reducer,
     learnProjects: learnProjectsSlice.reducer,
     mainTerminal: mainTerminalSlice.reducer,
+    activeRoute: activeRouteSlice.reducer,
   },
 });
 
