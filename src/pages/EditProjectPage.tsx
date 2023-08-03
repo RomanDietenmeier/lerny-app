@@ -163,15 +163,24 @@ export function EditProjectPage() {
   function isNeighbourToText(index: number): boolean {
     const chunkedContent = transformContentToChunks(fileContent);
 
-    const preNeighbour = chunkedContent[index];
-    if (preNeighbour.type === ChunkType.Markdown) return true;
+    if (index === -1) {
+      const postNeighbour = chunkedContent[0];
+      if (
+        postNeighbour !== undefined &&
+        postNeighbour.type === ChunkType.Markdown
+      )
+        return true;
+    } else {
+      const preNeighbour = chunkedContent[index];
+      if (preNeighbour.type === ChunkType.Markdown) return true;
 
-    const postNeighbour = chunkedContent[index + 1];
-    if (
-      postNeighbour !== undefined &&
-      postNeighbour.type === ChunkType.Markdown
-    )
-      return true;
+      const postNeighbour = chunkedContent[index + 1];
+      if (
+        postNeighbour !== undefined &&
+        postNeighbour.type === ChunkType.Markdown
+      )
+        return true;
+    }
 
     return false;
   }
@@ -182,7 +191,9 @@ export function EditProjectPage() {
       content: TEXT_INITIALIZER,
     };
     const chunkedContent = transformContentToChunks(fileContent);
-    chunkedContent.splice(index + 1, 0, newChunk);
+
+    if (index === -1) chunkedContent.unshift(newChunk);
+    else chunkedContent.splice(index + 1, 0, newChunk);
     setFileContent(transformChunksToContent(chunkedContent));
   }
 
@@ -192,7 +203,9 @@ export function EditProjectPage() {
       content: CODE_INITIALIZER,
     };
     const chunkedContent = transformContentToChunks(fileContent);
-    chunkedContent.splice(index + 1, 0, newChunk);
+
+    if (index === -1) chunkedContent.unshift(newChunk);
+    else chunkedContent.splice(index + 1, 0, newChunk);
     updateFileForceRerender(chunkedContent);
   }
 
@@ -261,6 +274,20 @@ export function EditProjectPage() {
                 ref={titleInputRef}
               />
             </EditProjectPageTitleWrapper>
+            <EditProjectPageSeperatorButtonWrapper>
+              <EditProjectPageSeperatorButton
+                onClick={() => handleAddEmptyCodeBlock(-1)}
+              >
+                +Code
+              </EditProjectPageSeperatorButton>
+              {isNeighbourToText(-1) ? null : (
+                <EditProjectPageSeperatorButton
+                  onClick={() => handleAddEmptyTextBlock(-1)}
+                >
+                  +Text
+                </EditProjectPageSeperatorButton>
+              )}
+            </EditProjectPageSeperatorButtonWrapper>
             {transformContentToChunks(fileContent).map(
               (contentChunk, index) => {
                 function handleOnValueChanged(value: string) {
