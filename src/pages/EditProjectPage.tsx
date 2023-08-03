@@ -24,12 +24,16 @@ import {
 import EditProjectPagePane from 'components/EditProjectPagePane';
 import {
   ChunkType,
+  ContentChunk,
   transformChunksToContent,
   transformContentToChunks,
 } from 'utilities/helper';
 import { CodeBlock } from 'components/CodeBlock';
 
 const LEARN_PAGE_EXTENSION = '.lap';
+export const TEXT_INITIALIZER = '#New Text#';
+const CODE_INITIALIZER =
+  '<executable-code-editor\r\nlanguage="c"\r\nfilename=""\r\n>\r\n\r\n<xml>\r\n\r\n<starter-code>\r\n</starter-code>\r\n\r\n</xml>\r\n\r\n</executable-code-editor>';
 
 export const enum EditMode {
   Edit,
@@ -142,6 +146,26 @@ export function EditProjectPage() {
     return false;
   }
 
+  function handleAddEmptyTextBlock(index: number) {
+    const newChunk: ContentChunk = {
+      type: ChunkType.Markdown,
+      content: TEXT_INITIALIZER,
+    };
+    const chunkedContent = transformContentToChunks(fileContent);
+    chunkedContent.splice(index + 1, 0, newChunk);
+    setFileContent(transformChunksToContent(chunkedContent));
+  }
+
+  function handleAddEmptyCodeBlock(index: number) {
+    const newChunk: ContentChunk = {
+      type: ChunkType.Markdown,
+      content: CODE_INITIALIZER,
+    };
+    const chunkedContent = transformContentToChunks(fileContent);
+    chunkedContent.splice(index + 1, 0, newChunk);
+    setFileContent(transformChunksToContent(chunkedContent));
+  }
+
   return (
     <Wrapper>
       <EditProjectPagePane onChangePreviewContent={handleChangeFileContent} />
@@ -201,11 +225,15 @@ export function EditProjectPage() {
                       />
                     )}
                     <EditProjectPageSeperatorButtonWrapper>
-                      <EditProjectPageSeperatorButton>
+                      <EditProjectPageSeperatorButton
+                        onClick={() => handleAddEmptyCodeBlock(index)}
+                      >
                         +Code
                       </EditProjectPageSeperatorButton>
                       {isNeighbourToText(index) ? null : (
-                        <EditProjectPageSeperatorButton>
+                        <EditProjectPageSeperatorButton
+                          onClick={() => handleAddEmptyTextBlock(index)}
+                        >
                           +Text
                         </EditProjectPageSeperatorButton>
                       )}

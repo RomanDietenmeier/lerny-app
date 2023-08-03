@@ -13,6 +13,7 @@ import { font } from 'constants/font';
 import { size } from 'constants/metrics';
 import { selectActiveRoute } from 'redux/selectors/activeRouteSelector';
 import { RouterRoutes } from 'constants/routerRoutes';
+import { TEXT_INITIALIZER } from 'pages/EditProjectPage';
 
 type MonacoEditorType = typeof import('monaco-editor');
 
@@ -164,9 +165,18 @@ export function CodeEditor({
             folderStructure
           );
 
+    let initializingValue = '';
     if (activeRoute.route === RouterRoutes.EditProjectPage)
-      editor.setValue(initialCodeEditorValue || loadedSourceFile || '');
-    else editor.setValue(loadedSourceFile || initialCodeEditorValue || '');
+      initializingValue = initialCodeEditorValue || loadedSourceFile || '';
+    else initializingValue = loadedSourceFile || initialCodeEditorValue || '';
+
+    if (initializingValue === TEXT_INITIALIZER) {
+      initializingValue = '';
+      editor.focus();
+    }
+
+    editor.setValue(initializingValue);
+
     resizeEditor();
   }
 
