@@ -14,18 +14,23 @@ import {
 } from 'web-components/code-editor/CodeEditor';
 import { retrieveExecutableCodeEditorData } from 'utilities/xml';
 
-const LANGUAGES = ['c', 'java', 'python'];
+const LANGUAGES = ['', 'c', 'java', 'python'];
 
 function attributesToContent(
-  filename: string,
-  language: string,
-  code: string,
+  filename?: string,
+  language?: string,
+  code?: string,
   buildCommand?: string,
   runCommand?: string,
   testCommand?: string
 ): string {
-  let transformedCode = code.replace(/</g, '&lt;');
-  transformedCode = transformedCode.replace(/>/g, '&gt;');
+  let transformedCode = code;
+  if (transformedCode === undefined) {
+    transformedCode = '';
+  } else {
+    transformedCode = transformedCode.replace(/</g, '&lt;');
+    transformedCode = transformedCode.replace(/>/g, '&gt;');
+  }
 
   const xmlContentArray = [
     '<xml>',
@@ -45,7 +50,11 @@ function attributesToContent(
   xmlContentArray.push('</xml>');
   const xmlContent = xmlContentArray.join('\r\n\r\n');
 
-  const result = `<executable-code-editor\r\nlanguage="${language}"\r\nfilename="${filename}"\r\n>\r\n\r\n${xmlContent}\r\n\r\n</executable-code-editor>`;
+  const result = `<executable-code-editor\r\nlanguage="${
+    language ?? ''
+  }"\r\nfilename="${
+    filename ?? ''
+  }"\r\n>\r\n\r\n${xmlContent}\r\n\r\n</executable-code-editor>`;
 
   return result;
 }
@@ -66,19 +75,18 @@ export function CodeBlock({
     executableCodeEditorCode,
   } = retrieveExecutableCodeEditorData(content);
   const [filenameInput, setFilenameInput] = useState(
-    executableCodeEditorAttributes?.filename
+    executableCodeEditorAttributes?.filename ?? ''
   );
   const [languageSelect, setLanguageSelect] = useState(
-    executableCodeEditorAttributes?.language
+    executableCodeEditorAttributes?.language ?? ''
   );
-  const [buildInput, setBuildInput] = useState(executableCodeEditorBuild);
-  const [runInput, setRunInput] = useState(executableCodeEditorRun);
-  const [testInput, setTestInput] = useState(executableCodeEditorTest);
-  const [code, setCode] = useState(executableCodeEditorCode);
+  const [buildInput, setBuildInput] = useState(executableCodeEditorBuild ?? '');
+  const [runInput, setRunInput] = useState(executableCodeEditorRun ?? '');
+  const [testInput, setTestInput] = useState(executableCodeEditorTest ?? '');
+  const [code, setCode] = useState(executableCodeEditorCode ?? '');
 
   useEffect(() => {
-    if (!handleOnValueChanged || !filenameInput || !languageSelect || !code)
-      return;
+    if (!handleOnValueChanged) return;
 
     handleOnValueChanged(
       attributesToContent(
