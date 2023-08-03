@@ -20,6 +20,8 @@ import {
   EditProjectPageSeperatorButtonWrapper,
   EditProjectPageSeperatorButton,
   EditProjectPageBlocksWrapper,
+  EditProjectPageBlocksButtonWrapper,
+  EditProjectPageBlockButton,
 } from './EditProjectPage.style';
 import EditProjectPagePane from 'components/EditProjectPagePane';
 import {
@@ -29,15 +31,43 @@ import {
   transformContentToChunks,
 } from 'utilities/helper';
 import { CodeBlock } from 'components/CodeBlock';
+import ChevronIcon from '../icons/chevron.svg';
+import DeleteIcon from '../icons/trash.svg';
 
 const LEARN_PAGE_EXTENSION = '.lap';
 export const TEXT_INITIALIZER = '#New Text#';
 const CODE_INITIALIZER =
-  '<executable-code-editor\r\nlanguage="c"\r\nfilename=""\r\n>\r\n\r\n<xml>\r\n\r\n<starter-code>\r\n</starter-code>\r\n\r\n</xml>\r\n\r\n</executable-code-editor>';
+  '<executable-code-editor\r\nlanguage=""\r\nfilename=""\r\n>\r\n\r\n<xml>\r\n\r\n<starter-code>\r\n</starter-code>\r\n\r\n</xml>\r\n\r\n</executable-code-editor>';
 
 export const enum EditMode {
   Edit,
   Preview,
+}
+type EditProjectPageBlockButtonsProps = {
+  index: number;
+  onMoveUp: (index: number) => void;
+  onMoveDown: (index: number) => void;
+  onDelete: (index: number) => void;
+};
+function EditProjectPageBlockButtons({
+  index,
+  onMoveUp: handleMoveUp,
+  onMoveDown: handleMoveDown,
+  onDelete: handleDelete,
+}: EditProjectPageBlockButtonsProps) {
+  return (
+    <EditProjectPageBlocksButtonWrapper>
+      <EditProjectPageBlockButton onClick={() => handleMoveUp(index)}>
+        <img src={ChevronIcon} style={{ transform: 'rotate(90deg)' }} />
+      </EditProjectPageBlockButton>
+      <EditProjectPageBlockButton onClick={() => handleMoveDown(index)}>
+        <img src={ChevronIcon} style={{ transform: 'rotate(-90deg)' }} />
+      </EditProjectPageBlockButton>
+      <EditProjectPageBlockButton onClick={() => handleDelete(index)}>
+        <img src={DeleteIcon} />
+      </EditProjectPageBlockButton>
+    </EditProjectPageBlocksButtonWrapper>
+  );
 }
 
 export function EditProjectPage() {
@@ -163,7 +193,41 @@ export function EditProjectPage() {
     };
     const chunkedContent = transformContentToChunks(fileContent);
     chunkedContent.splice(index + 1, 0, newChunk);
-    setFileContent(transformChunksToContent(chunkedContent));
+    updateFileForceRerender(chunkedContent);
+  }
+
+  function handleMoveUp(index: number) {
+    if (index === 0) return;
+    const chunkedContent = transformContentToChunks(fileContent);
+
+    const neighbour = chunkedContent[index - 1];
+    chunkedContent[index - 1] = chunkedContent[index];
+    chunkedContent[index] = neighbour;
+    updateFileForceRerender(chunkedContent);
+  }
+  function handleMoveDown(index: number) {
+    const chunkedContent = transformContentToChunks(fileContent);
+    if (chunkedContent[index + 1] === undefined) return;
+
+    const neighbour = chunkedContent[index + 1];
+    chunkedContent[index + 1] = chunkedContent[index];
+    chunkedContent[index] = neighbour;
+    updateFileForceRerender(chunkedContent);
+  }
+  function handleDelete(index: number) {
+    const chunkedContent = transformContentToChunks(fileContent);
+    chunkedContent.splice(index, 1);
+    updateFileForceRerender(chunkedContent);
+  }
+
+  function updateFileForceRerender(chunkedContent: Array<ContentChunk>) {
+    setFileContent('');
+
+    //debounce update to force complete rerender
+    const updateFileDebounced = _.debounce(() => {
+      setFileContent(transformChunksToContent(chunkedContent));
+    }, 1);
+    updateFileDebounced();
   }
 
   return (
@@ -205,24 +269,40 @@ export function EditProjectPage() {
                 return (
                   <EditProjectPageBlocksWrapper key={index}>
                     {contentChunk.type === ChunkType.Markdown ? (
-                      <CodeEditor
-                        monacoEditorProps={{
-                          language: 'markdown',
-                          wrapperProps: {
-                            style: {
-                              ...defaultMonacoWrapperStyle,
+                      <div>
+                        <EditProjectPageBlockButtons
+                          index={index}
+                          onMoveUp={() => handleMoveUp(index)}
+                          onMoveDown={() => handleMoveDown(index)}
+                          onDelete={() => handleDelete(index)}
+                        />
+                        <CodeEditor
+                          monacoEditorProps={{
+                            language: 'markdown',
+                            wrapperProps: {
+                              style: {
+                                ...defaultMonacoWrapperStyle,
+                              },
                             },
-                          },
-                        }}
-                        editorType={EditorType.Text}
-                        initialCodeEditorValue={contentChunk.content}
-                        onValueChanged={handleOnValueChanged}
-                      />
+                          }}
+                          editorType={EditorType.Text}
+                          initialCodeEditorValue={contentChunk.content}
+                          onValueChanged={handleOnValueChanged}
+                        />
+                      </div>
                     ) : (
-                      <CodeBlock
-                        content={contentChunk.content}
-                        onValueChanged={handleOnValueChanged}
-                      />
+                      <div>
+                        <EditProjectPageBlockButtons
+                          index={index}
+                          onMoveUp={() => handleMoveUp(index)}
+                          onMoveDown={() => handleMoveDown(index)}
+                          onDelete={() => handleDelete(index)}
+                        />
+                        <CodeBlock
+                          content={contentChunk.content}
+                          onValueChanged={handleOnValueChanged}
+                        />
+                      </div>
                     )}
                     <EditProjectPageSeperatorButtonWrapper>
                       <EditProjectPageSeperatorButton

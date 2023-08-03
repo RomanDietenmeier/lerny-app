@@ -52,10 +52,6 @@ export const EditProjectPageEditorWrapper = styled.div`
   padding: 0 ${sizeRem.default.space};
 
   overflow: scroll;
-
-  > *:not(:last-child) {
-    margin-bottom: ${sizeRem.default.spaceHalf};
-  }
 `;
 export const EditProjectPageTitleWrapper = styled.div`
   display: flex;
@@ -80,6 +76,34 @@ export const EditProjectPageTitleInput = styled.input`
 export const EditProjectPageBlocksWrapper = styled.div`
   > *:not(:last-child) {
     margin-bottom: ${sizeRem.default.spaceHalf};
+  }
+`;
+export const EditProjectPageBlocksButtonWrapper = styled.div`
+  display: flex;
+  position: relative;
+
+  width: fit-content;
+
+  padding: 0 0.5rem;
+  margin-left: auto;
+
+  top: 0.5rem;
+
+  z-index: 2;
+`;
+
+export const EditProjectPageBlockButton = styled.div`
+  display: flex;
+  height: 1rem;
+  width: 1.5rem;
+
+  justify-content: center;
+
+  border: 1px solid transparent;
+  background-color: ${(p) => p.theme.titlebar};
+
+  &:hover {
+    background-color: ${(p) => p.theme.titlebarHover};
   }
 `;
 
