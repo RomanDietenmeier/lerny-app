@@ -146,7 +146,9 @@ export function EditProjectPage() {
     }
   }
 
-  function handleChangeFileContent() {
+  async function handleChangeLearnPage() {
+    await saveLearnPage();
+
     setSelectedMode(EditMode.Edit);
     setFileContent(''); //remove all editors to prevent update bug
 
@@ -245,7 +247,7 @@ export function EditProjectPage() {
 
   return (
     <Wrapper>
-      <EditProjectPagePane onChangePreviewContent={handleChangeFileContent} />
+      <EditProjectPagePane onChangePreviewContent={handleChangeLearnPage} />
       <ContentWrapper>
         <EditProjectPageButtonWrapper>
           <EditProjectPageButton
