@@ -112,7 +112,7 @@ export const EditProjectPageBlockButton = styled.div`
   }
 `;
 
-export const EditProjectPageSeperatorButtonWrapper = styled.div`
+export const EditProjectPageSeparatorButtonWrapper = styled.div`
   display: flex;
   height: 0.25rem;
 
@@ -133,7 +133,7 @@ export const EditProjectPageSeperatorButtonWrapper = styled.div`
   }
 `;
 
-export const EditProjectPageSeperatorButton = styled.div`
+export const EditProjectPageSeparatorButton = styled.div`
   display: flex;
 
   width: 100%;

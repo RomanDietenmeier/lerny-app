@@ -1,44 +1,44 @@
+import { CodeBlock } from 'components/CodeBlock';
+import EditProjectPagePane from 'components/EditProjectPagePane';
+import { RouterRoutes } from 'constants/routerRoutes';
 import _ from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 import useAsyncEffect from 'use-async-effect';
-import { MarkdownViewer } from '../components/MarkdownViewer';
-import { Timeouts } from '../constants/timeouts';
-import {
-  useNavigateOnSelectedLearnPage,
-  useSearchParamsOnSelectedLearnPage,
-} from '../hooks/LearnPageHooks';
-import {
-  CodeEditor,
-  EditorType,
-  defaultMonacoWrapperStyle,
-} from '../web-components/code-editor/CodeEditor';
-import {
-  EditProjectPageTitleInput,
-  EditProjectPageWrapper as Wrapper,
-  EditProjectPageContentWrapper as ContentWrapper,
-  EditProjectPageButton,
-  EditProjectPageButtonWrapper,
-  EditProjectPageTitleWrapper,
-  EditProjectPageEditorWrapper,
-  EditProjectPageSeperatorButtonWrapper,
-  EditProjectPageSeperatorButton,
-  EditProjectPageBlocksWrapper,
-  EditProjectPageBlocksButtonWrapper,
-  EditProjectPageBlockButton,
-} from './EditProjectPage.style';
-import EditProjectPagePane from 'components/EditProjectPagePane';
 import {
   ChunkType,
   ContentChunk,
   transformChunksToContent,
   transformContentToChunks,
 } from 'utilities/helper';
-import { CodeBlock } from 'components/CodeBlock';
-import ChevronIcon from '../icons/chevron.svg';
-import DeleteIcon from '../icons/trash.svg';
-import CrossIcon from '../icons/cross.svg';
+import { MarkdownViewer } from '../components/MarkdownViewer';
+import { Timeouts } from '../constants/timeouts';
+import {
+  useNavigateOnSelectedLearnPage,
+  useSearchParamsOnSelectedLearnPage,
+} from '../hooks/LearnPageHooks';
 import CheckIcon from '../icons/check.svg';
-import { RouterRoutes } from 'constants/routerRoutes';
+import ChevronIcon from '../icons/chevron.svg';
+import CrossIcon from '../icons/cross.svg';
+import DeleteIcon from '../icons/trash.svg';
+import {
+  CodeEditor,
+  EditorType,
+  defaultMonacoWrapperStyle,
+} from '../web-components/code-editor/CodeEditor';
+import {
+  EditProjectPageContentWrapper as ContentWrapper,
+  EditProjectPageBlockButton,
+  EditProjectPageBlocksButtonWrapper,
+  EditProjectPageBlocksWrapper,
+  EditProjectPageButton,
+  EditProjectPageButtonWrapper,
+  EditProjectPageEditorWrapper,
+  EditProjectPageSeparatorButton,
+  EditProjectPageSeparatorButtonWrapper,
+  EditProjectPageTitleInput,
+  EditProjectPageTitleWrapper,
+  EditProjectPageWrapper as Wrapper,
+} from './EditProjectPage.style';
 
 const LEARN_PAGE_EXTENSION = '.lap';
 export const TEXT_INITIALIZER = '#New Text#';
@@ -162,7 +162,7 @@ export function EditProjectPage() {
     setShowInputIcons(false);
     if (!titleInputRef.current || !titleRef.current) return;
 
-    const extsitingPages =
+    const existingPages =
       window.electron.learnProject.readProjectDirectory(learnProject);
 
     let count = 0;
@@ -170,7 +170,7 @@ export function EditProjectPage() {
       `${titleInputRef.current.value}(\\(\\d+\\)|).lap`
     );
 
-    for (const page of extsitingPages) {
+    for (const page of existingPages) {
       if (regexp.test(page)) count++;
     }
     let newTitle = titleInputRef.current.value;
@@ -340,20 +340,20 @@ export function EditProjectPage() {
                 </>
               ) : null}
             </EditProjectPageTitleWrapper>
-            <EditProjectPageSeperatorButtonWrapper>
-              <EditProjectPageSeperatorButton
+            <EditProjectPageSeparatorButtonWrapper>
+              <EditProjectPageSeparatorButton
                 onClick={() => handleAddEmptyCodeBlock(-1)}
               >
                 +Code
-              </EditProjectPageSeperatorButton>
+              </EditProjectPageSeparatorButton>
               {isNeighbourToText(-1) ? null : (
-                <EditProjectPageSeperatorButton
+                <EditProjectPageSeparatorButton
                   onClick={() => handleAddEmptyTextBlock(-1)}
                 >
                   +Text
-                </EditProjectPageSeperatorButton>
+                </EditProjectPageSeparatorButton>
               )}
-            </EditProjectPageSeperatorButtonWrapper>
+            </EditProjectPageSeparatorButtonWrapper>
             {transformContentToChunks(fileContent).map(
               (contentChunk, index) => {
                 function handleOnValueChanged(value: string) {
@@ -397,20 +397,20 @@ export function EditProjectPage() {
                         />
                       </div>
                     )}
-                    <EditProjectPageSeperatorButtonWrapper>
-                      <EditProjectPageSeperatorButton
+                    <EditProjectPageSeparatorButtonWrapper>
+                      <EditProjectPageSeparatorButton
                         onClick={() => handleAddEmptyCodeBlock(index)}
                       >
                         +Code
-                      </EditProjectPageSeperatorButton>
+                      </EditProjectPageSeparatorButton>
                       {isNeighbourToText(index) ? null : (
-                        <EditProjectPageSeperatorButton
+                        <EditProjectPageSeparatorButton
                           onClick={() => handleAddEmptyTextBlock(index)}
                         >
                           +Text
-                        </EditProjectPageSeperatorButton>
+                        </EditProjectPageSeparatorButton>
                       )}
-                    </EditProjectPageSeperatorButtonWrapper>
+                    </EditProjectPageSeparatorButtonWrapper>
                   </EditProjectPageBlocksWrapper>
                 );
               }
