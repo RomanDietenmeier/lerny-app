@@ -138,7 +138,8 @@ export function CodeEditor({
   useEffect(() => {
     //onMount resize
     if (!codeEditor) return;
-    resizeEditor();
+    const resizeEditorDebounced = _.debounce(resizeEditor, 1);
+    resizeEditorDebounced();
   }, [codeEditor]);
 
   function resizeEditor() {
