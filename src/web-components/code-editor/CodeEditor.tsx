@@ -100,13 +100,14 @@ export function CodeEditor({
   useEffect(() => {
     if (!codeEditor) return;
 
-    codeEditor.onDidChangeModelContent(() => {
+    const disposableContentListener = codeEditor.onDidChangeModelContent(() => {
+      resizeEditor();
+      saveFileDebounced();
+    });
+    const disposableAreaListener = codeEditor.onDidChangeHiddenAreas(() => {
       resizeEditor();
     });
-    codeEditor.onDidChangeHiddenAreas(() => {
-      resizeEditor();
-    });
-    codeEditor.onDidBlurEditorText(() => {
+    const disposableBlurListener = codeEditor.onDidBlurEditorText(() => {
       if (handleValueChanged) handleValueChanged(codeEditor.getValue());
     });
 
@@ -126,11 +127,10 @@ export function CodeEditor({
       Timeouts.DebounceSaveTimeout
     );
 
-    const disposeModelListener = codeEditor.onDidChangeModelContent((_evt) => {
-      saveFileDebounced();
-    });
     return () => {
-      disposeModelListener.dispose();
+      disposableContentListener.dispose();
+      disposableAreaListener.dispose();
+      disposableBlurListener.dispose();
       saveFile();
     };
   }, [learnProject, folderStructure, filename, codeEditor]);
