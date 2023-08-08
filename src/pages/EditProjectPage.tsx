@@ -260,7 +260,10 @@ export function EditProjectPage() {
           <EditProjectPageButton
             //disabled when active
             disabled={selectedMode === EditMode.Preview}
-            onClick={() => setSelectedMode(EditMode.Preview)}
+            onClick={async () => {
+              await saveLearnPage();
+              setSelectedMode(EditMode.Preview);
+            }}
           >
             PREVIEW
           </EditProjectPageButton>
