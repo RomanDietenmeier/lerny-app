@@ -85,7 +85,9 @@ export const ProjectPaneFile = styled.div<ProjectPaneFileProps>`
   border: 1px solid ${(p) => p.theme.primary};
   border-radius: ${sizeRem.default.borderRadius};
 
-  cursor: pointer;
+  &:hover {
+    background-color: ${(p) => (p.active ? p.theme.primary : p.theme.titlebar)};
+  }
 `;
 
 export const ProjectPaneProject = styled.div`
