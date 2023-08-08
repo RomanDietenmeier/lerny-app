@@ -39,6 +39,11 @@ declare global {
           filename: string,
           folderStructure?: Array<string>
         ) => void;
+        renameLearnPage: (
+          learnProject: string,
+          filename: string,
+          newFilename: string
+        ) => string;
         saveLearnPage: (
           content: string,
           title?: string,
@@ -48,8 +53,16 @@ declare global {
       learnProject: {
         exportProject: (project: string) => Promise<void>;
         importProject: () => Promise<void>;
-        readDirectory: (folderPath: string) => Array<string>;
-        onDirectoryChanged: (folderPath: string, listener: () => void) => void;
+        readWorkingDirectory: (folderPath: string) => Array<string>;
+        onWorkingDirectoryChanged: (
+          folderPath: string,
+          listener: () => void
+        ) => void;
+        readProjectDirectory: (folderPath: string) => Array<string>;
+        onProjectDirectoryChanged: (
+          folderPath: string,
+          listener: () => void
+        ) => void;
       };
       openExternalLink: (link: string) => void;
     };

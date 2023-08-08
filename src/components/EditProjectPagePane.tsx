@@ -18,13 +18,12 @@ import {
   useNavigateOnSelectedLearnProject,
   useSearchParamsOnSelectedLearnProject,
 } from 'hooks/LearnProjectHooks';
-import { useSelector } from 'react-redux';
-import { selectLearnProjects } from 'redux/selectors/learnProjectsSelectors';
 import { useNavigateOnSelectedLearnPage } from 'hooks/LearnPageHooks';
 import useAsyncEffect from 'use-async-effect';
 import { updateLearnProjects } from 'pages/StartPage';
 import BackIcon from '../icons/chevron.svg';
 import EllipsisIcon from '../icons/ellipsisPrimary.svg';
+import AddFileIcon from '../icons/add-file.svg';
 
 type ProjectPaneProps = {
   onChangePreviewContent: () => void;
@@ -35,15 +34,18 @@ export default function ProjectPane({
   const navigate = useNavigate();
 
   const { learnProject, learnPage } = useSearchParamsOnSelectedLearnProject();
-  const pages = useSelector(selectLearnProjects)[learnProject];
+
+  const [projectDirectory, setProjectDirectory] = useState(
+    window.electron.learnProject.readProjectDirectory(learnProject)
+  );
 
   const [workingDirectory, setWorkingDirectory] = useState(
-    window.electron.learnProject.readDirectory(learnProject)
+    window.electron.learnProject.readWorkingDirectory(learnProject)
   );
 
   const { show } = useContextMenu({ id: learnProject });
 
-  const [onClickOnLearnPage] = useNavigateOnSelectedLearnPage(
+  const [onClickOnEditLearnPage] = useNavigateOnSelectedLearnPage(
     RouterRoutes.EditProjectPage
   );
   const [onClickOnEditLearnProject] = useNavigateOnSelectedLearnProject(
@@ -51,9 +53,14 @@ export default function ProjectPane({
   );
 
   useEffect(() => {
-    window.electron.learnProject.onDirectoryChanged(learnProject, () => {
+    window.electron.learnProject.onWorkingDirectoryChanged(learnProject, () => {
       setWorkingDirectory(
-        window.electron.learnProject.readDirectory(learnProject)
+        window.electron.learnProject.readWorkingDirectory(learnProject)
+      );
+    });
+    window.electron.learnProject.onProjectDirectoryChanged(learnProject, () => {
+      setProjectDirectory(
+        window.electron.learnProject.readProjectDirectory(learnProject)
       );
     });
   }, []);
@@ -67,7 +74,11 @@ export default function ProjectPane({
   }, [learnPage]);
 
   function handleOnClickLearnPage(page: string) {
-    onClickOnLearnPage(learnProject, page);
+    onClickOnEditLearnPage(learnProject, page);
+  }
+
+  function handleOnAddFile() {
+    onClickOnEditLearnPage(learnProject, '');
   }
 
   return (
@@ -110,9 +121,12 @@ export default function ProjectPane({
         </ProjectPaneBar>
         <ProjectPaneExplorer>
           <ProjectPaneSectionName>EXPLORER</ProjectPaneSectionName>
-          <ProjectPaneProject>{learnProject}</ProjectPaneProject>
+          <ProjectPaneProject>
+            {learnProject}
+            <img src={AddFileIcon} onClick={handleOnAddFile} />
+          </ProjectPaneProject>
           <ProjectPaneFileWrapper>
-            {pages?.map((page, index) => (
+            {projectDirectory?.map((page, index) => (
               <ProjectPaneFile
                 key={index}
                 active={learnPage === page}

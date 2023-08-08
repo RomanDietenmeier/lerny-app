@@ -58,6 +58,11 @@ export const EditProjectPageTitleWrapper = styled.div`
   align-items: center;
 
   font-size: ${font.sizeBigger};
+
+  img {
+    cursor: pointer;
+    transform: scale(0.75);
+  }
 `;
 export const EditProjectPageTitleInput = styled.input`
   width: ${sizeRem.projectPage.inputWidth};

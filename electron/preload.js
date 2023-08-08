@@ -145,6 +145,18 @@ contextBridge.exposeInMainWorld('electron', {
         textFileEncoding
       );
     },
+    async renameLearnPage(learnProject, filename, newFilename) {
+      if (!learnProject || !filename || ! newFilename) {
+        return;
+      }
+      let dir = `${localPersistentProjectsPath}/${learnProject}`;
+
+      await fs.promises.rename(
+        `${dir}/${filename}${learnPageExtension}`,
+        `${dir}/${newFilename}${learnPageExtension}`,
+      );
+      return newFilename;
+    },
     async saveLearnPage(content, learnPage, learnProject) {
       if (!learnProject) {
         learnProject = 'untitled';
@@ -219,14 +231,26 @@ contextBridge.exposeInMainWorld('electron', {
         console.error('import error', err);
       }
     },
-    readDirectory(folderPath) {
+    readWorkingDirectory(folderPath) {
       const fullFolderPath = `${localDumpDataPath}/${folderPath || ''}`;
 
       const files = fs.readdirSync(fullFolderPath)
       return files;
     },
-    onDirectoryChanged(folderPath, listener) {
+    onWorkingDirectoryChanged(folderPath, listener) {
       const fullFolderPath = `${localDumpDataPath}/${folderPath || ''}`;
+       fs.watch(fullFolderPath, () => {
+        listener();
+      })
+    },
+    readProjectDirectory(folderPath) {
+      const fullFolderPath = `${localPersistentProjectsPath}/${folderPath || ''}`;
+
+      const files = fs.readdirSync(fullFolderPath)
+      return files;
+    },
+    onProjectDirectoryChanged(folderPath, listener) {
+      const fullFolderPath = `${localPersistentProjectsPath}/${folderPath || ''}`;
        fs.watch(fullFolderPath, () => {
         listener();
       })

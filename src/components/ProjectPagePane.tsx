@@ -38,7 +38,7 @@ export default function ProjectPane({
   const pages = useSelector(selectLearnProjects)[learnProject];
 
   const [workingDirectory, setWorkingDirectory] = useState(
-    window.electron.learnProject.readDirectory(learnProject)
+    window.electron.learnProject.readWorkingDirectory(learnProject)
   );
 
   const { show } = useContextMenu({ id: learnProject });
@@ -51,9 +51,9 @@ export default function ProjectPane({
   );
 
   useEffect(() => {
-    window.electron.learnProject.onDirectoryChanged(learnProject, () => {
+    window.electron.learnProject.onWorkingDirectoryChanged(learnProject, () => {
       setWorkingDirectory(
-        window.electron.learnProject.readDirectory(learnProject)
+        window.electron.learnProject.readWorkingDirectory(learnProject)
       );
     });
   }, []);

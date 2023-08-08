@@ -89,5 +89,12 @@ export const ProjectPaneFile = styled.div<ProjectPaneFileProps>`
 `;
 
 export const ProjectPaneProject = styled.div`
+  display: flex;
   margin-bottom: ${sizeRem.default.space};
+
+  justify-content: space-between;
+
+  img {
+    cursor: pointer;
+  }
 `;

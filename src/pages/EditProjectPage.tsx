@@ -3,7 +3,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import useAsyncEffect from 'use-async-effect';
 import { MarkdownViewer } from '../components/MarkdownViewer';
 import { Timeouts } from '../constants/timeouts';
-import { useSearchParamsOnSelectedLearnPage } from '../hooks/LearnPageHooks';
+import {
+  useNavigateOnSelectedLearnPage,
+  useSearchParamsOnSelectedLearnPage,
+} from '../hooks/LearnPageHooks';
 import {
   CodeEditor,
   EditorType,
@@ -33,6 +36,9 @@ import {
 import { CodeBlock } from 'components/CodeBlock';
 import ChevronIcon from '../icons/chevron.svg';
 import DeleteIcon from '../icons/trash.svg';
+import CrossIcon from '../icons/cross.svg';
+import CheckIcon from '../icons/check.svg';
+import { RouterRoutes } from 'constants/routerRoutes';
 
 const LEARN_PAGE_EXTENSION = '.lap';
 export const TEXT_INITIALIZER = '#New Text#';
@@ -71,11 +77,16 @@ function EditProjectPageBlockButtons({
 }
 
 export function EditProjectPage() {
+  const [onClickOnEditLearnPage] = useNavigateOnSelectedLearnPage(
+    RouterRoutes.EditProjectPage
+  );
   const { learnProject: searchParameterLearnProject, learnPage } =
     useSearchParamsOnSelectedLearnPage();
   const [learnProject, setLearnProject] = useState(searchParameterLearnProject);
   const [fileContent, setFileContent] = useState('');
+  const [showInputIcons, setShowInputIcons] = useState(false);
   const titleInputRef = useRef<HTMLInputElement>(null);
+  const titleRef = useRef<string | null>(null);
   const [selectedMode, setSelectedMode] = useState(EditMode.Edit);
 
   //on first render
@@ -144,6 +155,45 @@ export function EditProjectPage() {
       //Sonst setze Titel auf Filename
       titleInputRef.current.value = learnPage;
     }
+    titleRef.current = titleInputRef.current.value;
+  }
+
+  async function handleChangeTitle() {
+    setShowInputIcons(false);
+    if (!titleInputRef.current || !titleRef.current) return;
+
+    const extsitingPages =
+      window.electron.learnProject.readProjectDirectory(learnProject);
+
+    let count = 0;
+    const regexp = new RegExp(
+      `${titleInputRef.current.value}(\\(\\d+\\)|).lap`
+    );
+
+    for (const page of extsitingPages) {
+      if (regexp.test(page)) count++;
+    }
+    let newTitle = titleInputRef.current.value;
+    if (count > 0) {
+      newTitle = `${titleInputRef.current.value}(${count})`;
+    }
+
+    window.electron.learnPage.renameLearnPage(
+      learnProject,
+      titleRef.current,
+      newTitle
+    );
+
+    titleRef.current = titleInputRef.current.value;
+
+    onClickOnEditLearnPage(learnProject, `${newTitle}${LEARN_PAGE_EXTENSION}`);
+  }
+
+  function handleCancelTitleChange() {
+    setShowInputIcons(false);
+    if (!titleInputRef.current || !titleRef.current) return;
+
+    titleInputRef.current.value = titleRef.current;
   }
 
   async function handleChangeLearnPage() {
@@ -277,7 +327,18 @@ export function EditProjectPage() {
                 type="text"
                 placeholder="Title"
                 ref={titleInputRef}
+                onFocus={() => setShowInputIcons(true)}
+                onBlur={_.debounce(
+                  () => setShowInputIcons(false),
+                  Timeouts.DebounceHideIconsTimeout
+                )}
               />
+              {showInputIcons ? (
+                <>
+                  <img src={CrossIcon} onClick={handleCancelTitleChange} />
+                  <img src={CheckIcon} onClick={handleChangeTitle} />
+                </>
+              ) : null}
             </EditProjectPageTitleWrapper>
             <EditProjectPageSeperatorButtonWrapper>
               <EditProjectPageSeperatorButton
