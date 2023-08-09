@@ -117,14 +117,16 @@ export function Titlebar(): JSX.Element {
             >
               import File
             </Item>
-            <Item disabled={currentPage !== RouterRoutes.ProjectPage}>
+            <Item
+              disabled={currentPage !== RouterRoutes.ProjectPage}
+              onClick={() => {
+                onClickOnEditLearnPage(learnProject, learnPage);
+              }}
+            >
               edit File
             </Item>
             <Separator />
             <Item disabled={currentPage === RouterRoutes.Root}>save File</Item>
-            <Item disabled={currentPage !== RouterRoutes.EditProjectPage}>
-              save File as...
-            </Item>
             <Separator />
             <Item disabled={currentPage !== RouterRoutes.EditProjectPage}>
               delete File
