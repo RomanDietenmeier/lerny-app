@@ -169,7 +169,6 @@ export function Titlebar(): JSX.Element {
         <TitlebarMenu onClick={(event) => show({ id: PROJECT_MENU, event })}>
           Project
           <StyledMenu id={PROJECT_MENU}>
-            <Item>new Project</Item>
             <Item disabled={currentPage === RouterRoutes.Root}>
               export Project
             </Item>
