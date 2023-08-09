@@ -71,6 +71,9 @@ export function Titlebar(): JSX.Element {
   const [onClickOnLearnProject] = useNavigateOnSelectedLearnProject(
     RouterRoutes.ProjectPage
   );
+  const [onClickOnEditLearnProject] = useNavigateOnSelectedLearnProject(
+    RouterRoutes.EditProjectPage
+  );
   const [onClickOnEditLearnPage] = useNavigateOnSelectedLearnPage(
     RouterRoutes.EditProjectPage
   );
@@ -186,7 +189,10 @@ export function Titlebar(): JSX.Element {
             >
               import Project
             </Item>
-            <Item disabled={currentPage !== RouterRoutes.ProjectPage}>
+            <Item
+              disabled={currentPage !== RouterRoutes.ProjectPage}
+              onClick={() => onClickOnEditLearnProject(learnProject)}
+            >
               edit Project
             </Item>
             <Separator />
