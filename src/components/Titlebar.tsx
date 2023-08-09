@@ -25,6 +25,7 @@ import {
   useNavigateOnSelectedLearnProject,
   useSearchParamsOnSelectedLearnProject,
 } from 'hooks/LearnProjectHooks';
+import { useNavigateOnSelectedLearnPage } from 'hooks/LearnPageHooks';
 
 const FILE_MENU = 'file-id';
 const PROJECT_MENU = 'project-id';
@@ -68,6 +69,9 @@ export function Titlebar(): JSX.Element {
   const [onClickOnLearnProject] = useNavigateOnSelectedLearnProject(
     RouterRoutes.ProjectPage
   );
+  const [onClickOnEditLearnPage] = useNavigateOnSelectedLearnPage(
+    RouterRoutes.EditProjectPage
+  );
 
   useAsyncEffect(async () => {
     await updateLearnProjects();
@@ -102,7 +106,15 @@ export function Titlebar(): JSX.Element {
             >
               export File
             </Item>
-            <Item disabled={currentPage !== RouterRoutes.EditProjectPage}>
+            <Item
+              disabled={currentPage !== RouterRoutes.EditProjectPage}
+              onClick={async () => {
+                const importedPage =
+                  await window.electron.learnPage.importLearnPage(learnProject);
+                if (!importedPage) return;
+                onClickOnEditLearnPage(learnProject, importedPage);
+              }}
+            >
               import File
             </Item>
             <Item disabled={currentPage !== RouterRoutes.ProjectPage}>

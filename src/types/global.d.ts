@@ -55,6 +55,7 @@ declare global {
           learnProject: string,
           learnPage: string
         ) => Promise<void>;
+        importLearnPage: (LearnProjects: string) => Promise<string | undefined>;
       };
       learnProject: {
         createProject: (project: string) => string | undefined;
