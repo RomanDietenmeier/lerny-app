@@ -199,9 +199,6 @@ export function Titlebar(): JSX.Element {
             <Item disabled={currentPage === RouterRoutes.Root}>
               save Project
             </Item>
-            <Item disabled={currentPage === RouterRoutes.Root}>
-              save Project as...
-            </Item>
             <Separator />
             <Item disabled={currentPage === RouterRoutes.Root}>
               delete Project
