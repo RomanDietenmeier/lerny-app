@@ -84,16 +84,27 @@ export default function ProjectPane({
   }
 
   async function handleDeleteAndLeavePage(learnPage: string) {
-    onClickOnEditLearnPage(learnProject, projectDirectory[0]);
-    const deletePageDebounced = _.debounce(
-      async () =>
-        await window.electron.learnPage.deleteLearnPage(
-          learnProject,
-          learnPage
-        ),
-      Timeouts.DebunceDeleteTimeout
-    );
-    deletePageDebounced();
+    if (projectDirectory.length === 1) {
+      await window.electron.learnProject.deleteProject(learnProject);
+      navigate(RouterRoutes.Root);
+    } else {
+      const pageIndex = projectDirectory.indexOf(learnPage);
+      if (pageIndex < 0) return;
+
+      if (pageIndex === 0)
+        onClickOnEditLearnPage(learnProject, projectDirectory[1]);
+      else
+        onClickOnEditLearnPage(learnProject, projectDirectory[pageIndex - 1]);
+      const deletePageDebounced = _.debounce(
+        async () =>
+          await window.electron.learnPage.deleteLearnPage(
+            learnProject,
+            learnPage
+          ),
+        Timeouts.DebunceDeleteTimeout
+      );
+      deletePageDebounced();
+    }
   }
 
   return (

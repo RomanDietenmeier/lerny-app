@@ -26,6 +26,8 @@ import {
   useSearchParamsOnSelectedLearnProject,
 } from 'hooks/LearnProjectHooks';
 import { useNavigateOnSelectedLearnPage } from 'hooks/LearnPageHooks';
+import { Timeouts } from 'constants/timeouts';
+import _ from 'lodash';
 
 const FILE_MENU = 'file-id';
 const PROJECT_MENU = 'project-id';
@@ -85,6 +87,33 @@ export function Titlebar(): JSX.Element {
     }
   }
 
+  async function handleDeleteAndLeavePage() {
+    const projectDirectory =
+      await window.electron.learnProject.readProjectDirectory(learnProject);
+
+    if (projectDirectory.length === 1) {
+      await window.electron.learnProject.deleteProject(learnProject);
+      navigate(RouterRoutes.Root);
+    } else {
+      const pageIndex = projectDirectory.indexOf(learnPage);
+      if (pageIndex < 0) return;
+
+      if (pageIndex === 0)
+        onClickOnEditLearnPage(learnProject, projectDirectory[1]);
+      else
+        onClickOnEditLearnPage(learnProject, projectDirectory[pageIndex - 1]);
+      const deletePageDebounced = _.debounce(
+        async () =>
+          await window.electron.learnPage.deleteLearnPage(
+            learnProject,
+            learnPage
+          ),
+        Timeouts.DebunceDeleteTimeout
+      );
+      deletePageDebounced();
+    }
+  }
+
   return (
     <TitlebarWrapper>
       <RowItemsFlex>
@@ -128,7 +157,10 @@ export function Titlebar(): JSX.Element {
             <Separator />
             <Item disabled={currentPage === RouterRoutes.Root}>save File</Item>
             <Separator />
-            <Item disabled={currentPage !== RouterRoutes.EditProjectPage}>
+            <Item
+              disabled={currentPage !== RouterRoutes.EditProjectPage}
+              onClick={handleDeleteAndLeavePage}
+            >
               delete File
             </Item>
           </StyledMenu>
