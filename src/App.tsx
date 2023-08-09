@@ -11,7 +11,9 @@ import { NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
 import { setActiveLearnPage } from 'redux/slices/activeLearnPage';
 import { setActiveRoute } from 'redux/slices/activeRoute';
+import { setEditorFont } from 'redux/slices/editorFontSlice';
 import { ThemeProvider } from 'styled-components';
+import useAsyncEffect from 'use-async-effect';
 
 export function App() {
   const dispatch = useDispatch();
@@ -19,6 +21,12 @@ export function App() {
   const activeLearnPage = useSearchParamsOnSelectedLearnPage();
   const currentTheme = useSelector(selectCurrentTheme);
   const activeRoute = useLocation().pathname;
+
+  useAsyncEffect(async (isMounted) => {
+    const fontSize = await window.electron.style.getFontSize();
+    if (!isMounted) return;
+    dispatch(setEditorFont({ size: fontSize }));
+  }, []);
 
   useEffect(() => {
     dispatch(setActiveRoute({ route: activeRoute as RouterRoutes }));
