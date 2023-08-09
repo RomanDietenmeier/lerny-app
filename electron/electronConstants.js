@@ -9,6 +9,7 @@ const persistentLocalDataRootPath = runningOnWindows
 
 const localPersistentDataPath = `${persistentLocalDataRootPath}/lerny-app`;
 const localPersistentProjectsPath = `${localPersistentDataPath}/projects`;
+const localPersistentSettingsPath = `${localPersistentDataPath}/settings`;
 
 const dumpLocalDataRootPath = runningOnWindows
   ? process.env.localappdata
@@ -46,6 +47,7 @@ module.exports = {
   localDumpDataPath,
   localPersistentDataPath,
   localPersistentProjectsPath,
+  localPersistentSettingsPath,
   persistentLocalDataRootPath,
   runningOnWindows,
   textFileEncoding,
