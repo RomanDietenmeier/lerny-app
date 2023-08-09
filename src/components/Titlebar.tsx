@@ -28,6 +28,7 @@ import {
 import { useNavigateOnSelectedLearnPage } from 'hooks/LearnPageHooks';
 import { Timeouts } from 'constants/timeouts';
 import _ from 'lodash';
+import { font } from 'constants/font';
 
 const FILE_MENU = 'file-id';
 const PROJECT_MENU = 'project-id';
@@ -238,9 +239,46 @@ export function Titlebar(): JSX.Element {
           </StyledMenu>
         </TitlebarMenu>
         <TitlebarMenu onClick={(event) => show({ id: THEME_MENU, event })}>
-          Theme
+          Style
           <StyledMenu id={THEME_MENU}>
             <Item onClick={swapTheme}>Swap theme</Item>
+            <Submenu label="Editor Font Size">
+              <Item
+                onClick={() =>
+                  window.electron.style.setFontSize(font.px.sizeSmall)
+                }
+              >
+                Very Small
+              </Item>
+              <Item
+                onClick={() =>
+                  window.electron.style.setFontSize(font.px.sizeSmaller)
+                }
+              >
+                Small
+              </Item>
+              <Item
+                onClick={() =>
+                  window.electron.style.setFontSize(font.px.sizeNormal)
+                }
+              >
+                Default
+              </Item>
+              <Item
+                onClick={() =>
+                  window.electron.style.setFontSize(font.px.sizeBigger)
+                }
+              >
+                Big
+              </Item>
+              <Item
+                onClick={() =>
+                  window.electron.style.setFontSize(font.px.sizeBig)
+                }
+              >
+                Very Big
+              </Item>
+            </Submenu>
           </StyledMenu>
         </TitlebarMenu>
       </RowItemsFlex>
