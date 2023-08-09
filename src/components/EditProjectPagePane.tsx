@@ -24,6 +24,8 @@ import { updateLearnProjects } from 'pages/StartPage';
 import BackIcon from '../icons/chevron.svg';
 import EllipsisIcon from '../icons/ellipsisPrimary.svg';
 import AddFileIcon from '../icons/add-file.svg';
+import _ from 'lodash';
+import { Timeouts } from 'constants/timeouts';
 
 type ProjectPaneProps = {
   onChangePreviewContent: () => void;
@@ -81,6 +83,19 @@ export default function ProjectPane({
     onClickOnEditLearnPage(learnProject, '');
   }
 
+  async function handleDeleteAndLeavePage(learnPage: string) {
+    onClickOnEditLearnPage(learnProject, projectDirectory[0]);
+    const deletePageDebounced = _.debounce(
+      async () =>
+        await window.electron.learnPage.deleteLearnPage(
+          learnProject,
+          learnPage
+        ),
+      Timeouts.DebunceDeleteTimeout
+    );
+    deletePageDebounced();
+  }
+
   return (
     <ProjectPaneWrapper>
       <div>
@@ -131,8 +146,25 @@ export default function ProjectPane({
                 key={index}
                 active={learnPage === page}
                 onClick={() => handleOnClickLearnPage(page)}
+                onContextMenu={(event) => show({ id: page, event })}
               >
                 {page}
+                <StyledProjectMenu
+                  id={page}
+                  style={{ fontSize: font.sizeNormal }}
+                >
+                  <Item onClick={() => handleDeleteAndLeavePage(page)}>
+                    delete...
+                  </Item>
+                  <Separator />
+                  <Item
+                    onClick={() => {
+                      onClickOnEditLearnProject(learnProject, page);
+                    }}
+                  >
+                    stop editing...
+                  </Item>
+                </StyledProjectMenu>
               </ProjectPaneFile>
             ))}
           </ProjectPaneFileWrapper>
@@ -141,13 +173,26 @@ export default function ProjectPane({
       <ProjectPaneDirectory>
         <ProjectPaneSectionName>WORKING DIRECTORY</ProjectPaneSectionName>
         <ProjectPaneFileWrapper>
-          {workingDirectory.map((directory, index) => (
+          {workingDirectory.map((file, index) => (
             <ProjectPaneFile
               key={index}
               active={false}
               style={{ cursor: 'unset' }}
+              onContextMenu={(event) => show({ id: file, event })}
             >
-              {directory}
+              {file}
+              <StyledProjectMenu
+                id={file}
+                style={{ fontSize: font.sizeNormal }}
+              >
+                <Item
+                  onClick={() =>
+                    window.electron.learnPage.deleteFile(learnProject, file)
+                  }
+                >
+                  delete...
+                </Item>
+              </StyledProjectMenu>
             </ProjectPaneFile>
           ))}
         </ProjectPaneFileWrapper>

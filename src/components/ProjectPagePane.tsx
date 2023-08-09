@@ -123,8 +123,21 @@ export default function ProjectPane({
                 key={index}
                 active={learnPage === page}
                 onClick={() => handleOnClickLearnPage(page)}
+                onContextMenu={(event) => show({ id: page, event })}
               >
                 {page}
+                <StyledProjectMenu
+                  id={page}
+                  style={{ fontSize: font.sizeNormal }}
+                >
+                  <Item
+                    onClick={() => {
+                      onClickOnEditLearnProject(learnProject, page);
+                    }}
+                  >
+                    edit...
+                  </Item>
+                </StyledProjectMenu>
               </ProjectPaneFile>
             ))}
           </ProjectPaneFileWrapper>
@@ -133,13 +146,26 @@ export default function ProjectPane({
       <ProjectPaneDirectory>
         <ProjectPaneSectionName>WORKING DIRECTORY</ProjectPaneSectionName>
         <ProjectPaneFileWrapper>
-          {workingDirectory.map((directory, index) => (
+          {workingDirectory.map((file, index) => (
             <ProjectPaneFile
               key={index}
               active={false}
               style={{ cursor: 'unset' }}
+              onContextMenu={(event) => show({ id: file, event })}
             >
-              {directory}
+              {file}
+              <StyledProjectMenu
+                id={file}
+                style={{ fontSize: font.sizeNormal }}
+              >
+                <Item
+                  onClick={() =>
+                    window.electron.learnPage.deleteFile(learnProject, file)
+                  }
+                >
+                  delete...
+                </Item>
+              </StyledProjectMenu>
             </ProjectPaneFile>
           ))}
         </ProjectPaneFileWrapper>

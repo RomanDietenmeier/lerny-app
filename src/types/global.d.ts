@@ -33,6 +33,7 @@ declare global {
           filename: string,
           folderStructure?: Array<string>
         ) => Promise<string>;
+        deleteFile: (learnProject: string, file: string) => void;
         saveFile: (
           content: string,
           learnProject: string,
@@ -44,6 +45,7 @@ declare global {
           filename: string,
           newFilename: string
         ) => string;
+        deleteLearnPage: (learnProject: string, learnPage: string) => void;
         saveLearnPage: (
           content: string,
           title?: string,

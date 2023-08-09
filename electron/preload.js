@@ -119,6 +119,14 @@ contextBridge.exposeInMainWorld('electron', {
         console.error(err);
       }
     },
+    async deleteFile(learnProject, filename) {
+      if (!learnProject || !filename) {
+        return;
+      }
+      let dir = `${localDumpDataPath}/${learnProject}/${filename}`;
+      await fs.promises.rm(dir);
+      return;
+    },
     async saveFile(content, learnProject, filename, folderStructure = []) {
       if (!content || !learnProject || !filename) {
         return;
@@ -156,6 +164,14 @@ contextBridge.exposeInMainWorld('electron', {
         `${dir}/${newFilename}${learnPageExtension}`,
       );
       return newFilename;
+    },
+    async deleteLearnPage(learnProject, learnPage) {
+      if (!learnProject || !learnPage) {
+        return;
+      }
+      let dir = `${localPersistentProjectsPath}/${learnProject}/${learnPage}`;
+      await fs.promises.rm(dir);
+      return;
     },
     async saveLearnPage(content, learnPage, learnProject) {
       if (!learnProject) {
