@@ -53,6 +53,7 @@ declare global {
         ) => Promise<[string, string]>;
       };
       learnProject: {
+        createProject: (project: string) => string | undefined;
         exportProject: (project: string) => Promise<void>;
         importProject: () => Promise<void>;
         readWorkingDirectory: (folderPath: string) => Array<string>;

@@ -63,6 +63,33 @@ export const ProjectAddCardOption = styled.div`
     background-color: ${(p) => p.theme.backgroundSecondary};
   }
 `;
+export const ProjectAddCardInput = styled.input`
+  display: flex;
+  width: 100%;
+  height: ${(size.projectCard.height - size.projectCard.offset) / 2}rem;
+
+  padding: 0 ${sizeRem.default.spaceHalf};
+
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+
+  color: ${(p) => p.theme.primary};
+  background-color: ${(p) => p.theme.backgroundMain};
+
+  font-size: ${font.sizeBigger};
+
+  border-radius: ${sizeRem.default.borderRadius} ${sizeRem.default.borderRadius}
+    0 0;
+  border: 0;
+  border-bottom: 1px solid ${(p) => p.theme.primary};
+  outline: none;
+
+  &:hover {
+    background-color: ${(p) => p.theme.backgroundSecondary};
+  }
+`;
 export const ProjectAddCardLastOption = styled(ProjectAddCardOption)`
   border-radius: 0 0 ${sizeRem.default.borderRadius}
     ${sizeRem.default.borderRadius};

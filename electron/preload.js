@@ -214,6 +214,20 @@ contextBridge.exposeInMainWorld('electron', {
     },
   },
   learnProject: {
+    async createProject(title) {
+      if (!title) {
+        return;
+      }
+      const projectDir = `${localPersistentProjectsPath}/${title}`;
+      const fileDir = `${localDumpDataPath}/${title}`;
+      if(!(await createDirs([
+        projectDir,
+        fileDir,
+      ]))){
+        return;
+      }
+      return title;
+    },
     async exportProject(project) {
       const targetDirectory = await openFileDialog(
         OpenFileDialogOption.selectFolder
