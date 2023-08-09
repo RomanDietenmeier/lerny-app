@@ -158,8 +158,6 @@ export function Titlebar(): JSX.Element {
               edit File
             </Item>
             <Separator />
-            <Item disabled={currentPage === RouterRoutes.Root}>save File</Item>
-            <Separator />
             <Item
               disabled={currentPage !== RouterRoutes.EditProjectPage}
               onClick={handleDeleteAndLeavePage}
