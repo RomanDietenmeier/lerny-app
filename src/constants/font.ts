@@ -2,8 +2,11 @@ export const font = {
   family: 'Segoe UI',
 
   px: {
-    sizeSmall: 14,
-    sizeSmaller: 16,
+    sizeSmall: 12,
+    sizeSmaller: 14,
+    sizeNormal: 16,
+    sizeBigger: 18,
+    sizeBig: 22,
   },
   sizeSmall: '0.875rem',
   sizeSmaller: '1rem',
