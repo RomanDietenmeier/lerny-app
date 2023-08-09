@@ -7,6 +7,7 @@ import useAsyncEffect from 'use-async-effect';
 import {
   ChunkType,
   ContentChunk,
+  renameDuplicateFile,
   transformChunksToContent,
   transformContentToChunks,
 } from 'utilities/helper';
@@ -163,21 +164,10 @@ export function EditProjectPage() {
     setShowInputIcons(false);
     if (!titleInputRef.current || !titleRef.current) return;
 
-    const existingPages =
-      window.electron.learnProject.readProjectDirectory(learnProject);
-
-    let count = 0;
-    const regexp = new RegExp(
-      `${titleInputRef.current.value}(\\(\\d+\\)|).lap`
+    const newTitle = renameDuplicateFile(
+      learnProject,
+      titleInputRef.current.value
     );
-
-    for (const page of existingPages) {
-      if (regexp.test(page)) count++;
-    }
-    let newTitle = titleInputRef.current.value;
-    if (count > 0) {
-      newTitle = `${titleInputRef.current.value}(${count})`;
-    }
 
     window.electron.learnPage.renameLearnPage(
       learnProject,

@@ -77,3 +77,23 @@ export function transformChunksToContent(chunks: Array<ContentChunk>): string {
   const contentArray = chunks.map((chunk) => chunk.content);
   return contentArray.join('\r\n\r\n');
 }
+
+export function renameDuplicateFile(
+  learnProject: string,
+  filename: string
+): string {
+  const existingPages =
+    window.electron.learnProject.readProjectDirectory(learnProject);
+
+  let count = 0;
+  const regexp = new RegExp(`${filename}(\\(\\d+\\)|).lap`);
+
+  for (const page of existingPages) {
+    if (regexp.test(page)) count++;
+  }
+  let newFilename = filename;
+  if (count > 0) {
+    newFilename = `${filename}(${count})`;
+  }
+  return newFilename;
+}
