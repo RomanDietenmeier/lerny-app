@@ -218,6 +218,20 @@ contextBridge.exposeInMainWorld('electron', {
       );
       return [learnPage, learnProject];
     },
+    async exportLearnPage(learnProject, learnPage) {
+      const targetDirectory = await openFileDialog(
+        OpenFileDialogOption.selectFolder
+      );
+      if (!targetDirectory) return;
+
+      try {
+        const source = `${localPersistentProjectsPath}/${learnProject}/${learnPage}`;
+        const destination = `${targetDirectory}/${learnPage}`;
+        await fs.promises.copyFile(source, destination);
+      } catch (err) {
+        console.error('export error', err, project);
+      }
+    },
   },
   learnProject: {
     async createProject(title) {

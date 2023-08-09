@@ -164,6 +164,17 @@ export default function ProjectPane({
                   >
                     stop editing...
                   </Item>
+                  <Separator />
+                  <Item
+                    onClick={() =>
+                      window.electron.learnPage.exportLearnPage(
+                        learnProject,
+                        page
+                      )
+                    }
+                  >
+                    export
+                  </Item>
                 </StyledProjectMenu>
               </ProjectPaneFile>
             ))}

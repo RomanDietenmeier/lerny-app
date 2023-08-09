@@ -21,7 +21,10 @@ import { RouterRoutes } from 'constants/routerRoutes';
 import { selectLearnProjects } from 'redux/selectors/learnProjectsSelectors';
 import { updateLearnProjects } from 'pages/StartPage';
 import useAsyncEffect from 'use-async-effect';
-import { useNavigateOnSelectedLearnProject } from 'hooks/LearnProjectHooks';
+import {
+  useNavigateOnSelectedLearnProject,
+  useSearchParamsOnSelectedLearnProject,
+} from 'hooks/LearnProjectHooks';
 
 const FILE_MENU = 'file-id';
 const PROJECT_MENU = 'project-id';
@@ -60,6 +63,7 @@ export function Titlebar(): JSX.Element {
   const currentTheme = useSelector(selectCurrentTheme);
   const currentPage = useLocation().pathname;
   const learnProjects = useSelector(selectLearnProjects);
+  const { learnProject, learnPage } = useSearchParamsOnSelectedLearnProject();
 
   const [onClickOnLearnProject] = useNavigateOnSelectedLearnProject(
     RouterRoutes.ProjectPage
@@ -87,7 +91,15 @@ export function Titlebar(): JSX.Element {
             <Item disabled={currentPage !== RouterRoutes.EditProjectPage}>
               new File
             </Item>
-            <Item disabled={currentPage === RouterRoutes.Root}>
+            <Item
+              disabled={currentPage === RouterRoutes.Root}
+              onClick={() =>
+                window.electron.learnPage.exportLearnPage(
+                  learnProject,
+                  learnPage
+                )
+              }
+            >
               export File
             </Item>
             <Item disabled={currentPage !== RouterRoutes.EditProjectPage}>

@@ -51,6 +51,10 @@ declare global {
           title?: string,
           learnProject?: string
         ) => Promise<[string, string]>;
+        exportLearnPage: (
+          learnProject: string,
+          learnPage: string
+        ) => Promise<void>;
       };
       learnProject: {
         createProject: (project: string) => string | undefined;

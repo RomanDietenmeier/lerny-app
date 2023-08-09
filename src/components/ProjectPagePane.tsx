@@ -66,7 +66,7 @@ export default function ProjectPane({
     async (isMounted) => {
       const loadedLearnPageContent =
         await window.electron.learnPage.loadLearnPage(learnProject, learnPage);
-      if (!isMounted()) return;
+      if (!isMounted() || !loadedLearnPageContent) return;
       handleChangeLearnPageContent(loadedLearnPageContent);
     },
     [learnPage]
@@ -136,6 +136,17 @@ export default function ProjectPane({
                     }}
                   >
                     edit...
+                  </Item>
+                  <Separator />
+                  <Item
+                    onClick={() =>
+                      window.electron.learnPage.exportLearnPage(
+                        learnProject,
+                        page
+                      )
+                    }
+                  >
+                    export
                   </Item>
                 </StyledProjectMenu>
               </ProjectPaneFile>
