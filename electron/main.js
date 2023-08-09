@@ -103,12 +103,24 @@ electron.ipcMain.on(ipc.openFileDialogOptions.selectFolder, async (evt, id) => {
   );
 });
 
-electron.ipcMain.on(ipc.openFileDialogOptions.selectFile, async (evt, id) => {
+electron.ipcMain.on(ipc.openFileDialogOptions.selectTgz, async (evt, id) => {
   mainWindow.webContents.send(
-    `${ipc.openFileDialogOptions.selectFile}${id}`,
+    `${ipc.openFileDialogOptions.selectTgz}${id}`,
     (
       await electron.dialog.showOpenDialog({
         filters: [{ name: 'Learn Projects', extensions: ['tgz'] }],
+        properties: ['openFile'],
+      })
+    ).filePaths[0]
+  );
+});
+
+electron.ipcMain.on(ipc.openFileDialogOptions.selectLap, async (evt, id) => {
+  mainWindow.webContents.send(
+    `${ipc.openFileDialogOptions.selectLap}${id}`,
+    (
+      await electron.dialog.showOpenDialog({
+        filters: [{ name: 'Learn Pages', extensions: ['lap'] }],
         properties: ['openFile'],
       })
     ).filePaths[0]

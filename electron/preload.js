@@ -232,6 +232,31 @@ contextBridge.exposeInMainWorld('electron', {
         console.error('export error', err, project);
       }
     },
+    async importLearnPage(learnProject) {
+      const sourceDirectory = await openFileDialog(
+        OpenFileDialogOption.selectLap
+      );
+      if (!sourceDirectory) return;
+
+      try {
+        const destination = `${localPersistentProjectsPath}/${learnProject}`;
+        const source = `${sourceDirectory}`;
+        const file = source.split('\\').pop();
+        const filename = file.slice(0, -learnPageExtension.length);
+        const files = fs.readdirSync(destination)
+
+        let count = 0;
+        let newFilename = file;
+        while(files.includes(newFilename)) {
+          count++;
+          newFilename = `${filename}(${count})${learnPageExtension}`;
+        }
+        await fs.promises.copyFile(source, `${destination}/${newFilename}`);
+        return newFilename;
+      } catch (err) {
+        console.error('export error', err, project);
+      }
+    },
   },
   learnProject: {
     async createProject(title) {
@@ -282,7 +307,7 @@ contextBridge.exposeInMainWorld('electron', {
     },
     async importProject() {
       const srcDirectory = await openFileDialog(
-        OpenFileDialogOption.selectFile
+        OpenFileDialogOption.selectTgz
       );
       if (!srcDirectory) return;
       try {
@@ -325,8 +350,9 @@ contextBridge.exposeInMainWorld('electron', {
 });
 
 const OpenFileDialogOption = {
+  selectTgz: ipc.openFileDialogOptions.selectTgz,
+  selectLap: ipc.openFileDialogOptions.selectLap,
   selectFolder: ipc.openFileDialogOptions.selectFolder,
-  selectFile: ipc.openFileDialogOptions.selectFile,
 };
 async function openFileDialog(option) {
   const id = getUniqueId();

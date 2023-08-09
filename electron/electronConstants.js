@@ -29,7 +29,8 @@ const ipc = {
   },
   openExternalLink: 'openExternalLink',
   openFileDialogOptions: {
-    selectFile: 'fileDialog.selectFile',
+    selectTgz: 'fileDialog.selectTgz',
+    selectLap: 'fileDialog.selectLap',
     selectFolder: 'fileDialog.selectFolder',
   },
   titlebar: {
