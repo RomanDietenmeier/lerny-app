@@ -14,6 +14,7 @@ import { size } from 'constants/metrics';
 import { selectActiveRoute } from 'redux/selectors/activeRouteSelector';
 import { RouterRoutes } from 'constants/routerRoutes';
 import { TEXT_INITIALIZER } from 'pages/EditProjectPage';
+import { selectEditorFont } from 'redux/selectors/editorFontSelector';
 
 type MonacoEditorType = typeof import('monaco-editor');
 
@@ -29,42 +30,6 @@ export const enum EditorType {
   Code,
   Text,
 }
-
-const monacoEditorCodeOptions: editor.IStandaloneEditorConstructionOptions = {
-  minimap: { enabled: false },
-  fontSize: font.px.sizeSmall,
-  scrollBeyondLastLine: false,
-  scrollbar: {
-    alwaysConsumeMouseWheel: false,
-    vertical: 'hidden',
-    verticalScrollbarSize: 0,
-    horizontalScrollbarSize: 0,
-    horizontalSliderSize: 20,
-  },
-  lineNumbersMinChars: 3,
-  padding: {
-    bottom: size.default.spaceHalf * font.px.sizeSmall,
-    top: size.default.spaceHalf * font.px.sizeSmall,
-  },
-};
-const monacoEditorTextOptions: editor.IStandaloneEditorConstructionOptions = {
-  minimap: { enabled: false },
-  fontSize: font.px.sizeSmall,
-  scrollBeyondLastLine: false,
-  scrollbar: {
-    alwaysConsumeMouseWheel: false,
-    vertical: 'hidden',
-    verticalScrollbarSize: 0,
-  },
-  padding: {
-    bottom: size.default.spaceHalf * font.px.sizeSmall,
-    top: size.default.spaceHalf * font.px.sizeSmall,
-  },
-  lineNumbers: 'off',
-  folding: false,
-  wordWrap: 'on',
-  wrappingIndent: 'same',
-};
 
 export type CodeEditorTerminalProps = {
   runCommand?: string;
@@ -96,6 +61,43 @@ export function CodeEditor({
   const [codeEditor, setCodeEditor] =
     useState<editor.IStandaloneCodeEditor | null>(null);
   const [editorHeight, setEditorHeight] = useState('0px');
+  const editorFontSize = useSelector(selectEditorFont).size;
+
+  const monacoEditorCodeOptions: editor.IStandaloneEditorConstructionOptions = {
+    minimap: { enabled: false },
+    fontSize: editorFontSize ?? font.px.sizeNormal,
+    scrollBeyondLastLine: false,
+    scrollbar: {
+      alwaysConsumeMouseWheel: false,
+      vertical: 'hidden',
+      verticalScrollbarSize: 0,
+      horizontalScrollbarSize: 0,
+      horizontalSliderSize: 20,
+    },
+    lineNumbersMinChars: 3,
+    padding: {
+      bottom: size.default.spaceHalf * (editorFontSize ?? font.px.sizeNormal),
+      top: size.default.spaceHalf * (editorFontSize ?? font.px.sizeNormal),
+    },
+  };
+  const monacoEditorTextOptions: editor.IStandaloneEditorConstructionOptions = {
+    minimap: { enabled: false },
+    fontSize: editorFontSize ?? font.px.sizeNormal,
+    scrollBeyondLastLine: false,
+    scrollbar: {
+      alwaysConsumeMouseWheel: false,
+      vertical: 'hidden',
+      verticalScrollbarSize: 0,
+    },
+    padding: {
+      bottom: size.default.spaceHalf * (editorFontSize ?? font.px.sizeNormal),
+      top: size.default.spaceHalf * (editorFontSize ?? font.px.sizeNormal),
+    },
+    lineNumbers: 'off',
+    folding: false,
+    wordWrap: 'on',
+    wrappingIndent: 'same',
+  };
 
   useEffect(() => {
     if (!codeEditor) return;
