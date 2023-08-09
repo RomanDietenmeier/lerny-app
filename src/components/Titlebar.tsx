@@ -177,7 +177,13 @@ export function Titlebar(): JSX.Element {
             >
               export Project
             </Item>
-            <Item disabled={currentPage !== RouterRoutes.Root}>
+            <Item
+              disabled={currentPage !== RouterRoutes.Root}
+              onClick={async () => {
+                await window.electron.learnProject.importProject();
+                await updateLearnProjects();
+              }}
+            >
               import Project
             </Item>
             <Item disabled={currentPage !== RouterRoutes.ProjectPage}>
