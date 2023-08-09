@@ -194,7 +194,13 @@ export function Titlebar(): JSX.Element {
               edit Project
             </Item>
             <Separator />
-            <Item disabled={currentPage === RouterRoutes.Root}>
+            <Item
+              disabled={currentPage === RouterRoutes.Root}
+              onClick={async () => {
+                await window.electron.learnProject.deleteProject(learnProject);
+                navigate(RouterRoutes.Root);
+              }}
+            >
               delete Project
             </Item>
           </StyledMenu>
