@@ -121,6 +121,7 @@ export function EditProjectPage() {
       //Lade content der LearnPage
       const loadedLearnPageContent =
         await window.electron.learnPage.loadLearnPage(learnProject, learnPage);
+      if (!loadedLearnPageContent) return;
       setFileContent(loadedLearnPageContent);
     }
   }

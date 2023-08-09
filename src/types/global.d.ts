@@ -27,7 +27,7 @@ declare global {
         loadLearnPage: (
           learnProject: string,
           learnPage: string
-        ) => Promise<string>;
+        ) => Promise<string | undefined>;
         loadFile: (
           learnProject: string,
           filename: string,
@@ -54,6 +54,7 @@ declare global {
       };
       learnProject: {
         createProject: (project: string) => string | undefined;
+        deleteProject: (project: string) => void;
         exportProject: (project: string) => Promise<void>;
         importProject: () => Promise<void>;
         readWorkingDirectory: (folderPath: string) => Array<string>;

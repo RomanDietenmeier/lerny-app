@@ -16,8 +16,12 @@ import { EllipsisWrapper } from './IconWrapper.style';
 
 type ProjectCardProps = {
   project: string;
+  onProjectDeletetd: () => void;
 };
-export function ProjectCard({ project }: ProjectCardProps): JSX.Element {
+export function ProjectCard({
+  project,
+  onProjectDeletetd: handleProjectDeleted,
+}: ProjectCardProps): JSX.Element {
   const { show } = useContextMenu({ id: project });
   const [onClickOnLearnProject] = useNavigateOnSelectedLearnProject(
     RouterRoutes.ProjectPage
@@ -43,7 +47,14 @@ export function ProjectCard({ project }: ProjectCardProps): JSX.Element {
           export...
         </Item>
         <Separator />
-        <Item>delete...</Item>
+        <Item
+          onClick={async () => {
+            await window.electron.learnProject.deleteProject(project);
+            handleProjectDeleted();
+          }}
+        >
+          delete...
+        </Item>
       </StyledProjectMenu>
       <ProjectCardTopLayer>
         <EllipsisWrapper

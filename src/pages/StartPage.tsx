@@ -31,7 +31,13 @@ export function StartPage() {
       <ProjectsWrapper>
         <ProjectAddCard />
         {Object.entries(learnProjects).map(([project, _], index) => {
-          return <ProjectCard key={index} project={project} />;
+          return (
+            <ProjectCard
+              key={index}
+              project={project}
+              onProjectDeletetd={updateLearnProjects}
+            />
+          );
         })}
       </ProjectsWrapper>
     </Wrapper>

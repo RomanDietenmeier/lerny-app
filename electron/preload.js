@@ -96,10 +96,16 @@ contextBridge.exposeInMainWorld('electron', {
   },
   learnPage: {
     async loadLearnPage(learnProject, learnPage) {
-      return await fs.promises.readFile(
-        `${localPersistentProjectsPath}/${learnProject}/${learnPage}`,
-        { encoding: textFileEncoding }
-      );
+      try {
+        const content =  await fs.promises.readFile(
+          `${localPersistentProjectsPath}/${learnProject}/${learnPage}`,
+          { encoding: textFileEncoding }
+        );
+        return content;
+      } catch(err) {
+        return undefined;
+      }
+      
     },
     async loadFile(learnProject, filename, folderStructure = []) {
       let dir = `${localDumpDataPath}/${learnProject}/`;
@@ -227,6 +233,19 @@ contextBridge.exposeInMainWorld('electron', {
         return;
       }
       return title;
+    },
+    async deleteProject(title) {
+      if (!title) {
+        return;
+      }
+      const projectDir = `${localPersistentProjectsPath}/${title}`;
+      const fileDir = `${localDumpDataPath}/${title}`;
+      try{
+        await fs.promises.rm(projectDir, { recursive: true, force: true });
+        await fs.promises.rm(fileDir, { recursive: true, force: true });
+      } catch(err) {
+        console.log('Unable to delete project:', err)
+      }
     },
     async exportProject(project) {
       const targetDirectory = await openFileDialog(
