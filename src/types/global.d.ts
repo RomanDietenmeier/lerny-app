@@ -74,6 +74,10 @@ declare global {
         ) => void;
       };
       openExternalLink: (link: string) => void;
+      style: {
+        setFontSize: (fontSize: number) => Promise<void>;
+        getFontSize: () => Promise<number | null>;
+      };
     };
     handleMarkdownAnchorClick: (href: string) => void;
     webComponent: {

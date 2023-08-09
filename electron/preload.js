@@ -9,6 +9,7 @@ const {
   localDumpDataPath,
   localPersistentDataPath,
   localPersistentProjectsPath,
+  localPersistentSettingsPath,
   textFileEncoding,
   ipc,
 } = require('./electronConstants');
@@ -347,6 +348,37 @@ contextBridge.exposeInMainWorld('electron', {
   openExternalLink(link) {
     ipcRenderer.send('openExternalLink', link);
   },
+  style: {
+    async setFontSize(fontSize) {
+      try{
+        const appData = fs.readdirSync(localPersistentDataPath);
+        if(!appData.includes('settings')){
+          await fs.promises.mkdir(localPersistentSettingsPath);
+        }
+        const settingsData = fs.readdirSync(localPersistentSettingsPath);
+        if(!settingsData.includes('style.json')){
+          await fs.promises.writeFile(`${localPersistentSettingsPath}/style.json`, '{}');
+        }
+        
+        const styleContent = (await fs.promises.readFile(`${localPersistentSettingsPath}/style.json`)).toString(textFileEncoding);
+        const styleObject = JSON.parse(styleContent);
+        styleObject['editorFontSize'] = fontSize;
+        await fs.promises.writeFile(`${localPersistentSettingsPath}/style.json`, JSON.stringify(styleObject)); 
+      } catch (err) {
+        console.error('Error setting font size:', err)
+      }
+    },
+    async getFontSize() {
+      try{   
+        const styleContent = (await fs.promises.readFile(`${localPersistentSettingsPath}/style.json`)).toString(textFileEncoding);
+        const styleObject = JSON.parse(styleContent);
+        return styleObject['editorFontSize'] ?? null;
+      } catch (err) {
+        console.error('Error setting font size:', err);
+        return null;
+      }
+    },
+  }
 });
 
 const OpenFileDialogOption = {
