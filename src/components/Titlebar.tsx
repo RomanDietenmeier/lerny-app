@@ -169,7 +169,12 @@ export function Titlebar(): JSX.Element {
         <TitlebarMenu onClick={(event) => show({ id: PROJECT_MENU, event })}>
           Project
           <StyledMenu id={PROJECT_MENU}>
-            <Item disabled={currentPage === RouterRoutes.Root}>
+            <Item
+              disabled={currentPage === RouterRoutes.Root}
+              onClick={async () => {
+                await window.electron.learnProject.exportProject(learnProject);
+              }}
+            >
               export Project
             </Item>
             <Item disabled={currentPage !== RouterRoutes.Root}>
