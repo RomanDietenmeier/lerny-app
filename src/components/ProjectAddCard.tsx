@@ -13,9 +13,6 @@ import { RouterRoutes } from 'constants/routerRoutes';
 import { updateLearnProjects } from 'pages/StartPage';
 import { useNavigateOnSelectedLearnProject } from 'hooks/LearnProjectHooks';
 
-/* type ProjectAddCardProps = {
-
-}; */
 export function ProjectAddCard(): JSX.Element {
   const [active, setActive] = useState(false);
   const [showInput, setShowInput] = useState(false);
