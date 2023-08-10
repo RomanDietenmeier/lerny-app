@@ -1,6 +1,6 @@
 import { font } from 'constants/font';
 import { RouterRoutes } from 'constants/routerRoutes';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Item, Separator, useContextMenu } from 'react-contexify';
 import { StyledProjectMenu } from './ProjectCard.style';
 import {
@@ -40,6 +40,7 @@ export default function ProjectPane({
   const [projectDirectory, setProjectDirectory] = useState(
     window.electron.learnProject.readProjectDirectory(learnProject)
   );
+  const projectDirectoryRef = useRef(projectDirectory);
 
   const [workingDirectory, setWorkingDirectory] = useState(
     window.electron.learnProject.readWorkingDirectory(learnProject)
@@ -60,11 +61,20 @@ export default function ProjectPane({
         window.electron.learnProject.readWorkingDirectory(learnProject)
       );
     });
-    window.electron.learnProject.onProjectDirectoryChanged(learnProject, () => {
-      setProjectDirectory(
-        window.electron.learnProject.readProjectDirectory(learnProject)
-      );
-    });
+    window.electron.learnProject.onProjectDirectoryChanged(
+      learnProject,
+      async () => {
+        const updatedDirectory =
+          await window.electron.learnProject.readProjectDirectory(learnProject);
+        if (updatedDirectory.length > projectDirectoryRef.current.length) {
+          const addedLearnPage = updatedDirectory.filter(
+            (learnPage) => !projectDirectoryRef.current.includes(learnPage)
+          );
+          onClickOnEditLearnPage(learnProject, addedLearnPage[0]);
+        }
+        setProjectDirectory(updatedDirectory);
+      }
+    );
   }, []);
 
   useAsyncEffect(async () => {
@@ -74,6 +84,10 @@ export default function ProjectPane({
   useEffect(() => {
     handleChangePreviewContent();
   }, [learnPage]);
+
+  useEffect(() => {
+    projectDirectoryRef.current = projectDirectory;
+  }, [projectDirectory]);
 
   function handleOnClickLearnPage(page: string) {
     onClickOnEditLearnPage(learnProject, page);
