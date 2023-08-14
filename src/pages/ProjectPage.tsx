@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { ProjectPageWrapper } from './ProjectPage.style';
+import {
+  ProjectPageContentWrapper,
+  ProjectPageWrapper,
+} from './ProjectPage.style';
 import { MarkdownViewer } from 'components/MarkdownViewer';
 import ProjectPane from 'components/ProjectPagePane';
 
@@ -12,7 +15,9 @@ export function ProjectPage() {
   return (
     <ProjectPageWrapper>
       <ProjectPane onChangeLearnPageContent={handleChangeLearnPageContent} />
-      <MarkdownViewer content={learnPageContent} />
+      <ProjectPageContentWrapper>
+        <MarkdownViewer content={learnPageContent} />
+      </ProjectPageContentWrapper>
     </ProjectPageWrapper>
   );
 }

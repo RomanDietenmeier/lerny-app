@@ -2,7 +2,7 @@ import { sizeRem } from 'constants/metrics';
 import styled from 'styled-components';
 
 export const MarkdownViewerWrapper = styled.div`
-  display: flex;
+  display: contents;
   height: 100%;
   width: 100%;
 
