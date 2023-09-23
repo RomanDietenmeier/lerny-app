@@ -16,7 +16,7 @@ module.exports = {
       path.join(__dirname, 'node_modules'),
       path.join(__dirname, 'src'),
     ],
-    extensions: ['*', '.js', '.jsx', '.tsx', '.ts'],
+    extensions: ['.*', '.js', '.jsx', '.tsx', '.ts'],
     fallback: {
       stream: require.resolve('stream-browserify'),
     },
