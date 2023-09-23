@@ -76,10 +76,6 @@ export class XTermTerminalWebComponent extends HTMLElement {
   private getDisableStdin() {
     return this.getAttribute(Attributes.DisableStdin) !== null;
   }
-
-  private getAttributeOrUndefined(attribute: string): string | undefined {
-    return this.getAttribute(attribute) ?? undefined;
-  }
 }
 
 window.customElements.define(
