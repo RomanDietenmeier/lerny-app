@@ -1,8 +1,8 @@
+import { EllipsisWrapper } from 'components/IconWrapper.style';
+import { StyledMenu } from 'components/Titlebar.style';
 import { font } from 'constants/font';
 import { size, sizeRem } from 'constants/metrics';
 import styled from 'styled-components';
-import { StyledMenu } from './Titlebar.style';
-import { EllipsisWrapper } from './IconWrapper.style';
 
 export const ProjectCardWrapper = styled.div`
   width: ${sizeRem.projectCard.width};

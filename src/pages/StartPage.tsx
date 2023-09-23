@@ -1,15 +1,15 @@
-import React from 'react';
-import { store } from 'redux/store';
-import useAsyncEffect from 'use-async-effect';
-import { setLearnProjects } from '../redux/slices/learnProjectsSlice';
+import { ProjectAddCard } from 'components/ProjectAddCard';
+import { ProjectCard } from 'components/ProjectCard';
 import {
   ProjectsWrapper,
   StartPageWrapper as Wrapper,
-} from './StartPage.style';
+} from 'pages/StartPage.style';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectLearnProjects } from 'redux/selectors/learnProjectsSelectors';
-import { ProjectCard } from 'components/ProjectCard';
-import { ProjectAddCard } from 'components/ProjectAddCard';
+import { setLearnProjects } from 'redux/slices/learnProjectsSlice';
+import { store } from 'redux/store';
+import useAsyncEffect from 'use-async-effect';
 
 export async function updateLearnProjects() {
   const learnProjects =

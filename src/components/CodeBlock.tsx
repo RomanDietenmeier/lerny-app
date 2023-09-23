@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react';
 import {
-  CodeBlockInput,
   CodeBlockAttribute,
-  CodeBlockWrapper,
-  CodeBlockSelect,
+  CodeBlockInput,
   CodeBlockInputFill,
-} from './CodeBlock.styles';
+  CodeBlockSelect,
+  CodeBlockWrapper,
+} from 'components/CodeBlock.styles';
+import React, { useEffect, useState } from 'react';
 import { RowItemsSpaced } from 'styles/layout.style';
+import { retrieveExecutableCodeEditorData } from 'utilities/xml';
 import {
   CodeEditor,
   EditorType,
   defaultMonacoWrapperStyle,
 } from 'web-components/code-editor/CodeEditor';
-import { retrieveExecutableCodeEditorData } from 'utilities/xml';
 
 const LANGUAGES = ['', 'c', 'java', 'python'];
 

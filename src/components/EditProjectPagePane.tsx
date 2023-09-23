@@ -1,31 +1,31 @@
+import { StyledProjectMenu } from 'components/ProjectCard.style';
+import {
+  ProjectPaneBar,
+  ProjectPaneDirectory,
+  ProjectPaneExplorer,
+  ProjectPaneFile,
+  ProjectPaneFileWrapper,
+  ProjectPaneProject,
+  ProjectPaneSectionName,
+  ProjectPaneWrapper,
+} from 'components/ProjectPane.style';
 import { font } from 'constants/font';
 import { RouterRoutes } from 'constants/routerRoutes';
-import React, { useEffect, useRef, useState } from 'react';
-import { Item, Separator, useContextMenu } from 'react-contexify';
-import { StyledProjectMenu } from './ProjectCard.style';
-import {
-  ProjectPaneWrapper,
-  ProjectPaneBar,
-  ProjectPaneExplorer,
-  ProjectPaneSectionName,
-  ProjectPaneProject,
-  ProjectPaneFileWrapper,
-  ProjectPaneFile,
-  ProjectPaneDirectory,
-} from './ProjectPane.style';
-import { useNavigate } from 'react-router-dom';
+import { Timeouts } from 'constants/timeouts';
+import { useNavigateOnSelectedLearnPage } from 'hooks/LearnPageHooks';
 import {
   useNavigateOnSelectedLearnProject,
   useSearchParamsOnSelectedLearnProject,
 } from 'hooks/LearnProjectHooks';
-import { useNavigateOnSelectedLearnPage } from 'hooks/LearnPageHooks';
-import useAsyncEffect from 'use-async-effect';
+import _ from 'lodash';
 import { updateLearnProjects } from 'pages/StartPage';
+import React, { useEffect, useRef, useState } from 'react';
+import { Item, Separator, useContextMenu } from 'react-contexify';
+import { useNavigate } from 'react-router-dom';
+import useAsyncEffect from 'use-async-effect';
+import AddFileIcon from '../icons/add-file.svg';
 import BackIcon from '../icons/chevron.svg';
 import EllipsisIcon from '../icons/ellipsisPrimary.svg';
-import AddFileIcon from '../icons/add-file.svg';
-import _ from 'lodash';
-import { Timeouts } from 'constants/timeouts';
 
 type ProjectPaneProps = {
   onChangePreviewContent: () => void;

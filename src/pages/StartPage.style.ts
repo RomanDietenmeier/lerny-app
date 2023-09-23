@@ -1,6 +1,6 @@
-import styled from 'styled-components';
-import { sizeRem } from 'constants/metrics';
 import { font } from 'constants/font';
+import { sizeRem } from 'constants/metrics';
+import styled from 'styled-components';
 
 export const StartPageWrapper = styled.div`
   display: flex;

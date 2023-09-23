@@ -127,16 +127,16 @@ electron.ipcMain.on(ipc.openFileDialogOptions.selectLap, async (evt, id) => {
   );
 });
 
-electron.ipcMain.on(ipc.titlebar.close, ()=>{
+electron.ipcMain.on(ipc.titlebar.close, () => {
   mainWindow.close();
 });
-electron.ipcMain.on(ipc.titlebar.maximizeRestore, ()=>{
-  if(mainWindow.isMaximized())  mainWindow.unmaximize();
-  else  mainWindow.maximize();
-})
-electron.ipcMain.on(ipc.titlebar.minimize, ()=>{
+electron.ipcMain.on(ipc.titlebar.maximizeRestore, () => {
+  if (mainWindow.isMaximized()) mainWindow.unmaximize();
+  else mainWindow.maximize();
+});
+electron.ipcMain.on(ipc.titlebar.minimize, () => {
   mainWindow.minimize();
-})
+});
 
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;

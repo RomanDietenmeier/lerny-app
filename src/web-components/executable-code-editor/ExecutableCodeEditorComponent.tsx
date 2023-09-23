@@ -4,14 +4,14 @@ import { Provider } from 'react-redux';
 import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
 import { store } from 'redux/store';
 import { StyleSheetManager, ThemeProvider } from 'styled-components';
+import { retrieveXmlData } from 'utilities/xml';
 import { CodeEditor, EditorType } from 'web-components/code-editor/CodeEditor';
+import {
+  CodeEditorButtonWrapper,
+  CodeEditorButtonsWrapper,
+} from 'web-components/executable-code-editor/ExecutableCodeEditor.style';
 import RunIcon from '../../icons/play.svg';
 import TestIcon from '../../icons/test.svg';
-import {
-  CodeEditorButtonsWrapper,
-  CodeEditorButtonWrapper,
-} from './ExecutableCodeEditor.style';
-import { retrieveXmlData } from 'utilities/xml';
 
 export const ExecutableCodeEditorComponentHtmlTag = 'executable-code-editor';
 

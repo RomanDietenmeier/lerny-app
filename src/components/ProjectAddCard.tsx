@@ -1,17 +1,17 @@
-import React, { useEffect, useRef, useState } from 'react';
 import {
-  ProjectAddCardWrapper,
-  ProjectAddCardTopLayer,
   ProjectAddCardBottomLayer,
+  ProjectAddCardInput,
+  ProjectAddCardLastOption,
   ProjectAddCardMiddleLayer,
   ProjectAddCardOption,
-  ProjectAddCardLastOption,
-  ProjectAddCardInput,
-} from './ProjectAddCard.style';
-import PlusIcon from '../icons/plusBig.svg';
+  ProjectAddCardTopLayer,
+  ProjectAddCardWrapper,
+} from 'components/ProjectAddCard.style';
 import { RouterRoutes } from 'constants/routerRoutes';
-import { updateLearnProjects } from 'pages/StartPage';
 import { useNavigateOnSelectedLearnProject } from 'hooks/LearnProjectHooks';
+import { updateLearnProjects } from 'pages/StartPage';
+import React, { useEffect, useRef, useState } from 'react';
+import PlusIcon from '../icons/plusBig.svg';
 
 export function ProjectAddCard(): JSX.Element {
   const [active, setActive] = useState(false);

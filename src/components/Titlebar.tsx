@@ -1,4 +1,27 @@
+import { font } from 'constants/font';
+import { RouterRoutes } from 'constants/routerRoutes';
+import { Timeouts } from 'constants/timeouts';
+import { useNavigateOnSelectedLearnPage } from 'hooks/LearnPageHooks';
+import {
+  useNavigateOnSelectedLearnProject,
+  useSearchParamsOnSelectedLearnProject,
+} from 'hooks/LearnProjectHooks';
+import _ from 'lodash';
+import { updateLearnProjects } from 'pages/StartPage';
 import React from 'react';
+import { Item, Separator, Submenu, useContextMenu } from 'react-contexify';
+import 'react-contexify/dist/ReactContexify.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router';
+import { selectLearnProjects } from 'redux/selectors/learnProjectsSelectors';
+import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
+import { themeChangeCurrentTheme } from 'redux/slices/themeSlice';
+import { RowItemsFlex } from 'styles/layout.style';
+import useAsyncEffect from 'use-async-effect';
+import CloseIcon from '../icons/cross.svg';
+import LogoIcon from '../icons/logo.svg';
+import MinimizeIcon from '../icons/minus.svg';
+import MaximizeIcon from '../icons/tabs.svg';
 import {
   ControlButton,
   StyledMenu,
@@ -6,29 +29,6 @@ import {
   TitlebarMenu,
   TitlebarWrapper,
 } from './Titlebar.style';
-import LogoIcon from '../icons/logo.svg';
-import CloseIcon from '../icons/cross.svg';
-import MaximizeIcon from '../icons/tabs.svg';
-import MinimizeIcon from '../icons/minus.svg';
-import { RowItemsFlex } from 'styles/layout.style';
-import { Item, Separator, Submenu, useContextMenu } from 'react-contexify';
-import 'react-contexify/dist/ReactContexify.css';
-import { themeChangeCurrentTheme } from 'redux/slices/themeSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
-import { useLocation, useNavigate } from 'react-router';
-import { RouterRoutes } from 'constants/routerRoutes';
-import { selectLearnProjects } from 'redux/selectors/learnProjectsSelectors';
-import { updateLearnProjects } from 'pages/StartPage';
-import useAsyncEffect from 'use-async-effect';
-import {
-  useNavigateOnSelectedLearnProject,
-  useSearchParamsOnSelectedLearnProject,
-} from 'hooks/LearnProjectHooks';
-import { useNavigateOnSelectedLearnPage } from 'hooks/LearnPageHooks';
-import { Timeouts } from 'constants/timeouts';
-import _ from 'lodash';
-import { font } from 'constants/font';
 
 const FILE_MENU = 'file-id';
 const PROJECT_MENU = 'project-id';

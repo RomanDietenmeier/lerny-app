@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { activeLearnPageSlice } from 'redux/slices/activeLearnPage';
+import { activeRouteSlice } from 'redux/slices/activeRoute';
+import { editorFontSlice } from 'redux/slices/editorFontSlice';
 import { learnProjectsSlice } from 'redux/slices/learnProjectsSlice';
+import { mainTerminalSlice } from 'redux/slices/mainTerminalSlice';
 import { themeSlice } from 'redux/slices/themeSlice';
-import { mainTerminalSlice } from './slices/mainTerminalSlice';
-import { activeRouteSlice } from './slices/activeRoute';
-import { editorFontSlice } from './slices/editorFontSlice';
 
 export const store = configureStore({
   reducer: {

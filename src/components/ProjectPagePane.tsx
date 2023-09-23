@@ -1,28 +1,28 @@
+import { StyledProjectMenu } from 'components/ProjectCard.style';
+import {
+  ProjectPaneBar,
+  ProjectPaneDirectory,
+  ProjectPaneExplorer,
+  ProjectPaneFile,
+  ProjectPaneFileWrapper,
+  ProjectPaneProject,
+  ProjectPaneSectionName,
+  ProjectPaneWrapper,
+} from 'components/ProjectPane.style';
 import { font } from 'constants/font';
 import { RouterRoutes } from 'constants/routerRoutes';
-import React, { useEffect, useState } from 'react';
-import { Item, Separator, useContextMenu } from 'react-contexify';
-import { StyledProjectMenu } from './ProjectCard.style';
-import {
-  ProjectPaneWrapper,
-  ProjectPaneBar,
-  ProjectPaneExplorer,
-  ProjectPaneSectionName,
-  ProjectPaneProject,
-  ProjectPaneFileWrapper,
-  ProjectPaneFile,
-  ProjectPaneDirectory,
-} from './ProjectPane.style';
-import { useNavigate } from 'react-router-dom';
+import { useNavigateOnSelectedLearnPage } from 'hooks/LearnPageHooks';
 import {
   useNavigateOnSelectedLearnProject,
   useSearchParamsOnSelectedLearnProject,
 } from 'hooks/LearnProjectHooks';
-import { useSelector } from 'react-redux';
-import { selectLearnProjects } from 'redux/selectors/learnProjectsSelectors';
-import { useNavigateOnSelectedLearnPage } from 'hooks/LearnPageHooks';
-import useAsyncEffect from 'use-async-effect';
 import { updateLearnProjects } from 'pages/StartPage';
+import React, { useEffect, useState } from 'react';
+import { Item, Separator, useContextMenu } from 'react-contexify';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { selectLearnProjects } from 'redux/selectors/learnProjectsSelectors';
+import useAsyncEffect from 'use-async-effect';
 import BackIcon from '../icons/chevron.svg';
 import EllipsisIcon from '../icons/ellipsisPrimary.svg';
 

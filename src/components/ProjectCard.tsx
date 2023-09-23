@@ -1,18 +1,18 @@
-import { font } from 'constants/font';
-import { useContextMenu, Item, Separator } from 'react-contexify';
-import 'react-contexify/dist/ReactContexify.css';
+import { EllipsisWrapper } from 'components/IconWrapper.style';
 import {
-  ProjectCardWrapper,
-  ProjectCardTopLayer,
-  ProjectCardMiddleLayer,
   ProjectCardBottomLayer,
+  ProjectCardMiddleLayer,
+  ProjectCardTopLayer,
+  ProjectCardWrapper,
   StyledProjectMenu,
-} from './ProjectCard.style';
-import React from 'react';
-import EllipsisIcon from '../icons/ellipsis.svg';
+} from 'components/ProjectCard.style';
+import { font } from 'constants/font';
 import { RouterRoutes } from 'constants/routerRoutes';
 import { useNavigateOnSelectedLearnProject } from 'hooks/LearnProjectHooks';
-import { EllipsisWrapper } from './IconWrapper.style';
+import React from 'react';
+import { Item, Separator, useContextMenu } from 'react-contexify';
+import 'react-contexify/dist/ReactContexify.css';
+import EllipsisIcon from '../icons/ellipsis.svg';
 
 type ProjectCardProps = {
   project: string;

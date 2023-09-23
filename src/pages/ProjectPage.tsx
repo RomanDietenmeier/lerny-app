@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import { MarkdownViewer } from 'components/MarkdownViewer';
+import ProjectPane from 'components/ProjectPagePane';
 import {
   ProjectPageContentWrapper,
   ProjectPageWrapper,
-} from './ProjectPage.style';
-import { MarkdownViewer } from 'components/MarkdownViewer';
-import ProjectPane from 'components/ProjectPagePane';
+} from 'pages/ProjectPage.style';
+import React, { useState } from 'react';
 
 export function ProjectPage() {
   const [learnPageContent, setLearnPageContent] = useState('');

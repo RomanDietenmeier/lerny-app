@@ -1,20 +1,20 @@
 import MonacoEditor, { EditorProps } from '@monaco-editor/react';
 import { DefaultSpinner } from 'constants/Spinners';
+import { font } from 'constants/font';
+import { size } from 'constants/metrics';
+import { RouterRoutes } from 'constants/routerRoutes';
 import { Timeouts } from 'constants/timeouts';
 import _ from 'lodash';
 import { editor } from 'monaco-editor';
+import { TEXT_INITIALIZER } from 'pages/EditProjectPage';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { selectActiveRoute } from 'redux/selectors/activeRouteSelector';
+import { selectEditorFont } from 'redux/selectors/editorFontSelector';
 import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
 import 'styles/xtermOverride.css';
+import { CodeEditorWrapper } from 'web-components/code-editor/CodeEditor.style';
 import 'xterm/css/xterm.css';
-import { CodeEditorWrapper } from './CodeEditor.style';
-import { font } from 'constants/font';
-import { size } from 'constants/metrics';
-import { selectActiveRoute } from 'redux/selectors/activeRouteSelector';
-import { RouterRoutes } from 'constants/routerRoutes';
-import { TEXT_INITIALIZER } from 'pages/EditProjectPage';
-import { selectEditorFont } from 'redux/selectors/editorFontSelector';
 
 type MonacoEditorType = typeof import('monaco-editor');
 

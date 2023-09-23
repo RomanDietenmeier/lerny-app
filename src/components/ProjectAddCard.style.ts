@@ -1,7 +1,7 @@
+import { font } from 'constants/font';
 import { size, sizeRem } from 'constants/metrics';
 import styled from 'styled-components';
 import { ProjectCardLayer } from './ProjectCard.style';
-import { font } from 'constants/font';
 
 export const ProjectAddCardWrapper = styled.div`
   width: ${sizeRem.projectCard.width};

@@ -98,15 +98,14 @@ contextBridge.exposeInMainWorld('electron', {
   learnPage: {
     async loadLearnPage(learnProject, learnPage) {
       try {
-        const content =  await fs.promises.readFile(
+        const content = await fs.promises.readFile(
           `${localPersistentProjectsPath}/${learnProject}/${learnPage}`,
           { encoding: textFileEncoding }
         );
         return content;
-      } catch(err) {
+      } catch (err) {
         return undefined;
       }
-      
     },
     async loadFile(learnProject, filename, folderStructure = []) {
       let dir = `${localDumpDataPath}/${learnProject}/`;
@@ -161,14 +160,14 @@ contextBridge.exposeInMainWorld('electron', {
       );
     },
     async renameLearnPage(learnProject, filename, newFilename) {
-      if (!learnProject || !filename || ! newFilename) {
+      if (!learnProject || !filename || !newFilename) {
         return;
       }
       let dir = `${localPersistentProjectsPath}/${learnProject}`;
 
       await fs.promises.rename(
         `${dir}/${filename}${learnPageExtension}`,
-        `${dir}/${newFilename}${learnPageExtension}`,
+        `${dir}/${newFilename}${learnPageExtension}`
       );
       return newFilename;
     },
@@ -244,11 +243,11 @@ contextBridge.exposeInMainWorld('electron', {
         const source = `${sourceDirectory}`;
         const file = source.split('\\').pop();
         const filename = file.slice(0, -learnPageExtension.length);
-        const files = fs.readdirSync(destination)
+        const files = fs.readdirSync(destination);
 
         let count = 0;
         let newFilename = file;
-        while(files.includes(newFilename)) {
+        while (files.includes(newFilename)) {
           count++;
           newFilename = `${filename}(${count})${learnPageExtension}`;
         }
@@ -266,10 +265,7 @@ contextBridge.exposeInMainWorld('electron', {
       }
       const projectDir = `${localPersistentProjectsPath}/${title}`;
       const fileDir = `${localDumpDataPath}/${title}`;
-      if(!(await createDirs([
-        projectDir,
-        fileDir,
-      ]))){
+      if (!(await createDirs([projectDir, fileDir]))) {
         return;
       }
       return title;
@@ -280,11 +276,11 @@ contextBridge.exposeInMainWorld('electron', {
       }
       const projectDir = `${localPersistentProjectsPath}/${title}`;
       const fileDir = `${localDumpDataPath}/${title}`;
-      try{
+      try {
         await fs.promises.rm(projectDir, { recursive: true, force: true });
         await fs.promises.rm(fileDir, { recursive: true, force: true });
-      } catch(err) {
-        console.log('Unable to delete project:', err)
+      } catch (err) {
+        console.log('Unable to delete project:', err);
       }
     },
     async exportProject(project) {
@@ -307,9 +303,7 @@ contextBridge.exposeInMainWorld('electron', {
       }
     },
     async importProject() {
-      const srcDirectory = await openFileDialog(
-        OpenFileDialogOption.selectTgz
-      );
+      const srcDirectory = await openFileDialog(OpenFileDialogOption.selectTgz);
       if (!srcDirectory) return;
       try {
         await tar.x({
@@ -323,26 +317,30 @@ contextBridge.exposeInMainWorld('electron', {
     readWorkingDirectory(folderPath) {
       const fullFolderPath = `${localDumpDataPath}/${folderPath || ''}`;
 
-      const files = fs.readdirSync(fullFolderPath)
+      const files = fs.readdirSync(fullFolderPath);
       return files;
     },
     onWorkingDirectoryChanged(folderPath, listener) {
       const fullFolderPath = `${localDumpDataPath}/${folderPath || ''}`;
-       fs.watch(fullFolderPath, () => {
+      fs.watch(fullFolderPath, () => {
         listener();
-      })
+      });
     },
     readProjectDirectory(folderPath) {
-      const fullFolderPath = `${localPersistentProjectsPath}/${folderPath || ''}`;
+      const fullFolderPath = `${localPersistentProjectsPath}/${
+        folderPath || ''
+      }`;
 
-      const files = fs.readdirSync(fullFolderPath)
+      const files = fs.readdirSync(fullFolderPath);
       return files;
     },
     onProjectDirectoryChanged(folderPath, listener) {
-      const fullFolderPath = `${localPersistentProjectsPath}/${folderPath || ''}`;
-       fs.watch(fullFolderPath, () => {
+      const fullFolderPath = `${localPersistentProjectsPath}/${
+        folderPath || ''
+      }`;
+      fs.watch(fullFolderPath, () => {
         listener();
-      })
+      });
     },
   },
   openExternalLink(link) {
@@ -350,27 +348,41 @@ contextBridge.exposeInMainWorld('electron', {
   },
   style: {
     async setFontSize(fontSize) {
-      try{
+      try {
         const appData = fs.readdirSync(localPersistentDataPath);
-        if(!appData.includes('settings')){
+        if (!appData.includes('settings')) {
           await fs.promises.mkdir(localPersistentSettingsPath);
         }
         const settingsData = fs.readdirSync(localPersistentSettingsPath);
-        if(!settingsData.includes('style.json')){
-          await fs.promises.writeFile(`${localPersistentSettingsPath}/style.json`, '{}');
+        if (!settingsData.includes('style.json')) {
+          await fs.promises.writeFile(
+            `${localPersistentSettingsPath}/style.json`,
+            '{}'
+          );
         }
-        
-        const styleContent = (await fs.promises.readFile(`${localPersistentSettingsPath}/style.json`)).toString(textFileEncoding);
+
+        const styleContent = (
+          await fs.promises.readFile(
+            `${localPersistentSettingsPath}/style.json`
+          )
+        ).toString(textFileEncoding);
         const styleObject = JSON.parse(styleContent);
         styleObject['editorFontSize'] = fontSize;
-        await fs.promises.writeFile(`${localPersistentSettingsPath}/style.json`, JSON.stringify(styleObject)); 
+        await fs.promises.writeFile(
+          `${localPersistentSettingsPath}/style.json`,
+          JSON.stringify(styleObject)
+        );
       } catch (err) {
-        console.error('Error setting font size:', err)
+        console.error('Error setting font size:', err);
       }
     },
     async getFontSize() {
-      try{   
-        const styleContent = (await fs.promises.readFile(`${localPersistentSettingsPath}/style.json`)).toString(textFileEncoding);
+      try {
+        const styleContent = (
+          await fs.promises.readFile(
+            `${localPersistentSettingsPath}/style.json`
+          )
+        ).toString(textFileEncoding);
         const styleObject = JSON.parse(styleContent);
         return styleObject['editorFontSize'] ?? null;
       } catch (err) {
@@ -378,7 +390,7 @@ contextBridge.exposeInMainWorld('electron', {
         return null;
       }
     },
-  }
+  },
 });
 
 const OpenFileDialogOption = {

@@ -1,8 +1,8 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
-import { DefaultTheme } from 'styled-components';
-import { defaultTheme, whiteTheme } from '../../styles/defaultTheme';
 import { editor } from 'monaco-editor';
+import { DefaultTheme } from 'styled-components';
+import { defaultTheme, whiteTheme } from 'styles/defaultTheme';
 
 const themeDataDark: editor.IStandaloneThemeData = {
   base: 'vs-dark',
