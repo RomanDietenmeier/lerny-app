@@ -56,14 +56,18 @@ class ExecutableCodeEditorComponent extends HTMLElement {
       );
 
     const handleOnClickRun = () => {
-      if (buildCommand && runCommand && this.consoleId) {
-        window.electron.console.sendToTerminal(this.consoleId, buildCommand);
+      if (runCommand && this.consoleId) {
+        if (buildCommand) {
+          window.electron.console.sendToTerminal(this.consoleId, buildCommand);
+        }
         window.electron.console.sendToTerminal(this.consoleId, runCommand);
       }
     };
     const handleOnClickTest = () => {
-      if (buildCommand && testCommand && this.consoleId) {
-        window.electron.console.sendToTerminal(this.consoleId, buildCommand);
+      if (testCommand && this.consoleId) {
+        if (buildCommand) {
+          window.electron.console.sendToTerminal(this.consoleId, buildCommand);
+        }
         window.electron.console.sendToTerminal(this.consoleId, testCommand);
       }
     };
@@ -75,12 +79,12 @@ class ExecutableCodeEditorComponent extends HTMLElement {
             theme={selectCurrentTheme(store.getState()).styledComponentsTheme}
           >
             <CodeEditorButtonsWrapper>
-              {buildCommand && runCommand ? (
+              {runCommand ? (
                 <CodeEditorButtonWrapper onClick={handleOnClickRun}>
                   <img src={RunIcon} />
                 </CodeEditorButtonWrapper>
               ) : null}
-              {buildCommand && testCommand ? (
+              {testCommand ? (
                 <CodeEditorButtonWrapper onClick={handleOnClickTest}>
                   <img src={TestIcon} />
                 </CodeEditorButtonWrapper>
