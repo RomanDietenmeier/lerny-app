@@ -37,6 +37,8 @@ const terminals = {};
 electron.ipcMain.on(ipc.console.create, (evt, id, folderPath) => {
   const fullFolderPath = `${localDumpDataPath}/${folderPath || ''}`;
 
+  fs.mkdirSync(fullFolderPath, { recursive: true });
+
   let ptyProcess = node_pty.spawn(shell, [], {
     name: 'xterm-color',
     cwd: fs.existsSync(fullFolderPath) ? fullFolderPath : localDumpDataPath,
