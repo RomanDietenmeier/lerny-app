@@ -1,10 +1,10 @@
-import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { selectLearnProjects } from 'redux/selectors/learnProjectsSelectors';
 import {
   LearnPageSearchParameters,
   useSearchParamsOnSelectedLearnPage,
-} from './LearnPageHooks';
+} from 'hooks/LearnPageHooks';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { selectLearnProjects } from 'redux/selectors/learnProjectsSelectors';
 
 export function useNavigateOnSelectedLearnProject(targetRoute: string) {
   const navigate = useNavigate();
