@@ -66,7 +66,7 @@ declare global {
         onWorkingDirectoryChanged: (
           folderPath: string,
           listener: () => void
-        ) => void;
+        ) => () => void;
         readProjectDirectory: (folderPath: string) => Array<string>;
         onProjectDirectoryChanged: (
           folderPath: string,

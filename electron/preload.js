@@ -322,9 +322,13 @@ contextBridge.exposeInMainWorld('electron', {
     },
     onWorkingDirectoryChanged(folderPath, listener) {
       const fullFolderPath = `${localDumpDataPath}/${folderPath || ''}`;
-      fs.watch(fullFolderPath, () => {
+      const watcher = fs.watch(fullFolderPath, () => {
         listener();
       });
+      function stopWatching() {
+        watcher.close();
+      }
+      return stopWatching;
     },
     readProjectDirectory(folderPath) {
       const fullFolderPath = `${localPersistentProjectsPath}/${

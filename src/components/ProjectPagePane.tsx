@@ -51,11 +51,17 @@ export default function ProjectPane({
   );
 
   useEffect(() => {
-    window.electron.learnProject.onWorkingDirectoryChanged(learnProject, () => {
-      setWorkingDirectory(
-        window.electron.learnProject.readWorkingDirectory(learnProject)
-      );
-    });
+    const stopWatching = window.electron.learnProject.onWorkingDirectoryChanged(
+      learnProject,
+      () => {
+        setWorkingDirectory(
+          window.electron.learnProject.readWorkingDirectory(learnProject)
+        );
+      }
+    );
+    return () => {
+      stopWatching();
+    };
   }, []);
 
   useAsyncEffect(async () => {
