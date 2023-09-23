@@ -386,8 +386,10 @@ contextBridge.exposeInMainWorld('electron', {
         const styleObject = JSON.parse(styleContent);
         return styleObject['editorFontSize'] ?? null;
       } catch (err) {
-        console.error('Error setting font size:', err);
-        return null;
+        if (err.code === 'ENOENT') {
+          return null;
+        }
+        console.error('Error getting font size:', err);
       }
     },
   },
