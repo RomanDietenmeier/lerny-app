@@ -317,18 +317,36 @@ contextBridge.exposeInMainWorld('electron', {
     readWorkingDirectory(folderPath) {
       const fullFolderPath = `${localDumpDataPath}/${folderPath || ''}`;
 
-      const files = fs.readdirSync(fullFolderPath);
-      return files;
+      try {
+        const files = fs.readdirSync(fullFolderPath);
+        return files;
+      } catch (err) {
+        if (err.code === 'ENOENT') {
+          return [];
+        }
+        console.error('readWorkingDirectory', err);
+      }
     },
     onWorkingDirectoryChanged(folderPath, listener) {
       const fullFolderPath = `${localDumpDataPath}/${folderPath || ''}`;
-      const watcher = fs.watch(fullFolderPath, () => {
-        listener();
-      });
-      function stopWatching() {
-        watcher.close();
+      try {
+        const watcher = fs.watch(fullFolderPath, () => {
+          listener();
+        });
+        function stopWatching() {
+          watcher.close();
+        }
+        return stopWatching;
+      } catch (err) {
+        if (err.code === 'ENOENT') {
+          console.warn(
+            'onWorkingDirectoryChanged: No such directory:',
+            fullFolderPath
+          );
+          return () => {};
+        }
+        console.error('onWorkingDirectoryChanged', err);
       }
-      return stopWatching;
     },
     readProjectDirectory(folderPath) {
       const fullFolderPath = `${localPersistentProjectsPath}/${
@@ -342,9 +360,13 @@ contextBridge.exposeInMainWorld('electron', {
       const fullFolderPath = `${localPersistentProjectsPath}/${
         folderPath || ''
       }`;
-      fs.watch(fullFolderPath, () => {
+      const watcher = fs.watch(fullFolderPath, () => {
         listener();
       });
+      function stopWatching() {
+        watcher.close();
+      }
+      return stopWatching;
     },
   },
   openExternalLink(link) {

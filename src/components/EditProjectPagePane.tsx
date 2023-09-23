@@ -56,25 +56,36 @@ export default function ProjectPane({
   );
 
   useEffect(() => {
-    window.electron.learnProject.onWorkingDirectoryChanged(learnProject, () => {
-      setWorkingDirectory(
-        window.electron.learnProject.readWorkingDirectory(learnProject)
-      );
-    });
-    window.electron.learnProject.onProjectDirectoryChanged(
-      learnProject,
-      async () => {
-        const updatedDirectory =
-          await window.electron.learnProject.readProjectDirectory(learnProject);
-        if (updatedDirectory.length > projectDirectoryRef.current.length) {
-          const addedLearnPage = updatedDirectory.filter(
-            (learnPage) => !projectDirectoryRef.current.includes(learnPage)
+    const stopWatchingWorkingDir =
+      window.electron.learnProject.onWorkingDirectoryChanged(
+        learnProject,
+        () => {
+          setWorkingDirectory(
+            window.electron.learnProject.readWorkingDirectory(learnProject)
           );
-          onClickOnEditLearnPage(learnProject, addedLearnPage[0]);
         }
-        setProjectDirectory(updatedDirectory);
-      }
-    );
+      );
+    const stopWatchingProjectDir =
+      window.electron.learnProject.onProjectDirectoryChanged(
+        learnProject,
+        async () => {
+          const updatedDirectory =
+            await window.electron.learnProject.readProjectDirectory(
+              learnProject
+            );
+          if (updatedDirectory.length > projectDirectoryRef.current.length) {
+            const addedLearnPage = updatedDirectory.filter(
+              (learnPage) => !projectDirectoryRef.current.includes(learnPage)
+            );
+            onClickOnEditLearnPage(learnProject, addedLearnPage[0]);
+          }
+          setProjectDirectory(updatedDirectory);
+        }
+      );
+    return () => {
+      stopWatchingWorkingDir();
+      stopWatchingProjectDir();
+    };
   }, []);
 
   useAsyncEffect(async () => {

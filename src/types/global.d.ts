@@ -71,7 +71,7 @@ declare global {
         onProjectDirectoryChanged: (
           folderPath: string,
           listener: () => void
-        ) => void;
+        ) => () => void;
       };
       openExternalLink: (link: string) => void;
       style: {
