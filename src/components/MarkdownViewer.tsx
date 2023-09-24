@@ -1,8 +1,13 @@
-import { MarkdownViewerWrapper as Wrapper } from 'components/MarkdownViewer.style';
+import {
+  MarkdownViewerContentWrapper,
+  MarkdownViewerTerminalWrapper,
+  MarkdownViewerWrapper as Wrapper,
+} from 'components/MarkdownViewer.style';
 import { webComponentTagsToWrap } from 'constants/webComponentTags';
 import MarkdownIt from 'markdown-it';
 import { markdownItExternalLinksPlugin } from 'markdown-it-extensions/markdownItExternalLinksPlugin';
 import React from 'react';
+import { store } from 'redux/store';
 import { stringToBinary } from 'utilities/helper';
 import { base64Tag } from 'web-components/base64/base64ConverterWebComponent';
 
@@ -59,11 +64,32 @@ type MarkdownViewerProps = {
 };
 
 export function MarkdownViewer({ content }: MarkdownViewerProps) {
-  return (
+  let activeLearnProject = store.getState().activeLearnPage.learnProject;
+
+  if (!activeLearnProject) {
+    const unsubscribe = store.subscribe(() => {
+      const learnProjectState = store.getState().activeLearnPage.learnProject;
+      if (learnProjectState) {
+        activeLearnProject = learnProjectState;
+        unsubscribe();
+      }
+    });
+  }
+
+  return activeLearnProject ? (
     <Wrapper>
-      <span
-        dangerouslySetInnerHTML={{ __html: renderMarkdownToJSX(content) }}
-      />
+      <MarkdownViewerContentWrapper>
+        <span
+          dangerouslySetInnerHTML={{ __html: renderMarkdownToJSX(content) }}
+        />
+      </MarkdownViewerContentWrapper>
+      <MarkdownViewerTerminalWrapper>
+        <span
+          dangerouslySetInnerHTML={{
+            __html: renderMarkdownToJSX('<xterm-terminal/>'),
+          }}
+        />
+      </MarkdownViewerTerminalWrapper>
     </Wrapper>
-  );
+  ) : null;
 }

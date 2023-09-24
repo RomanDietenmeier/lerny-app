@@ -1,39 +1,36 @@
 import { AppWrapper as Wrapper } from 'App.style';
+import { Titlebar } from 'components/Titlebar';
 import { RouterRoutes } from 'constants/routerRoutes';
 import { useSearchParamsOnSelectedLearnPage } from 'hooks/LearnPageHooks';
-import { CreateLearnPage } from 'pages/CreateLearnPage';
-import { EditSelectionPage } from 'pages/EditSelectionPage';
-import { ExportLearnProject } from 'pages/ExportLearnProject';
-import { LearnPage } from 'pages/LearnPage';
+import { EditProjectPage } from 'pages/EditProjectPage';
+import { ProjectPage } from 'pages/ProjectPage';
 import { StartPage } from 'pages/StartPage';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  NavLink,
-  Route,
-  Routes,
-  useLocation,
-  useNavigate,
-} from 'react-router-dom';
+import { NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
 import { setActiveLearnPage } from 'redux/slices/activeLearnPage';
-import { themeChangeCurrentTheme } from 'redux/slices/themeSlice';
+import { setActiveRoute } from 'redux/slices/activeRoute';
+import { setEditorFont } from 'redux/slices/editorFontSlice';
 import { ThemeProvider } from 'styled-components';
+import useAsyncEffect from 'use-async-effect';
 
 export function App() {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { pathname: pagePathName } = useLocation();
   const activeLearnPage = useSearchParamsOnSelectedLearnPage();
   const currentTheme = useSelector(selectCurrentTheme);
+  const activeRoute = useLocation().pathname;
 
-  function swapTheme() {
-    if (currentTheme.monacoEditorTheme == 'vs-dark') {
-      dispatch(themeChangeCurrentTheme('white'));
-    } else {
-      dispatch(themeChangeCurrentTheme('dark'));
-    }
-  }
+  useAsyncEffect(async (isMounted) => {
+    const fontSize = await window.electron.style.getFontSize();
+    if (!isMounted) return;
+    dispatch(setEditorFont({ size: fontSize }));
+  }, []);
+
+  useEffect(() => {
+    dispatch(setActiveRoute({ route: activeRoute as RouterRoutes }));
+  }, [activeRoute]);
 
   useEffect(() => {
     dispatch(setActiveLearnPage(activeLearnPage));
@@ -42,42 +39,28 @@ export function App() {
   useEffect(() => {
     document.body.style.setProperty(
       'background-color',
-      currentTheme.styledComponentsTheme.backgroundColor
+      currentTheme.styledComponentsTheme.backgroundMain
     );
     document
       .getElementById('BackgroundBanner')
       ?.style.setProperty(
         '-webkit-text-stroke-color',
-        currentTheme.styledComponentsTheme.color
+        currentTheme.styledComponentsTheme.primary
       );
   }, [currentTheme]);
 
   return (
     <ThemeProvider theme={currentTheme.styledComponentsTheme}>
       <Wrapper>
-        <button onClick={swapTheme}>SWAP THEME</button>
-        <button
-          onClick={() => {
-            navigate(-1);
-          }}
-        >
-          GO BACK
-        </button>
+        <Titlebar />
         <Routes>
           <Route path={RouterRoutes.Root} element={<StartPage />} />
 
+          <Route path={RouterRoutes.ProjectPage} element={<ProjectPage />} />
+
           <Route
-            path={RouterRoutes.CreateLearnPage}
-            element={<CreateLearnPage />}
-          />
-          <Route
-            path={RouterRoutes.ExportLearnProject}
-            element={<ExportLearnProject />}
-          />
-          <Route path={RouterRoutes.LearnPage} element={<LearnPage />} />
-          <Route
-            path={RouterRoutes.SelectLearnPageToEdit}
-            element={<EditSelectionPage />}
+            path={RouterRoutes.EditProjectPage}
+            element={<EditProjectPage />}
           />
           <Route
             path="*"

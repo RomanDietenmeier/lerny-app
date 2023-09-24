@@ -1,11 +1,25 @@
+import { sizeRem } from 'constants/metrics';
 import styled from 'styled-components';
-import { DefaultButton } from 'styles/button.style';
 
-export const ExecutableCodeEditorRunTestButton = styled(DefaultButton)`
-  margin: 0.25rem;
-  border-radius: 0.25rem;
-  padding: 0.25rem;
-  :first-child {
-    margin-left: 3.25rem;
+export const CodeEditorButtonsWrapper = styled.div`
+  display: flex;
+
+  width: fit-content;
+
+  background-color: ${(p) => p.theme.backgroundSecondary};
+`;
+export const CodeEditorButtonWrapper = styled.div`
+  display: flex;
+
+  padding: 0 ${sizeRem.default.spaceHalf};
+
+  cursor: pointer;
+
+  img {
+    scale: 0.66;
+  }
+
+  &:hover {
+    background-color: ${(p) => p.theme.titlebar};
   }
 `;

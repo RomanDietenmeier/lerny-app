@@ -1,11 +1,11 @@
-import { size } from 'constants/metrics';
+import { sizeRem } from 'constants/metrics';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
 import { store } from 'redux/store';
 import { StyleSheetManager, ThemeProvider } from 'styled-components';
-import { CodeEditor } from 'web-components/code-editor/CodeEditor';
+import { CodeEditor, EditorType } from 'web-components/code-editor/CodeEditor';
 
 export const CodeEditorWebComponentHtmlTag = 'code-editor';
 
@@ -35,7 +35,7 @@ class CodeEditorWebComponent extends HTMLElement {
 
     styleSlot.style.setProperty(
       'height',
-      this.getAttribute(Attributes.Height) ?? size.default.codeEditorHeight
+      this.getAttribute(Attributes.Height) ?? sizeRem.default.codeEditorHeight
     );
     this.reactRenderNode.style.setProperty('height', '100%');
 
@@ -60,6 +60,7 @@ class CodeEditorWebComponent extends HTMLElement {
               monacoEditorProps={{
                 language: this.getAttributeOrUndefined(Attributes.Language),
               }}
+              editorType={EditorType.Code}
             />
           </ThemeProvider>
         </StyleSheetManager>

@@ -1,6 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { activeLearnPageSlice } from 'redux/slices/activeLearnPage';
+import { activeRouteSlice } from 'redux/slices/activeRoute';
+import { editorFontSlice } from 'redux/slices/editorFontSlice';
 import { learnProjectsSlice } from 'redux/slices/learnProjectsSlice';
+import { mainTerminalSlice } from 'redux/slices/mainTerminalSlice';
 import { themeSlice } from 'redux/slices/themeSlice';
 
 export const store = configureStore({
@@ -8,6 +11,9 @@ export const store = configureStore({
     activeLearnPage: activeLearnPageSlice.reducer,
     theme: themeSlice.reducer,
     learnProjects: learnProjectsSlice.reducer,
+    mainTerminal: mainTerminalSlice.reducer,
+    activeRoute: activeRouteSlice.reducer,
+    editorFont: editorFontSlice.reducer,
   },
 });
 

@@ -9,6 +9,7 @@ const persistentLocalDataRootPath = runningOnWindows
 
 const localPersistentDataPath = `${persistentLocalDataRootPath}/lerny-app`;
 const localPersistentProjectsPath = `${localPersistentDataPath}/projects`;
+const localPersistentSettingsPath = `${localPersistentDataPath}/settings`;
 
 const dumpLocalDataRootPath = runningOnWindows
   ? process.env.localappdata
@@ -29,8 +30,14 @@ const ipc = {
   },
   openExternalLink: 'openExternalLink',
   openFileDialogOptions: {
-    selectFile: 'fileDialog.selectFile',
+    selectTgz: 'fileDialog.selectTgz',
+    selectLap: 'fileDialog.selectLap',
     selectFolder: 'fileDialog.selectFolder',
+  },
+  titlebar: {
+    close: 'closeApp',
+    maximizeRestore: 'maximizeRestoreApp',
+    minimize: 'minimizeApp',
   },
 };
 
@@ -40,6 +47,7 @@ module.exports = {
   localDumpDataPath,
   localPersistentDataPath,
   localPersistentProjectsPath,
+  localPersistentSettingsPath,
   persistentLocalDataRootPath,
   runningOnWindows,
   textFileEncoding,

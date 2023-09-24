@@ -1,9 +1,21 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
+import { editor } from 'monaco-editor';
 import { DefaultTheme } from 'styled-components';
-import { defaultTheme, whiteTheme } from '../../styles/defaultTheme';
+import { defaultTheme, whiteTheme } from 'styles/defaultTheme';
 
-const MonacoEditorDefaultTheme = 'vs-dark';
+const themeDataDark: editor.IStandaloneThemeData = {
+  base: 'vs-dark',
+  colors: {
+    'editor.background': defaultTheme.backgroundSecondary,
+  },
+  inherit: true,
+  rules: [],
+};
+
+editor.defineTheme('lerny-dark', themeDataDark);
+
+const MonacoEditorDefaultTheme = 'lerny-dark';
 
 type Theme = {
   styledComponentsTheme: DefaultTheme;

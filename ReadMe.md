@@ -1,8 +1,14 @@
 # LERNY-APP
 
-![Learn Page Example](./read-me-contents/Lerny%20App%20example%20Learn%20Page%20showcase.jpg 'Learn Page')
+![Learn Project Example](./read-me-contents/TitlePage.png 'Lerny Title Page')<br>
+![Learn Project Example](./read-me-contents/LearnProjectPreview.png 'Learn Project')
+![Learn Project Editor](./read-me-contents/LearnProjectEdit.png 'Learn Project Editor')<br>
+With the Lerny App you can create interactive Tutorials.<br>
+You can explain everything in Markdown, write run & test code.<br>
+And you can export your Learn Projects to share them with other.<br>
 
 # Set up Development Environment
+
 - [Windows Setup Video](https://youtu.be/fH2xYBm0YYg)
 - clone project
 - use node version v16.14.2

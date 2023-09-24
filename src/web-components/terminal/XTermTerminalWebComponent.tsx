@@ -1,7 +1,9 @@
+import { sizeRem } from 'constants/metrics';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
+import { setMainTerminal } from 'redux/slices/mainTerminalSlice';
 import { store } from 'redux/store';
 import { StyleSheetManager, ThemeProvider } from 'styled-components';
 import { XTermTerminal } from 'web-components/terminal/XTermTerminal';
@@ -26,6 +28,7 @@ export class XTermTerminalWebComponent extends HTMLElement {
         this.getAttribute(Attributes.FolderStructure) || '.'
       }`
     );
+    store.dispatch(setMainTerminal({ id: this.consoleId }));
   }
 
   connectedCallback() {
@@ -53,7 +56,7 @@ export class XTermTerminalWebComponent extends HTMLElement {
             <XTermTerminal
               consoleId={this.consoleId}
               disableStdin={this.getDisableStdin()}
-              height={this.getAttributeOrUndefined(Attributes.Height)}
+              height={sizeRem.terminal.height}
               initialInput={window.webComponent.getContentOfHTMLCommentString(
                 this.innerHTML
               )}
@@ -72,10 +75,6 @@ export class XTermTerminalWebComponent extends HTMLElement {
 
   private getDisableStdin() {
     return this.getAttribute(Attributes.DisableStdin) !== null;
-  }
-
-  private getAttributeOrUndefined(attribute: string): string | undefined {
-    return this.getAttribute(attribute) ?? undefined;
   }
 }
 

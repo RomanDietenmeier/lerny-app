@@ -1,37 +1,32 @@
-import { size } from 'constants/metrics';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { selectCurrentTheme } from 'redux/selectors/themeSelectors';
 import { store } from 'redux/store';
 import { StyleSheetManager, ThemeProvider } from 'styled-components';
-import { CodeEditor } from 'web-components/code-editor/CodeEditor';
-import { ExecutableCodeEditorRunTestButton as Button } from 'web-components/executable-code-editor/ExecutableCodeEditor.style';
-import { XTermTerminal } from 'web-components/terminal/XTermTerminal';
-import { xml2js } from 'xml-js';
+import { retrieveXmlData } from 'utilities/xml';
+import { CodeEditor, EditorType } from 'web-components/code-editor/CodeEditor';
+import {
+  CodeEditorButtonWrapper,
+  CodeEditorButtonsWrapper,
+} from 'web-components/executable-code-editor/ExecutableCodeEditor.style';
+import RunIcon from '../../icons/play.svg';
+import TestIcon from '../../icons/test.svg';
 
 export const ExecutableCodeEditorComponentHtmlTag = 'executable-code-editor';
 
 const enum Attributes {
   FileName = 'FileName',
   FolderStructure = 'FolderStructure',
-  HeightCodeEditor = 'HeightCodeEditor',
-  HeightTerminal = 'HeightTerminal',
   Language = 'Language',
 }
 
 class ExecutableCodeEditorComponent extends HTMLElement {
-  private consoleId: number;
+  private consoleId: number | null = null;
   private reactRenderNode: HTMLSpanElement | null = null;
 
   constructor() {
     super();
-
-    this.consoleId = window.electron.console.createConsole(
-      `${store.getState().activeLearnPage.learnProject || '.'}/${
-        this.getAttribute(Attributes.FolderStructure) || '.'
-      }`
-    );
   }
 
   connectedCallback() {
@@ -43,22 +38,13 @@ class ExecutableCodeEditorComponent extends HTMLElement {
     this.reactRenderNode = document.createElement('span');
     const styleElements = document.head.querySelectorAll('style');
 
+    this.consoleId = store.getState().mainTerminal.id;
+
     for (const element of styleElements) {
       const duplicateElement = element.cloneNode(true);
       shadowRoot.append(duplicateElement);
     }
 
-    const codeEditorHeight =
-      this.getAttribute(Attributes.HeightCodeEditor) ||
-      size.default.codeEditorHeight;
-    const terminalHeight =
-      this.getAttribute(Attributes.HeightTerminal) ||
-      size.default.terminalHeight;
-
-    styleSlot.style.setProperty(
-      'height',
-      `calc(calc(${codeEditorHeight} + ${terminalHeight}) + 2rem)`
-    );
     this.reactRenderNode.style.setProperty('height', '100%');
 
     shadowRoot.append(styleSlot);
@@ -69,69 +55,53 @@ class ExecutableCodeEditorComponent extends HTMLElement {
         window.webComponent.getContentOfHTMLCommentString(this.innerHTML)
       );
 
+    const handleOnClickRun = () => {
+      if (runCommand && this.consoleId) {
+        if (buildCommand) {
+          window.electron.console.sendToTerminal(this.consoleId, buildCommand);
+        }
+        window.electron.console.sendToTerminal(this.consoleId, runCommand);
+      }
+    };
+    const handleOnClickTest = () => {
+      if (testCommand && this.consoleId) {
+        if (buildCommand) {
+          window.electron.console.sendToTerminal(this.consoleId, buildCommand);
+        }
+        window.electron.console.sendToTerminal(this.consoleId, testCommand);
+      }
+    };
+
     ReactDOM.render(
       <Provider store={store}>
         <StyleSheetManager target={styleSlot}>
           <ThemeProvider
             theme={selectCurrentTheme(store.getState()).styledComponentsTheme}
           >
-            <div style={{ height: codeEditorHeight }}>
-              <CodeEditor
-                filename={this.getAttributeOrUndefined(Attributes.FileName)}
-                folderStructure={this.getAttributeFolderStructure()}
-                learnProject={
-                  store.getState().activeLearnPage.learnProject || undefined
-                }
-                initialCodeEditorValue={starterCode}
-                monacoEditorProps={{
-                  language: this.getAttributeOrUndefined(Attributes.Language),
-                }}
-              />
-            </div>
-            <div style={{ height: '2rem' }}>
-              {!buildCommand ? null : (
-                <>
-                  {!runCommand ? null : (
-                    <Button
-                      onClick={() => {
-                        window.electron.console.sendToTerminal(
-                          this.consoleId,
-                          buildCommand
-                        );
-                        window.electron.console.sendToTerminal(
-                          this.consoleId,
-                          runCommand
-                        );
-                      }}
-                    >
-                      RUN
-                    </Button>
-                  )}
-                  {!testCommand ? null : (
-                    <Button
-                      onClick={() => {
-                        window.electron.console.sendToTerminal(
-                          this.consoleId,
-                          buildCommand
-                        );
-                        window.electron.console.sendToTerminal(
-                          this.consoleId,
-                          testCommand
-                        );
-                      }}
-                    >
-                      TEST
-                    </Button>
-                  )}
-                </>
-              )}
-            </div>
-            <div style={{ height: terminalHeight }}>
-              <XTermTerminal
-                consoleId={this.consoleId}
-                height={terminalHeight}
-              />
-            </div>
+            <CodeEditorButtonsWrapper>
+              {runCommand ? (
+                <CodeEditorButtonWrapper onClick={handleOnClickRun}>
+                  <img src={RunIcon} />
+                </CodeEditorButtonWrapper>
+              ) : null}
+              {testCommand ? (
+                <CodeEditorButtonWrapper onClick={handleOnClickTest}>
+                  <img src={TestIcon} />
+                </CodeEditorButtonWrapper>
+              ) : null}
+            </CodeEditorButtonsWrapper>
+            <CodeEditor
+              filename={this.getAttributeOrUndefined(Attributes.FileName)}
+              folderStructure={this.getAttributeFolderStructure()}
+              learnProject={
+                store.getState().activeLearnPage.learnProject || undefined
+              }
+              initialCodeEditorValue={starterCode}
+              monacoEditorProps={{
+                language: this.getAttributeOrUndefined(Attributes.Language),
+              }}
+              editorType={EditorType.Code}
+            />
           </ThemeProvider>
         </StyleSheetManager>
       </Provider>,
@@ -161,26 +131,3 @@ window.customElements.define(
   ExecutableCodeEditorComponentHtmlTag,
   ExecutableCodeEditorComponent
 );
-
-function retrieveXmlData(xmlString: string) {
-  try {
-    const xml = xml2js(xmlString, { compact: true }) as {
-      xml?: {
-        'build-command'?: { _text: string };
-        'run-command'?: { _text: string };
-        'starter-code'?: { _text: string };
-        'test-command'?: { _text: string };
-      };
-    };
-    if (!xml.xml) return {};
-    return {
-      buildCommand: xml.xml['build-command']?._text,
-      runCommand: xml.xml['run-command']?._text,
-      starterCode: xml.xml['starter-code']?._text,
-      testCommand: xml.xml['test-command']?._text,
-    };
-  } catch (err) {
-    console.error('XML Parse Error: ', err);
-    return {};
-  }
-}

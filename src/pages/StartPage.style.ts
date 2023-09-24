@@ -1,14 +1,20 @@
-import { NavLink } from 'react-router-dom';
+import { font } from 'constants/font';
+import { sizeRem } from 'constants/metrics';
 import styled from 'styled-components';
-import { DefaultButton } from '../styles/button.style';
 
 export const StartPageWrapper = styled.div`
   display: flex;
-  width: 100%;
   height: 100%;
-  padding-left: 1rem;
-  overflow: hidden;
-  background-color: ${(p) => p.theme.backgroundColor};
+  padding: ${sizeRem.startPage.paddingTB} ${sizeRem.startPage.paddingLR};
+
+  flex-direction: column;
+
+  align-items: center;
+
+  font-size: ${font.sizeBiggest};
+
+  overflow: auto;
+  background-color: ${(p) => p.theme.backgroundMain};
 `;
 
 export const StartPageButtonWrapper = styled.div`
@@ -21,11 +27,16 @@ export const StartPageButtonWrapper = styled.div`
   padding-right: 1rem;
 `;
 
-export const StartPageNavLink = styled(NavLink)`
-  width: inherit;
-`;
+export const ProjectsWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 
-export const StartPageButton = styled(DefaultButton)`
-  font-size: 3rem;
   width: 100%;
+
+  overflow-y: auto;
+
+  ::-webkit-scrollbar {
+    width: 0;
+  }
 `;

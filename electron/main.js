@@ -37,6 +37,8 @@ const terminals = {};
 electron.ipcMain.on(ipc.console.create, (evt, id, folderPath) => {
   const fullFolderPath = `${localDumpDataPath}/${folderPath || ''}`;
 
+  fs.mkdirSync(fullFolderPath, { recursive: true });
+
   let ptyProcess = node_pty.spawn(shell, [], {
     name: 'xterm-color',
     cwd: fs.existsSync(fullFolderPath) ? fullFolderPath : localDumpDataPath,
@@ -103,9 +105,9 @@ electron.ipcMain.on(ipc.openFileDialogOptions.selectFolder, async (evt, id) => {
   );
 });
 
-electron.ipcMain.on(ipc.openFileDialogOptions.selectFile, async (evt, id) => {
+electron.ipcMain.on(ipc.openFileDialogOptions.selectTgz, async (evt, id) => {
   mainWindow.webContents.send(
-    `${ipc.openFileDialogOptions.selectFile}${id}`,
+    `${ipc.openFileDialogOptions.selectTgz}${id}`,
     (
       await electron.dialog.showOpenDialog({
         filters: [{ name: 'Learn Projects', extensions: ['tgz'] }],
@@ -113,6 +115,29 @@ electron.ipcMain.on(ipc.openFileDialogOptions.selectFile, async (evt, id) => {
       })
     ).filePaths[0]
   );
+});
+
+electron.ipcMain.on(ipc.openFileDialogOptions.selectLap, async (evt, id) => {
+  mainWindow.webContents.send(
+    `${ipc.openFileDialogOptions.selectLap}${id}`,
+    (
+      await electron.dialog.showOpenDialog({
+        filters: [{ name: 'Learn Pages', extensions: ['lap'] }],
+        properties: ['openFile'],
+      })
+    ).filePaths[0]
+  );
+});
+
+electron.ipcMain.on(ipc.titlebar.close, () => {
+  mainWindow.close();
+});
+electron.ipcMain.on(ipc.titlebar.maximizeRestore, () => {
+  if (mainWindow.isMaximized()) mainWindow.unmaximize();
+  else mainWindow.maximize();
+});
+electron.ipcMain.on(ipc.titlebar.minimize, () => {
+  mainWindow.minimize();
 });
 
 const app = electron.app;
@@ -124,6 +149,7 @@ app.whenReady().then(async () => {
   mainWindow = new BrowserWindow({
     autoHideMenuBar: true,
     show: false,
+    frame: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       worldSafeExecuteJavaScript: true,
@@ -138,7 +164,6 @@ app.whenReady().then(async () => {
   mainWindow.webContents.openDevTools();
   mainWindow.webContents.on('did-start-loading', (evt, data) => {
     installDevToolExtensions();
-    killAllConsoles();
   });
 });
 

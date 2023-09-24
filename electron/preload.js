@@ -9,6 +9,7 @@ const {
   localDumpDataPath,
   localPersistentDataPath,
   localPersistentProjectsPath,
+  localPersistentSettingsPath,
   textFileEncoding,
   ipc,
 } = require('./electronConstants');
@@ -55,6 +56,17 @@ contextBridge.exposeInMainWorld('electron', {
       ipcRenderer.send(ipc.console.killConsole, id);
     },
   },
+  titlebar: {
+    closeApp() {
+      ipcRenderer.send(ipc.titlebar.close);
+    },
+    maximizeRestoreApp() {
+      ipcRenderer.send(ipc.titlebar.maximizeRestore);
+    },
+    minimizeApp() {
+      ipcRenderer.send(ipc.titlebar.minimize);
+    },
+  },
   async getLocalLearnProjectAndLearnPages() {
     const ret = {};
     const projects = [];
@@ -85,10 +97,15 @@ contextBridge.exposeInMainWorld('electron', {
   },
   learnPage: {
     async loadLearnPage(learnProject, learnPage) {
-      return await fs.promises.readFile(
-        `${localPersistentProjectsPath}/${learnProject}/${learnPage}`,
-        { encoding: textFileEncoding }
-      );
+      try {
+        const content = await fs.promises.readFile(
+          `${localPersistentProjectsPath}/${learnProject}/${learnPage}`,
+          { encoding: textFileEncoding }
+        );
+        return content;
+      } catch (err) {
+        return undefined;
+      }
     },
     async loadFile(learnProject, filename, folderStructure = []) {
       let dir = `${localDumpDataPath}/${learnProject}/`;
@@ -107,6 +124,14 @@ contextBridge.exposeInMainWorld('electron', {
         }
         console.error(err);
       }
+    },
+    async deleteFile(learnProject, filename) {
+      if (!learnProject || !filename) {
+        return;
+      }
+      let dir = `${localDumpDataPath}/${learnProject}/${filename}`;
+      await fs.promises.rm(dir);
+      return;
     },
     async saveFile(content, learnProject, filename, folderStructure = []) {
       if (!content || !learnProject || !filename) {
@@ -133,6 +158,26 @@ contextBridge.exposeInMainWorld('electron', {
         content,
         textFileEncoding
       );
+    },
+    async renameLearnPage(learnProject, filename, newFilename) {
+      if (!learnProject || !filename || !newFilename) {
+        return;
+      }
+      let dir = `${localPersistentProjectsPath}/${learnProject}`;
+
+      await fs.promises.rename(
+        `${dir}/${filename}${learnPageExtension}`,
+        `${dir}/${newFilename}${learnPageExtension}`
+      );
+      return newFilename;
+    },
+    async deleteLearnPage(learnProject, learnPage) {
+      if (!learnProject || !learnPage) {
+        return;
+      }
+      let dir = `${localPersistentProjectsPath}/${learnProject}/${learnPage}`;
+      await fs.promises.rm(dir);
+      return;
     },
     async saveLearnPage(content, learnPage, learnProject) {
       if (!learnProject) {
@@ -173,8 +218,71 @@ contextBridge.exposeInMainWorld('electron', {
       );
       return [learnPage, learnProject];
     },
+    async exportLearnPage(learnProject, learnPage) {
+      const targetDirectory = await openFileDialog(
+        OpenFileDialogOption.selectFolder
+      );
+      if (!targetDirectory) return;
+
+      try {
+        const source = `${localPersistentProjectsPath}/${learnProject}/${learnPage}`;
+        const destination = `${targetDirectory}/${learnPage}`;
+        await fs.promises.copyFile(source, destination);
+      } catch (err) {
+        console.error('export error', err, project);
+      }
+    },
+    async importLearnPage(learnProject) {
+      const sourceDirectory = await openFileDialog(
+        OpenFileDialogOption.selectLap
+      );
+      if (!sourceDirectory) return;
+
+      try {
+        const destination = `${localPersistentProjectsPath}/${learnProject}`;
+        const source = `${sourceDirectory}`;
+        const file = source.split('\\').pop();
+        const filename = file.slice(0, -learnPageExtension.length);
+        const files = fs.readdirSync(destination);
+
+        let count = 0;
+        let newFilename = file;
+        while (files.includes(newFilename)) {
+          count++;
+          newFilename = `${filename}(${count})${learnPageExtension}`;
+        }
+        await fs.promises.copyFile(source, `${destination}/${newFilename}`);
+        return newFilename;
+      } catch (err) {
+        console.error('export error', err, project);
+      }
+    },
   },
   learnProject: {
+    async createProject(title) {
+      if (!title) {
+        return;
+      }
+      const projectDir = `${localPersistentProjectsPath}/${title}`;
+      const fileDir = `${localDumpDataPath}/${title}`;
+      if (!(await createDirs([projectDir, fileDir]))) {
+        return;
+      }
+      return title;
+    },
+    async deleteProject(title) {
+      if (!title) {
+        return;
+      }
+      const projectDir = `${localPersistentProjectsPath}/${title}`;
+      const fileDir = `${localDumpDataPath}/${title}`;
+      try {
+        await fs.promises.rm(projectDir, { recursive: true, force: true });
+        await fs.promises.rm(fileDir, { recursive: true, force: true });
+      } catch (err) {
+        console.log('Unable to delete project:', err);
+      }
+    },
     async exportProject(project) {
       const targetDirectory = await openFileDialog(
         OpenFileDialogOption.selectFolder
@@ -195,9 +303,7 @@ contextBridge.exposeInMainWorld('electron', {
       }
     },
     async importProject() {
-      const srcDirectory = await openFileDialog(
-        OpenFileDialogOption.selectFile
-      );
+      const srcDirectory = await openFileDialog(OpenFileDialogOption.selectTgz);
       if (!srcDirectory) return;
       try {
         await tar.x({
@@ -208,15 +314,117 @@ contextBridge.exposeInMainWorld('electron', {
         console.error('import error', err);
       }
     },
+    readWorkingDirectory(folderPath) {
+      const fullFolderPath = `${localDumpDataPath}/${folderPath || ''}`;
+
+      try {
+        const files = fs.readdirSync(fullFolderPath);
+        return files;
+      } catch (err) {
+        if (err.code === 'ENOENT') {
+          return [];
+        }
+        console.error('readWorkingDirectory', err);
+      }
+    },
+    onWorkingDirectoryChanged(folderPath, listener) {
+      const fullFolderPath = `${localDumpDataPath}/${folderPath || ''}`;
+      try {
+        const watcher = fs.watch(fullFolderPath, () => {
+          listener();
+        });
+        function stopWatching() {
+          watcher.close();
+        }
+        return stopWatching;
+      } catch (err) {
+        if (err.code === 'ENOENT') {
+          console.warn(
+            'onWorkingDirectoryChanged: No such directory:',
+            fullFolderPath
+          );
+          return () => {};
+        }
+        console.error('onWorkingDirectoryChanged', err);
+      }
+    },
+    readProjectDirectory(folderPath) {
+      const fullFolderPath = `${localPersistentProjectsPath}/${
+        folderPath || ''
+      }`;
+
+      const files = fs.readdirSync(fullFolderPath);
+      return files;
+    },
+    onProjectDirectoryChanged(folderPath, listener) {
+      const fullFolderPath = `${localPersistentProjectsPath}/${
+        folderPath || ''
+      }`;
+      const watcher = fs.watch(fullFolderPath, () => {
+        listener();
+      });
+      function stopWatching() {
+        watcher.close();
+      }
+      return stopWatching;
+    },
   },
   openExternalLink(link) {
     ipcRenderer.send('openExternalLink', link);
   },
+  style: {
+    async setFontSize(fontSize) {
+      try {
+        const appData = fs.readdirSync(localPersistentDataPath);
+        if (!appData.includes('settings')) {
+          await fs.promises.mkdir(localPersistentSettingsPath);
+        }
+        const settingsData = fs.readdirSync(localPersistentSettingsPath);
+        if (!settingsData.includes('style.json')) {
+          await fs.promises.writeFile(
+            `${localPersistentSettingsPath}/style.json`,
+            '{}'
+          );
+        }
+
+        const styleContent = (
+          await fs.promises.readFile(
+            `${localPersistentSettingsPath}/style.json`
+          )
+        ).toString(textFileEncoding);
+        const styleObject = JSON.parse(styleContent);
+        styleObject['editorFontSize'] = fontSize;
+        await fs.promises.writeFile(
+          `${localPersistentSettingsPath}/style.json`,
+          JSON.stringify(styleObject)
+        );
+      } catch (err) {
+        console.error('Error setting font size:', err);
+      }
+    },
+    async getFontSize() {
+      try {
+        const styleContent = (
+          await fs.promises.readFile(
+            `${localPersistentSettingsPath}/style.json`
+          )
+        ).toString(textFileEncoding);
+        const styleObject = JSON.parse(styleContent);
+        return styleObject['editorFontSize'] ?? null;
+      } catch (err) {
+        if (err.code === 'ENOENT') {
+          return null;
+        }
+        console.error('Error getting font size:', err);
+      }
+    },
+  },
 });
 
 const OpenFileDialogOption = {
+  selectTgz: ipc.openFileDialogOptions.selectTgz,
+  selectLap: ipc.openFileDialogOptions.selectLap,
   selectFolder: ipc.openFileDialogOptions.selectFolder,
-  selectFile: ipc.openFileDialogOptions.selectFile,
 };
 async function openFileDialog(option) {
   const id = getUniqueId();
